@@ -13,3 +13,20 @@
 - [ ] Expand WOPI protocol mock server with real-time WebDAV file locks
 - [ ] Add offline PWA service worker caching for Native Federation manifests
 - [ ] Connect Turso edge database replicas to live gateway proxy
+- [x] Create placeholder docker-compose.yml for Appwrite self-hosting (on standby)
+- [x] Integrate Polar Usage-Based Billing & Metering Engine (`PolarBillingService`)
+- [x] Implement Polar event ingestion pipeline with Cost Insights (`_cost`) and sub-cent precision
+- [x] Add Polar meters management, filter clauses, and aggregation calculation engine
+- [x] Provide Polar hosted checkout session generation and license key validation
+- [x] Wire Express gateway proxy endpoints (`/api/polar/*`) and Gemini AI token metering
+- [x] Pass unit test suite for Polar Billing Service (7/7 green, 61/61 project total)
+- [x] Implement The Ξ (Xi) Economy & CogniOps Foundation (`XiEconomyService`)
+- [x] Define weighted CogniOps unit cost floor: Ξ_Floor = ∑(ω_i · C_i) with contractual CAD/USD peg
+- [x] Implement Hybrid Tiered SaaS upgrade threshold formula: U_upgrade = Q_lower + (X_higher - X_lower)/(R_lower - R_higher)
+- [x] Implement Proof-of-Attribution (PoA) reward formula: R_Ξ = M_Ξ · N_k · (F_k)^α · E_data (Strategic COGS investment)
+- [x] Build closed-loop Ξ lifecycle (Minting channels vs Burning for CogniOps and Elastic Access)
+- [x] Formulate Hybrid Pricing & Value Committee (HPVC) governance model and proposal voting
+- [x] Implement Sankey economic flow diagram data structure for CFO and telemetry visualization
+- [x] Integrate Ξ Economy Cockpit into `GatewayConsoleComponent` (zero new front-end files)
+- [x] Pass unit test suite for XiEconomyService (7/7 green, 68/68 bun unit tests, 14/14 vitest tests)
+

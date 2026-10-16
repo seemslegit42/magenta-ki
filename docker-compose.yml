@@ -1,0 +1,29 @@
+version: '3'
+services:
+  traefik:
+    image: traefik:v2.10
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+  appwrite:
+    image: appwrite/appwrite:2.5.0
+    container_name: appwrite
+    depends_on:
+      - mariadb
+      - redis
+    environment:
+      - _APP_ENV=production
+    volumes:
+      - ./appwrite:/usr/src/code/appwrite:rw
+  mariadb:
+    image: mariadb:10.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+  redis:
+    image: redis:6.0

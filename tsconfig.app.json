@@ -16,6 +16,9 @@
     "src/app/components/statusbar/statusbar.component.ts",
     "src/app/components/apps/app-store/app-store.component.ts",
     "src/app/components/apps/native-federation/native-federation-studio.component.ts",
-    "src/app/components/apps/app-launcher/app-launcher.component.ts"
+    "src/app/components/apps/app-launcher/app-launcher.component.ts",
+    "src/app/services/polar-billing.service.ts",
+    "src/app/services/xi-economy.service.ts",
+    "src/app/components/apps/gateway-console/gateway-console.component.ts"
   ]
 }

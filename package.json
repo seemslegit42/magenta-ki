@@ -53,6 +53,6 @@
     "typescript": "~6.0.3",
     "typescript-eslint": "8.47.0",
     "vitest": "^4.0.0",
-    "@softarc/native-federation-orchestrator": "^4.6.0"
+    "@softarc/native-federation-orchestrator": "4.6.0"
   }
 }

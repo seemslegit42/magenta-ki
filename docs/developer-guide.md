@@ -26,3 +26,10 @@ Supported SDK code generators for programmatic database and table provisioning:
 2. **Implement Standalone Component**: Ensure it's a standalone component.
 3. **Expose Module**: Configure `federation.config.mjs` to expose the component.
 4. **Register in Store**: Add to `AppStoreComponent` catalog.
+
+## Polar Usage-Based Billing & Metering
+1. **Meters & Filters**: Manage event filters and aggregations (`count`, `sum`, `avg`, `min`, `max`, `unique`) via `PolarBillingService`.
+2. **Event Ingestion**: Ingest telemetry events (`/api/polar/events/ingest`) with Cost Insights (`_cost: { amount, currency }`).
+3. **Customer State & Entitlements**: Retrieve consolidated subscriptions, granted benefits, and active meters via `getCustomerState(externalId)`.
+4. **License Keys**: Validate and track multi-device license activations via `validateLicenseKey(key, deviceId)`.
+

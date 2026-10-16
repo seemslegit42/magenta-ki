@@ -52,3 +52,10 @@
 - **Process Telemetry**: Live inspection of active, minimized, and dormant PIDs with direct focus/restore integration via `WindowManagerService`.
 - **Search & Filter Pipeline**: Sub-millisecond reactive filtering across categories (`productivity`, `database`, `security`, `developer`, `ai`, `federated`) with real-time query signals.
 - **Decision Tokens**: VIP Roman Glass (`rgba(18, 20, 26, 0.72)`), Comfortaa header hierarchy, Lexend Deca body telemetry, Patina Green (`#3EB991`) primary conversion trigger.
+
+### 7. Polar Usage-Based Billing & Entitlements Engine (`PolarBillingService`)
+- **Meters & Filter Clauses**: Event filtering on condition clauses (`eq`, `ne`, `gt`, `gte`, `lt`, `lte`, `contains`, `does_not_contain`) with `and`/`or` conjunctions and unit multipliers (Scalar, Token, Custom).
+- **Cost Insights Engine**: Sub-cent precision event cost tracking with 12-decimal micro-cost recording (`_cost: { amount, currency: 'usd' }`) and automatic LLM inference meter linkage.
+- **Entitlements & License Vault**: Cryptographic `POLAR_<UUID>` key issuance, multi-device activation tracking, and customer state resolution (`subscriptions`, `benefits`, `customer_meters`).
+- **Gateway Proxy Endpoints**: Express `/api/polar/*` routes for event ingestion, hosted checkout session links, and Standard Webhooks verification.
+

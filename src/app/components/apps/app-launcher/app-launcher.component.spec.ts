@@ -10,6 +10,7 @@ describe('AppLauncherComponent', () => {
   let windowManager: WindowManagerService;
 
   beforeEach(async () => {
+    TestBed.resetTestingModule();
     await TestBed.configureTestingModule({
       imports: [AppLauncherComponent],
       providers: [
