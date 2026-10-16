@@ -1,0 +1,8 @@
+{
+  "name": "Verdigris WebOS v2.4 - Native Federation",
+  "description": "Enterprise WebOS Desktop Shell with Dynamic Micro-Frontend Native Federation (Angular v22, Zoneless, Signals, VIP v2.4)",
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ],
+  "permissions": []
+}

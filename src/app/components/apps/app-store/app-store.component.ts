@@ -1,0 +1,409 @@
+import { Component, Input, inject } from '@angular/core';
+import { WindowManagerService } from '../../../services/window-manager.service';
+import { signal } from '@angular/core';
+import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { NativeFederationService, RemoteDefinition } from '../../../services/native-federation.service';
+
+@Component({
+  selector: 'app-app-store',
+  standalone: true,
+  imports: [ReactiveFormsModule],
+  template: `
+    <div class="space-y-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-white/10 pb-4 gap-3">
+        <div>
+          <h2 class="font-display text-xl font-bold text-white flex items-center space-x-2">
+            <span class="material-icons text-[#E0218A]">storefront</span>
+            <span>Native Federation App Store</span>
+          </h2>
+          <p class="text-xs text-[#8C94A8] mt-1">Angular 22 ApplicationBuilder & &#64;angular-architects/native-federation runtime mesh.</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <span class="text-xs px-2.5 py-1 rounded-full bg-[#3EB991]/10 text-[#3EB991] border border-[#3EB991]/20 font-mono flex items-center space-x-1.5">
+            <span class="w-2 h-2 rounded-full bg-[#3EB991] animate-pulse"></span>
+            <span>Federation Host: app (Port 3000)</span>
+          </span>
+          <span class="text-xs px-2.5 py-1 rounded-full bg-[#6A0DAD]/20 text-[#20B2AA] border border-[#20B2AA]/30 font-mono">
+            Angular 22.2.0
+          </span>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="flex items-center space-x-2 border-b border-white/10 pb-2 text-xs font-mono">
+        <button
+          class="px-3.5 py-1.5 rounded-lg transition-colors flex items-center space-x-1.5"
+          [class.bg-[#6A0DAD]]="activeTab() === 'catalog'"
+          [class.text-white]="activeTab() === 'catalog'"
+          [class.text-[#8C94A8]]="activeTab() !== 'catalog'"
+          [class.hover:bg-white/5]="activeTab() !== 'catalog'"
+          (click)="activeTab.set('catalog')">
+          <span class="material-icons text-sm">apps</span>
+          <span>Core Catalog ({{ catalog.length }})</span>
+        </button>
+
+        <button
+          class="px-3.5 py-1.5 rounded-lg transition-colors flex items-center space-x-1.5"
+          [class.bg-[#6A0DAD]]="activeTab() === 'remotes'"
+          [class.text-white]="activeTab() === 'remotes'"
+          [class.text-[#8C94A8]]="activeTab() !== 'remotes'"
+          [class.hover:bg-white/5]="activeTab() !== 'remotes'"
+          (click)="activeTab.set('remotes')">
+          <span class="material-icons text-sm">hub</span>
+          <span>Dynamic Remotes ({{ federationService.remotes().length }})</span>
+        </button>
+
+        <button
+          class="px-3.5 py-1.5 rounded-lg transition-colors flex items-center space-x-1.5"
+          [class.bg-[#6A0DAD]]="activeTab() === 'manifest'"
+          [class.text-white]="activeTab() === 'manifest'"
+          [class.text-[#8C94A8]]="activeTab() !== 'manifest'"
+          [class.hover:bg-white/5]="activeTab() !== 'manifest'"
+          (click)="activeTab.set('manifest')">
+          <span class="material-icons text-sm">integration_instructions</span>
+          <span>Manifest Pipeline</span>
+        </button>
+
+        <button
+          class="px-3.5 py-1.5 rounded-lg transition-colors flex items-center space-x-1.5"
+          [class.bg-[#6A0DAD]]="activeTab() === 'register'"
+          [class.text-white]="activeTab() === 'register'"
+          [class.text-[#8C94A8]]="activeTab() !== 'register'"
+          [class.hover:bg-white/5]="activeTab() !== 'register'"
+          (click)="activeTab.set('register')">
+          <span class="material-icons text-sm">add_link</span>
+          <span>Register Remote</span>
+        </button>
+      </div>
+
+      <!-- Tab 1: Core Catalog -->
+      @if (activeTab() === 'catalog') {
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          @for (app of catalog; track app.id) {
+            <div class="bg-[#151922] border border-white/10 rounded-xl p-5 flex flex-col justify-between hover:border-[#E0218A]/50 transition-all group">
+              <div>
+                <div class="flex items-start justify-between mb-3">
+                  <div class="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[#FF2A9D] group-hover:bg-[#E0218A]/20 transition-colors">
+                    <span class="material-icons text-2xl">{{ app.icon }}</span>
+                  </div>
+                  <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-[#8C94A8]">
+                    {{ app.sandboxType }}
+                  </span>
+                </div>
+                <h3 class="font-display font-semibold text-white text-sm">{{ app.name }}</h3>
+                <p class="text-xs text-[#8C94A8] mt-1.5 leading-relaxed">{{ app.description }}</p>
+              </div>
+
+              <div class="mt-6 pt-4 border-t border-white/5 flex items-center justify-between">
+                <span class="text-[11px] font-mono text-[#20B2AA]">{{ app.version }}</span>
+                <button
+                  class="px-3.5 py-1.5 rounded-lg bg-[#6A0DAD] hover:bg-[#E0218A] text-white text-xs font-medium transition-colors flex items-center space-x-1 shadow-md"
+                  (click)="launchApp(app)">
+                  <span class="material-icons text-xs">play_arrow</span>
+                  <span>Launch</span>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Tab 2: Dynamic Remote Micro-Frontends -->
+      @if (activeTab() === 'remotes') {
+        <div class="space-y-4">
+          <div class="p-4 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
+            <div>
+              <h4 class="text-xs font-semibold text-white font-display">Native Federation Runtime Remotes</h4>
+              <p class="text-[11px] text-[#8C94A8] mt-0.5 font-mono">Dynamic remote entries registered in public/federation.manifest.json</p>
+            </div>
+            <button
+              class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-mono transition-colors flex items-center space-x-1"
+              (click)="federationService.refreshManifest()">
+              <span class="material-icons text-xs">refresh</span>
+              <span>Sync Manifest</span>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            @for (remote of federationService.remotes(); track remote.name) {
+              <div class="bg-[#151922] border border-white/10 rounded-xl p-5 flex flex-col justify-between hover:border-[#20B2AA]/50 transition-all">
+                <div>
+                  <div class="flex items-start justify-between mb-3">
+                    <div class="w-12 h-12 rounded-xl bg-[#6A0DAD]/30 border border-[#6A0DAD]/50 flex items-center justify-center text-[#20B2AA]">
+                      <span class="material-icons text-2xl">layers</span>
+                    </div>
+                    <span 
+                      class="text-[10px] font-mono px-2 py-0.5 rounded border"
+                      [class.bg-[#3EB991]/20]="remote.status === 'ONLINE'"
+                      [class.text-[#3EB991]]="remote.status === 'ONLINE'"
+                      [class.border-[#3EB991]/40]="remote.status === 'ONLINE'"
+                      [class.bg-[#6A0DAD]/20]="remote.status === 'STANDBY' || remote.status === 'CONNECTING'"
+                      [class.text-[#20B2AA]]="remote.status === 'STANDBY' || remote.status === 'CONNECTING'"
+                      [class.border-[#20B2AA]/30]="remote.status === 'STANDBY' || remote.status === 'CONNECTING'"
+                      [class.bg-rose-500/20]="remote.status === 'ERROR'"
+                      [class.text-rose-400]="remote.status === 'ERROR'"
+                      [class.border-rose-500/30]="remote.status === 'ERROR'">
+                      {{ remote.status }}
+                      @if (remote.latencyMs) {
+                        <span>({{ remote.latencyMs }}ms)</span>
+                      }
+                    </span>
+                  </div>
+                  <h3 class="font-display font-semibold text-white text-sm">{{ remote.name }}</h3>
+                  <p class="text-xs text-[#8C94A8] mt-1 leading-relaxed">{{ remote.description }}</p>
+                  
+                  <div class="mt-3 p-2 rounded bg-black/30 border border-white/5 font-mono text-[10px] text-[#20B2AA] truncate" [title]="remote.url">
+                    URI: {{ remote.url }}
+                  </div>
+                </div>
+
+                <div class="mt-5 pt-3 border-t border-white/5 flex items-center justify-between gap-2">
+                  <button
+                    class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white text-[11px] font-mono border border-white/10 transition-colors flex items-center space-x-1"
+                    (click)="probeRemote(remote)">
+                    <span class="material-icons text-xs">network_check</span>
+                    <span>Probe</span>
+                  </button>
+
+                  <button
+                    class="px-3.5 py-1.5 rounded-lg bg-[#6A0DAD] hover:bg-[#E0218A] text-white text-xs font-medium transition-colors flex items-center space-x-1 shadow-md"
+                    (click)="launchRemote(remote)">
+                    <span class="material-icons text-xs">open_in_new</span>
+                    <span>Mount MFE</span>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Tab 3: Manifest Pipeline -->
+      @if (activeTab() === 'manifest') {
+        <div class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Left: Manifest JSON -->
+            <div class="bg-[#151922] border border-white/10 rounded-xl p-4">
+              <div class="flex items-center justify-between border-b border-white/10 pb-2 mb-3">
+                <span class="text-xs font-mono font-semibold text-white flex items-center space-x-1.5">
+                  <span class="material-icons text-sm text-[#20B2AA]">description</span>
+                  <span>public/federation.manifest.json</span>
+                </span>
+                <span class="text-[10px] font-mono text-[#3EB991]">Active Manifest</span>
+              </div>
+              <pre class="bg-black/50 p-3 rounded-lg border border-white/5 font-mono text-xs text-[#F5FFFA] overflow-x-auto leading-relaxed">{{ manifestJson() }}</pre>
+            </div>
+
+            <!-- Right: Config & Shared Packages -->
+            <div class="bg-[#151922] border border-white/10 rounded-xl p-4 space-y-3">
+              <div class="border-b border-white/10 pb-2">
+                <span class="text-xs font-mono font-semibold text-white flex items-center space-x-1.5">
+                  <span class="material-icons text-sm text-[#E0218A]">tune</span>
+                  <span>federation.config.mjs Specifications</span>
+                </span>
+              </div>
+
+              <div class="space-y-2 text-xs">
+                <div class="flex items-center justify-between p-2 rounded bg-white/5">
+                  <span class="text-[#8C94A8] font-mono">Builder Adapter</span>
+                  <span class="text-[#3EB991] font-mono font-semibold">&#64;angular-architects/native-federation:build</span>
+                </div>
+                <div class="flex items-center justify-between p-2 rounded bg-white/5">
+                  <span class="text-[#8C94A8] font-mono">Shared Core</span>
+                  <span class="text-[#20B2AA] font-mono font-semibold">&#64;angular/core (singleton, strictVersion)</span>
+                </div>
+                <div class="flex items-center justify-between p-2 rounded bg-white/5">
+                  <span class="text-[#8C94A8] font-mono">Chunk Strategy</span>
+                  <span class="text-white font-mono">denseChunking: true</span>
+                </div>
+                <div class="flex items-center justify-between p-2 rounded bg-white/5">
+                  <span class="text-[#8C94A8] font-mono">Import Engine</span>
+                  <span class="text-[#FF2A9D] font-mono">W3C Native Import Maps / es-module-shims</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Tab 4: Register Custom Dynamic Remote -->
+      @if (activeTab() === 'register') {
+        <div class="bg-[#151922] border border-white/10 rounded-xl p-6 max-w-xl mx-auto">
+          <div class="border-b border-white/10 pb-3 mb-4">
+            <h3 class="font-display font-semibold text-sm text-white">Register Dynamic Micro-Frontend</h3>
+            <p class="text-xs text-[#8C94A8] mt-0.5">Dynamically add and resolve remote modules without rebuilding the host.</p>
+          </div>
+
+          <form [formGroup]="remoteForm" (ngSubmit)="submitNewRemote()" class="space-y-4">
+            <div>
+              <label for="remote-mfe-name" class="block text-xs font-mono text-[#8C94A8] mb-1">Remote Package Name</label>
+              <input 
+                id="remote-mfe-name"
+                type="text" 
+                formControlName="name"
+                placeholder="e.g. mfe-crm, billing-portal"
+                class="w-full bg-black/40 border border-white/15 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#20B2AA] font-mono" />
+            </div>
+
+            <div>
+              <label for="remote-mfe-url" class="block text-xs font-mono text-[#8C94A8] mb-1">Remote Entry URL</label>
+              <input 
+                id="remote-mfe-url"
+                type="text" 
+                formControlName="url"
+                placeholder="e.g. http://localhost:3005/remoteEntry.json"
+                class="w-full bg-black/40 border border-white/15 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#20B2AA] font-mono" />
+            </div>
+
+            <div>
+              <label for="remote-mfe-exposed" class="block text-xs font-mono text-[#8C94A8] mb-1">Exposed Module Key</label>
+              <input 
+                id="remote-mfe-exposed"
+                type="text" 
+                formControlName="exposedModule"
+                placeholder="./Component"
+                class="w-full bg-black/40 border border-white/15 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#20B2AA] font-mono" />
+            </div>
+
+            <div>
+              <label for="remote-mfe-desc" class="block text-xs font-mono text-[#8C94A8] mb-1">Description</label>
+              <input 
+                id="remote-mfe-desc"
+                type="text" 
+                formControlName="description"
+                placeholder="Brief description of the remote application..."
+                class="w-full bg-black/40 border border-white/15 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#20B2AA]" />
+            </div>
+
+            <div class="pt-2 flex justify-end">
+              <button 
+                type="submit"
+                [disabled]="remoteForm.invalid"
+                class="px-4 py-2 rounded-lg bg-[#6A0DAD] hover:bg-[#E0218A] disabled:opacity-40 disabled:hover:bg-[#6A0DAD] text-white text-xs font-semibold transition-colors flex items-center space-x-1.5 shadow-md">
+                <span class="material-icons text-sm">add_circle</span>
+                <span>Register Remote MFE</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      }
+    </div>
+  `
+})
+export class AppStoreComponent {
+  @Input({ required: true }) pid!: string;
+  private windowMgr = inject(WindowManagerService);
+  protected federationService = inject(NativeFederationService);
+
+  public activeTab = signal<'catalog' | 'remotes' | 'manifest' | 'register'>('catalog');
+
+  public remoteForm = new FormGroup({
+    name: new FormControl('', [Validators.required, Validators.pattern(/^[a-zA-Z0-9_-]+$/)]),
+    url: new FormControl('', [Validators.required]),
+    exposedModule: new FormControl('./Component', [Validators.required]),
+    description: new FormControl('Dynamic Remote Micro-Frontend')
+  });
+
+  public manifestJson = signal<string>(JSON.stringify({
+    "remote-analytics": "http://localhost:3001/remoteEntry.json",
+    "remote-copilot": "http://localhost:3002/remoteEntry.json",
+    "remote-wopi-editor": "http://localhost:3003/remoteEntry.json"
+  }, null, 2));
+
+  protected catalog = [
+    {
+      id: 'appwrite-databases',
+      name: 'Appwrite Databases & SDK',
+      description: 'Enterprise multi-tenant database manager, TablesDB schema inspector, and Server SDK code generator for 11 runtimes.',
+      icon: 'storage',
+      component: 'AppwriteDatabasesComponent',
+      sandboxType: 'TablesDB Service',
+      version: 'v2.4.0'
+    },
+    {
+      id: 'security-audit',
+      name: 'Audit Trail & RBAC Sentinel',
+      description: 'Immutable security audit trail, multi-role RBAC access matrix, and cryptographic compliance.',
+      icon: 'verified_user',
+      component: 'SecurityAuditComponent',
+      sandboxType: 'Security Kernel',
+      version: 'v2.4.0'
+    },
+    {
+      id: 'agent-fs',
+      name: 'AgentFS VFS Explorer',
+      description: 'SQLite/OPFS virtual filesystem inspector, inode mapping, and CoW sandbox execution.',
+      icon: 'folder_special',
+      component: 'AgentFsExplorerComponent',
+      sandboxType: 'Direct ESM Injection',
+      version: 'v2.4.0'
+    },
+    {
+      id: 'wopi-office',
+      name: 'WOPI Office Suite',
+      description: 'Collaborative document, spreadsheet, and slide editor with real-time locks and CheckFileInfo.',
+      icon: 'description',
+      component: 'WopiOfficeComponent',
+      sandboxType: 'OnlyOffice Federation',
+      version: 'v2026.4'
+    },
+    {
+      id: 'gateway',
+      name: 'Control Plane & Turso DB',
+      description: 'Go API gateway orchestrator, Appwrite IAM token verification, and per-tenant libSQL routing.',
+      icon: 'dns',
+      component: 'GatewayConsoleComponent',
+      sandboxType: 'Secure Edge Mesh',
+      version: 'v1.8.2'
+    },
+    {
+      id: 'terminal',
+      name: 'WebOS AI Copilot & Terminal',
+      description: 'Interactive CLI shell and Gemini AI assistant for running automated enterprise scripts.',
+      icon: 'terminal',
+      component: 'TerminalComponent',
+      sandboxType: 'Sandboxed Worker',
+      version: 'v3.0.1'
+    },
+    {
+      id: 'settings',
+      name: 'Verdigris System Settings',
+      description: 'Configure syncopated UI rhythm cadence, window geometry, and security boundaries.',
+      icon: 'settings',
+      component: 'SettingsComponent',
+      sandboxType: 'Host Kernel',
+      version: 'v2.4'
+    }
+  ];
+
+  public launchApp(app: { id: string; name: string; icon: string; component: string; category?: string }): void {
+    this.windowMgr.spawnProcess(app.id, app.name, app.icon, app.component, 'productivity');
+  }
+
+  public launchRemote(remote: RemoteDefinition): void {
+    this.federationService.addLog(`[AppStore] Spawning micro-frontend process '${remote.name}'`);
+    this.windowMgr.spawnProcess(
+      `remote-${remote.name}`,
+      `MFE: ${remote.name}`,
+      'layers',
+      'RemoteContainerComponent',
+      'productivity'
+    );
+  }
+
+  public async probeRemote(remote: RemoteDefinition): Promise<void> {
+    await this.federationService.probeRemote(remote);
+  }
+
+  public submitNewRemote(): void {
+    if (this.remoteForm.valid) {
+      const { name, url, exposedModule, description } = this.remoteForm.value;
+      if (name && url) {
+        this.federationService.registerDynamicRemote(name, url, exposedModule || './Component', description || '');
+        this.remoteForm.reset({ exposedModule: './Component', description: 'Dynamic Remote Micro-Frontend' });
+        this.activeTab.set('remotes');
+      }
+    }
+  }
+}
+

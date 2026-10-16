@@ -1,0 +1,21 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/app",
+    "types": []
+  },
+  "files": [
+    "src/main.ts",
+    "src/main.server.ts",
+    "src/server.ts",
+    "src/app/app.ts",
+    "src/app/services/window-manager.service.ts",
+    "src/app/services/native-federation.service.ts",
+    "src/app/components/window/window.component.ts",
+    "src/app/components/dock/dock.component.ts",
+    "src/app/components/statusbar/statusbar.component.ts",
+    "src/app/components/apps/app-store/app-store.component.ts",
+    "src/app/components/apps/native-federation/native-federation-studio.component.ts",
+    "src/app/components/apps/app-launcher/app-launcher.component.ts"
+  ]
+}
