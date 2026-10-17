@@ -19,6 +19,7 @@
     "src/app/components/apps/app-launcher/app-launcher.component.ts",
     "src/app/services/polar-billing.service.ts",
     "src/app/services/xi-economy.service.ts",
-    "src/app/components/apps/gateway-console/gateway-console.component.ts"
+    "src/app/components/apps/gateway-console/gateway-console.component.ts",
+    "src/generated/api.types.ts"
   ]
 }

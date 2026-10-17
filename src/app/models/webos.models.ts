@@ -1,3 +1,22 @@
+// Re-export canonical downstream contract types generated from /contracts/openapi/webos.v1.yaml
+export type {
+  components as WebOsApiComponents,
+  paths as WebOsApiPaths,
+  SystemPreferencesContract,
+  ProcessContract,
+  WindowStateContract,
+  UserProfileContract,
+  TenantContextContract,
+  PolarIngestEventContract,
+  PolarCheckoutSessionContract,
+  PolarCustomerStateContract,
+  CogniOpsCogsBreakdownContract,
+  XiFloorDataContract,
+  PoAContributionParamsContract,
+  PoARewardResultContract,
+  XiSankeyFlowContract
+} from '../../generated/api.types';
+
 export interface ProcessDescriptor {
   pid: string;
   appId: string;

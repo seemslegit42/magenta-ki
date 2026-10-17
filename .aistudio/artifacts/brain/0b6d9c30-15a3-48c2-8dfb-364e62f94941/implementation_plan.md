@@ -1,26 +1,38 @@
-# Migration Plan: Native Federation Integration
+# Implementation Plan: Phase 1 (/contracts/)
 
-## Goal: Migrate existing application to Native Federation
+## Objective
+Formalize the neutral data layer and API specification as the single source of truth for the Verdigris Cloud OS, decoupling the Go gateway and Angular host.
 
-## Phase 1: Dependency Preparation
-- Validate existing `@angular/core` version and install compatible `@angular-architects/native-federation`.
-- Ensure `tsconfig.federation.json` is correctly set up for build isolation.
+## Proposed Actions
 
-## Phase 2: Architectural Configuration
-- Create/Configure `federation.config.mjs` for the host application (defining shared dependencies and scopes).
-- Update `angular.json` to replace standard `@angular/build:application` targets with `@angular-architects/native-federation:build`.
-- Configure `serve` target to use the federation-aware dev server wrapper.
+### 1. File System Scaffolding
+- Create:
+  - `/contracts/sql/`
+  - `/contracts/openapi/`
+  - `/contracts/scripts/`
 
-## Phase 3: Bootstrap & Runtime Initialization
-- Refactor `main.ts` to initialize the federation orchestrator using `initFederation`.
-- Align existing `AppInitializer` (created in previous turn) to ensure manifest loading is integrated with the `initFederation` workflow.
+### 2. Contract Formalization
+- Populate `contracts/sql/schema.sql` with full DDL for:
+  - System/OS state (`system_preferences`, `active_processes`, `window_states`)
+  - RBAC (`user_profiles`, `roles`, `permissions`)
+  - Appwrite/Polar persistence (`databases`, `tables`, `license_keys`, `meters`)
+  - Xi Economy (`cogs_breakdown`, `ledger`, `proposals`)
+- Populate `contracts/openapi/webos.v1.yaml` with REST boundaries for:
+  - AI Assistant (`/api/ai/chat`)
+  - Polar Billing/Metering (`/api/polar/*`)
+  - Xi Economy Engine (`/api/xi/*`)
 
-## Phase 4: Verification & SSR Alignment
-- Perform clean build (`ng build`).
-- Validate SSR compatibility for federated components.
-- Run unit/integration tests to ensure no regressions in runtime behavior.
+### 3. Generation Pipeline
+- Create `contracts/scripts/codegen-ts.sh` to generate TypeScript types into `src/generated/api.types.ts`.
+- Create `contracts/scripts/codegen-go.sh` to generate Go models into `go/pkg/contracts/api.gen.go`.
 
-## Estimated Timeline
-- **Setup & Config**: 1-2 hours
-- **Bootstrap & Migration**: 1-2 hours
-- **Testing & Refinement**: 1 hour
+### 4. Integration
+- Run `codegen-ts.sh`.
+- Replace legacy static `src/app/models/webos.models.ts` references with imports from `src/generated/api.types.ts`.
+- Verify compilation and linting.
+
+## Risks & Mitigation
+- **Schema Drift**: Mitigation is enforced via strict generation pipeline (no manual model definitions allowed).
+- **Migration Complexity**: Entities are mapped 1:1; database DDL is generated first, then TS interfaces.
+
+Please review this plan. If you approve, I will proceed with creating the directory structure and populating the contract files.

@@ -1,29 +1,26 @@
-version: '3'
+version: '3.8'
+
+include:
+  - path: appwrite/docker-compose.yml
+
 services:
-  traefik:
-    image: traefik:v2.10
-    command:
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--entrypoints.web.address=:80"
+  verdigris-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "80:80"
-      - "8080:8080"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - "3000:3000"
+    environment:
+      - PORT=3000
+    env_file:
+      - ./appwrite.env
+    restart: unless-stopped
+    networks:
+      - appwrite
+      - gateway
+
+networks:
+  gateway:
+    name: gateway
   appwrite:
-    image: appwrite/appwrite:2.5.0
-    container_name: appwrite
-    depends_on:
-      - mariadb
-      - redis
-    environment:
-      - _APP_ENV=production
-    volumes:
-      - ./appwrite:/usr/src/code/appwrite:rw
-  mariadb:
-    image: mariadb:10.7
-    environment:
-      - MYSQL_ROOT_PASSWORD=password
-  redis:
-    image: redis:6.0
+    name: appwrite

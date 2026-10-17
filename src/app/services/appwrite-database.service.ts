@@ -889,6 +889,38 @@ let response = try await tablesDB.create(
 )
 print(response)`;
 
+      case 'go':
+      case 'golang':
+        return `// Appwrite Server SDK - Go
+package main
+
+import (
+    "fmt"
+    "os"
+
+    "github.com/appwrite/sdk-for-go/appwrite"
+)
+
+func main() {
+    client := appwrite.NewClient()
+    client.SetEndpoint("${ep}") // Your API Endpoint
+    client.SetProject("${proj}") // Your project ID
+    client.SetKey("${key}")     // Your secret API key
+
+    tablesDB := appwrite.NewTablesDB(client)
+
+    result, err := tablesDB.Create(
+        "${dbId}",
+        "${dbName}",
+    )
+    if err != nil {
+        fmt.Printf("Error creating database: %v\\n", err)
+        return
+    }
+
+    fmt.Printf("Database created successfully: %s\\n", result.Id)
+}`;
+
       case 'rust':
       default:
         return `// Appwrite Server SDK - Rust

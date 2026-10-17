@@ -5,6 +5,11 @@ All notable changes to the Verdigris Cloud OS workspace are documented in this f
 ## [Unreleased] - 2026-10-16
 
 ### Added
+- **Subsystem 1: Neutral /contracts/ Architecture**: Created language-agnostic data contract specification establishing immutable boundaries between Go gateway and Angular host.
+- **Canonical SQLite / libSQL DDL**: Formalized `contracts/sql/schema.sql` and `contracts/sql/queries/system.sql` covering OS state, processes, windows, RBAC, Appwrite, Polar meters, and Xi Economy.
+- **Canonical OpenAPI 3.1 Spec**: Implemented `contracts/openapi/webos.v1.yaml` capturing all REST/RPC control plane endpoints and components schemas.
+- **Automated Downstream Pipelines**: Authored generation scripts `contracts/scripts/codegen-ts.sh` and `contracts/scripts/codegen-go.sh`.
+- **Generated TypeScript Contract Types**: Emitted `src/generated/api.types.ts` and wired into `webos.models.ts` with zero breaking changes across all 82 unit tests.
 - **Polar Usage-Based Billing & Metering Engine**: Complete domain service (`PolarBillingService`) supporting custom and scalar usage meters, condition filtering, and aggregation operators (`count`, `sum`, `avg`, `min`, `max`, `unique`).
 - **Cost Insights & Sub-Cent Telemetry**: Event ingestion pipeline capturing `_cost` decimal amounts in cents with 12-decimal micro-cost precision and live session tracking.
 - **Hosted Checkout & Customer State API**: Programmatic checkout session generation with ad-hoc pricing support and customer entitlement retrieval (`subscriptions`, `benefits`, `customer_meters`).

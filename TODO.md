@@ -29,4 +29,14 @@
 - [x] Implement Sankey economic flow diagram data structure for CFO and telemetry visualization
 - [x] Integrate Ξ Economy Cockpit into `GatewayConsoleComponent` (zero new front-end files)
 - [x] Pass unit test suite for XiEconomyService (7/7 green, 68/68 bun unit tests, 14/14 vitest tests)
+- [x] Complete Phase 1: Establish Neutral `/contracts/` Subtree (Zero Schema Drift)
+  - [x] Canonical SQLite / libSQL DDL (`contracts/sql/schema.sql`) covering System, Processes, Windows, RBAC, Appwrite, Polar & Xi Economy
+  - [x] Canonical sqlc queries (`contracts/sql/queries/system.sql`)
+  - [x] Canonical OpenAPI 3.1 REST/RPC specification (`contracts/openapi/webos.v1.yaml`)
+  - [x] Generation pipelines (`contracts/scripts/codegen-ts.sh`, `contracts/scripts/codegen-go.sh`)
+  - [x] Auto-generated TypeScript contract definitions (`src/generated/api.types.ts`) re-exported via `webos.models.ts`
+- [ ] Phase 2: Scaffold `/go/gateway/` reverse proxy and peel off `/api/*` endpoints
+- [ ] Phase 3: Decouple `/ts/apps/host` to pure Angular Native Federation Host
+- [ ] Phase 4: Root Evacuation & Lefthook Execution Scoping
+
 

@@ -1,0 +1,452 @@
+openapi: 3.1.0
+info:
+  title: Verdigris Cloud OS Gateway API & Contracts (VIP v2.4 Magenta Augmented)
+  version: 2.4.0
+  description: |
+    Comprehensive OpenAPI 3.1 specification for Verdigris Cloud OS, defining the unified boundaries
+    across system preferences, active processes, AI copilot inference endpoints, Polar billing & metering,
+    and the Ξ (Xi) Economy & CogniOps subsystem.
+servers:
+  - url: http://localhost:3000/api
+    description: Local development gateway
+  - url: https://ais-dev-stzsdm5tohshnsbppc34pa-31404703519.us-west1.run.app/api
+    description: Cloud Run development deployment
+
+paths:
+  /v1/system/preferences:
+    get:
+      summary: Retrieve system preferences
+      operationId: getSystemPreferences
+      responses:
+        '200':
+          description: System preferences retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemPreferences'
+    put:
+      summary: Update system preferences
+      operationId: updateSystemPreferences
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SystemPreferences'
+      responses:
+        '204':
+          description: Updated successfully
+
+  /v1/processes:
+    get:
+      summary: List all active processes
+      operationId: listProcesses
+      responses:
+        '200':
+          description: Active process descriptor list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProcessDescriptor'
+
+  /ai/chat:
+    post:
+      summary: Execute AI Copilot inference session
+      operationId: aiChatInference
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [prompt]
+              properties:
+                prompt:
+                  type: string
+                  description: User prompt or system diagnostic command
+                context:
+                  type: object
+                  description: Active workspace context and tenant metadata
+      responses:
+        '200':
+          description: AI inference response with telemetry
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [reply, polarUsage]
+                properties:
+                  reply:
+                    type: string
+                  polarUsage:
+                    $ref: '#/components/schemas/PolarUsageEvent'
+
+  /polar/events/ingest:
+    post:
+      summary: Ingest usage-based metering events for Polar Billing
+      operationId: polarIngestEvents
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [events]
+              properties:
+                events:
+                  type: array
+                  items:
+                    type: object
+      responses:
+        '202':
+          description: Events ingested and aggregated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  ingested:
+                    type: integer
+                  totalCostCentsAdded:
+                    type: number
+                  timestamp:
+                    type: integer
+
+  /polar/checkouts:
+    post:
+      summary: Create ad-hoc or catalog Polar checkout session URL
+      operationId: polarCreateCheckout
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [products]
+              properties:
+                products:
+                  type: array
+                  items:
+                    type: string
+                externalCustomerId:
+                  type: string
+                customerEmail:
+                  type: string
+                successUrl:
+                  type: string
+      responses:
+        '201':
+          description: Checkout session created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolarCheckoutSession'
+
+  /polar/customer-state/{id}:
+    get:
+      summary: Retrieve customer subscriptions, benefits, and meters
+      operationId: polarGetCustomerState
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Customer state retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolarCustomerState'
+
+  /polar/webhooks:
+    post:
+      summary: Receive and verify Polar webhook events
+      operationId: polarWebhookReceiver
+      parameters:
+        - name: webhook-id
+          in: header
+          schema:
+            type: string
+        - name: webhook-signature
+          in: header
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '202':
+          description: Webhook received and processed
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /xi/floor:
+    get:
+      summary: Calculate and retrieve dynamic Ξ Floor cost
+      operationId: getXiFloor
+      responses:
+        '200':
+          description: Ξ Floor cost components and formula
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/XiFloorResponse'
+
+  /xi/burn:
+    post:
+      summary: Burn Ξ tokens for CogniOps inference and elastic feature gating
+      operationId: burnXiTokens
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [customerId, xiUnits]
+              properties:
+                customerId:
+                  type: string
+                xiUnits:
+                  type: number
+                reason:
+                  type: string
+                isElasticAccess:
+                  type: boolean
+      responses:
+        '200':
+          description: Ξ burned successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  burnedXi:
+                    type: number
+                  reason:
+                    type: string
+                  revenueRecognizedUsd:
+                    type: number
+                  timestamp:
+                    type: integer
+
+  /xi/poa-reward:
+    post:
+      summary: Calculate Proof-of-Attribution (PoA) reward for data contributors
+      operationId: calculatePoAReward
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                contributorId:
+                  type: string
+                datasetWeightNk:
+                  type: number
+                qualityFactorFk:
+                  type: number
+                efficacyImpactEdata:
+                  type: number
+      responses:
+        '200':
+          description: PoA reward calculated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  contributorId:
+                    type: string
+                  rewardXi:
+                    type: number
+                  formula:
+                    type: string
+                  timestamp:
+                    type: integer
+
+  /xi/sankey:
+    get:
+      summary: Retrieve balanced Sankey diagram flow telemetry for Ξ Economy
+      operationId: getXiSankeyFlow
+      responses:
+        '200':
+          description: Sankey nodes and links data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/XiSankeyResponse'
+
+  /xi/governance:
+    get:
+      summary: Retrieve Hybrid Pricing & Value Committee (HPVC) proposals and constants
+      operationId: getXiGovernance
+      responses:
+        '200':
+          description: Governance parameters and active proposals
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/XiGovernanceResponse'
+
+components:
+  schemas:
+    SystemPreferences:
+      type: object
+      required: [id, theme, scaling_factor, dock_position]
+      properties:
+        id:
+          type: string
+        theme:
+          type: string
+          enum: [dark, light, cyberpunk, verdigris, magenta]
+        wallpaper_url:
+          type: string
+        scaling_factor:
+          type: number
+        dock_position:
+          type: string
+          enum: [left, bottom, right]
+        updated_at:
+          type: integer
+
+    ProcessDescriptor:
+      type: object
+      required: [pid, appId, title, icon, isOpen, state]
+      properties:
+        pid:
+          type: string
+        appId:
+          type: string
+        title:
+          type: string
+        icon:
+          type: string
+        isOpen:
+          type: boolean
+        isMinimized:
+          type: boolean
+        isMaximized:
+          type: boolean
+        zIndex:
+          type: integer
+        state:
+          type: string
+          enum: [RUNNING, SUSPENDED, TERMINATED]
+        category:
+          type: string
+
+    PolarUsageEvent:
+      type: object
+      properties:
+        event:
+          type: string
+        tokens:
+          type: integer
+        costCents:
+          type: number
+        currency:
+          type: string
+
+    PolarCheckoutSession:
+      type: object
+      properties:
+        checkoutId:
+          type: string
+        url:
+          type: string
+        status:
+          type: string
+        products:
+          type: array
+          items:
+            type: string
+        externalCustomerId:
+          type: string
+        customerEmail:
+          type: string
+        successUrl:
+          type: string
+
+    PolarCustomerState:
+      type: object
+      properties:
+        customerId:
+          type: string
+        externalCustomerId:
+          type: string
+        email:
+          type: string
+        name:
+          type: string
+        subscriptions:
+          type: array
+          items:
+            type: object
+        benefits:
+          type: array
+          items:
+            type: object
+        meters:
+          type: array
+          items:
+            type: object
+
+    XiFloorResponse:
+      type: object
+      properties:
+        xiFloorUsd:
+          type: number
+        fiatPegCurrency:
+          type: string
+        fiatRatio:
+          type: number
+        components:
+          type: object
+        formula:
+          type: string
+
+    XiSankeyResponse:
+      type: object
+      properties:
+        nodes:
+          type: array
+          items:
+            type: object
+        links:
+          type: array
+          items:
+            type: object
+        totalVolumeXi:
+          type: number
+        totalFiatInflowUsd:
+          type: number
+        strategicCogsRatio:
+          type: number
+
+    XiGovernanceResponse:
+      type: object
+      properties:
+        committee:
+          type: string
+        constants:
+          type: object
+        proposals:
+          type: array
+          items:
+            type: object

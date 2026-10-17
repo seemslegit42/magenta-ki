@@ -18,7 +18,10 @@ const app = express();
 app.use(express.json());
 app.set('trust proxy', true);
 
-const angularApp = new AngularNodeAppEngine({ trustProxyHeaders: true });
+const angularApp = new AngularNodeAppEngine({
+  allowedHosts: ['*'],
+  trustProxyHeaders: true,
+});
 
 const ai = new GoogleGenAI({ apiKey: process.env['GEMINI_API_KEY'] || '' });
 

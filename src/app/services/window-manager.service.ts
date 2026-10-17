@@ -140,8 +140,8 @@ export class WindowManagerService {
     const isMob = typeof window !== 'undefined' && window.innerWidth < 768;
     const width = isMob ? (typeof window !== 'undefined' ? window.innerWidth : 360) : 780;
     const height = isMob ? (typeof window !== 'undefined' ? window.innerHeight - 110 : 420) : 520;
-    const xPos = isMob ? 0 : Math.min(180, Math.max(30, (this._processes().length * 28) % 240));
-    const yPos = isMob ? 44 : Math.min(140, Math.max(50, (this._processes().length * 28) % 200));
+    const xPos = isMob ? 0 : 30 + ((this._processes().length * 32) % 240);
+    const yPos = isMob ? 44 : 50 + ((this._processes().length * 28) % 180);
 
     const newProc: ProcessDescriptor = {
       pid: procPid,
