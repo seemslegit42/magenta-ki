@@ -4,7 +4,7 @@ include:
   - path: appwrite/docker-compose.yml
 
 services:
-  verdigris-gateway:
+  lexvos-gateway:
     build:
       context: .
       dockerfile: Dockerfile

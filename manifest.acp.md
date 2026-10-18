@@ -80,7 +80,12 @@
 - **Return on Intelligence Compounded (ROIC):** Real-time learning velocity calculus measuring economic appreciation per unit of data/pipeline infrastructure capital.
 - **Interoperability & Exporting:** Native WindowManager integration, Application Matrix launcher tile, Spotlight Cmd+Space search index, and zero-dependency JSON/CSV report generation.
 
+### 11. Spotlight & Universal Command Center (`SpotlightComponent`)
+- **Global Keybinding (`Cmd+Space` / `Ctrl+Space`):** Seamless keyboard-driven launcher for instant search across all applications, files, and system operations.
+- **Unified Fuzzy Search:** Real-time query filtering across the Application Matrix, AgentFS inodes, and direct system actions with keyboard navigation (Up/Down/Enter/Escape).
+- **Glassmorphic Modal Presence:** Deep Roman Aqua blurred container (`bg-[#10131A]/95 backdrop-blur-2xl border border-white/20`) with instant focus handling.
 
-
-
-
+### 12. Micro-App Window Infrastructure & Tabler Sigils (`WindowComponent`)
+- **Glassmorphic Chrome & Foundation:** Multi-layer depth with `bg-[#10131A]/98 backdrop-blur-2xl border border-white/20 rounded-2xl shadow-2xl`.
+- **Gesture Dragging & Desktop Controls:** Fluid touch and mouse header dragging, tall-screen mobile pull-down sheet dismissal, and PID metadata tags.
+- **Tabler Control Sigils:** 100% adherence to Tabler Primal Forms for window controls (`minus`, `maximize`, `minimize`, `x`) without external icon font bloat or dependencies.

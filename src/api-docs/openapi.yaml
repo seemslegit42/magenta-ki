@@ -1,0 +1,141 @@
+openapi: 3.0.3
+info:
+  title: Verdigris WebOS API
+  version: 1.0.0
+  description: API documentation for the Verdigris WebOS backend services.
+servers:
+  - url: http://localhost:3000
+    description: Development server
+paths:
+  /api/ai/chat:
+    post:
+      summary: Chat with AI Agent
+      description: Sends a prompt to the AI Agent and returns a response.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                prompt:
+                  type: string
+                  description: The user prompt.
+                context:
+                  type: object
+                  description: Optional context object.
+      responses:
+        '200':
+          description: AI response generated successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reply:
+                    type: string
+                  polarUsage:
+                    type: object
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /api/polar/events/ingest:
+    post:
+      summary: Ingest usage events
+      description: Ingests Polar usage events for billing.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                events:
+                  type: array
+                  items:
+                    type: object
+      responses:
+        '202':
+          description: Events ingested successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  ingested:
+                    type: integer
+                  totalCostCentsAdded:
+                    type: number
+                  timestamp:
+                    type: integer
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /api/polar/checkouts:
+    post:
+      summary: Create checkout session
+      description: Creates a Polar checkout session.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                products:
+                  type: array
+                  items:
+                    type: string
+                externalCustomerId:
+                  type: string
+                customerEmail:
+                  type: string
+                successUrl:
+                  type: string
+      responses:
+        '201':
+          description: Checkout session created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  checkoutId:
+                    type: string
+                  url:
+                    type: string
+                  status:
+                    type: string
+                  products:
+                    type: array
+                    items:
+                      type: string
+                  externalCustomerId:
+                    type: string
+                  customerEmail:
+                    type: string
+                  successUrl:
+                    type: string
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
