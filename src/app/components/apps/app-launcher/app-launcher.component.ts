@@ -230,6 +230,15 @@ export class AppLauncherComponent {
   // Base core catalogue
   private readonly coreApps: AppLauncherItem[] = [
     {
+      id: 'agentic-value-framework',
+      name: 'Agentic Value Framework (AVF)',
+      category: 'ai',
+      icon: 'insights',
+      description: 'The autonomous enterprise revenue calculus: goal-oriented UAV tracking, compounding intelligence engine, and ROIC analytics.',
+      version: 'v1.0.0',
+      componentName: 'AgenticValueFrameworkComponent'
+    },
+    {
       id: 'appwrite-databases',
       name: 'Appwrite Databases & SDK',
       category: 'database',

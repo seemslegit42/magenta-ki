@@ -1,45 +1,45 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatIconModule } from '@angular/material/icon';
+import { TablerIconComponent } from '../common/tabler-icon.component';
 import { WindowManagerService } from '../../services/window-manager.service';
 
 @Component({
   selector: 'app-dock',
   standalone: true,
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule, TablerIconComponent],
   template: `
     <nav aria-label="Application Dock" class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-[#14161C]/85 backdrop-blur-2xl border border-[rgba(245,255,250,0.18)] p-2 rounded-2xl shadow-2xl flex items-center space-x-3 z-50">
       <!-- App Launcher Button -->
       <button
         type="button"
-        class="relative group w-12 h-12 rounded-xl bg-[#1A1C23] hover:bg-[#22252F] border border-white/10 flex items-center justify-center text-[#F5FFFA] transition-all hover:scale-110 shadow-md focus:outline-none"
+        class="relative group w-12 h-12 rounded-xl bg-gradient-to-b from-[#222530] to-[#161820] hover:from-[#2A2E3D] hover:to-[#1A1C24] border border-[#3EB991]/30 hover:border-[#3EB991] flex items-center justify-center text-[#F5FFFA] transition-all hover:scale-110 shadow-lg shadow-[#3EB991]/10 focus:outline-none"
         (click)="openAppLauncher()"
         title="Application Matrix & Launcher"
       >
-        <mat-icon class="text-xl text-[#3EB991]">apps</mat-icon>
-        <span class="absolute -top-8 px-2 py-1 rounded bg-[#08090C] text-[10px] font-mono text-[#F5FFFA] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow">Applications</span>
+        <app-tabler-icon name="apps" size="20" class="text-[#3EB991] drop-shadow-[0_0_8px_rgba(62,185,145,0.4)]" />
+        <span class="absolute -top-8 px-2 py-1 rounded bg-[#08090C]/90 backdrop-blur-md text-[10px] font-mono text-[#F5FFFA] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow border border-white/10">Applications</span>
       </button>
 
       <!-- App Store Button -->
       <button
         type="button"
-        class="relative group w-12 h-12 rounded-xl bg-[#1A1C23] hover:bg-[#22252F] border border-white/10 flex items-center justify-center text-[#F5FFFA] transition-all hover:scale-110 shadow-md focus:outline-none"
+        class="relative group w-12 h-12 rounded-xl bg-gradient-to-b from-[#222530] to-[#161820] hover:from-[#2A2E3D] hover:to-[#1A1C24] border border-[#20B2AA]/30 hover:border-[#20B2AA] flex items-center justify-center text-[#F5FFFA] transition-all hover:scale-110 shadow-lg shadow-[#20B2AA]/10 focus:outline-none"
         (click)="openAppStore()"
         title="App Store & Catalog"
       >
-        <mat-icon class="text-xl text-[#20B2AA]">storefront</mat-icon>
-        <span class="absolute -top-8 px-2 py-1 rounded bg-[#08090C] text-[10px] font-mono text-[#F5FFFA] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow">App Store</span>
+        <app-tabler-icon name="store" size="20" class="text-[#20B2AA] drop-shadow-[0_0_8px_rgba(32,178,170,0.4)]" />
+        <span class="absolute -top-8 px-2 py-1 rounded bg-[#08090C]/90 backdrop-blur-md text-[10px] font-mono text-[#F5FFFA] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow border border-white/10">App Store</span>
       </button>
 
       <!-- Native Federation Studio Button -->
       <button
         type="button"
-        class="relative group w-12 h-12 rounded-xl bg-[#1A1C23] hover:bg-[#22252F] border border-white/10 flex items-center justify-center text-[#F5FFFA] transition-all hover:scale-110 shadow-md focus:outline-none"
+        class="relative group w-12 h-12 rounded-xl bg-gradient-to-b from-[#222530] to-[#161820] hover:from-[#2A2E3D] hover:to-[#1A1C24] border border-[#E0218A]/30 hover:border-[#E0218A] flex items-center justify-center text-[#F5FFFA] transition-all hover:scale-110 shadow-lg shadow-[#E0218A]/10 focus:outline-none"
         (click)="openStudio()"
         title="Native Federation Studio"
       >
-        <mat-icon class="text-xl text-[#E0218A]">hub</mat-icon>
-        <span class="absolute -top-8 px-2 py-1 rounded bg-[#08090C] text-[10px] font-mono text-[#F5FFFA] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow">Federation Studio</span>
+        <app-tabler-icon name="network" size="20" class="text-[#E0218A] drop-shadow-[0_0_8px_rgba(224,33,138,0.4)]" />
+        <span class="absolute -top-8 px-2 py-1 rounded bg-[#08090C]/90 backdrop-blur-md text-[10px] font-mono text-[#F5FFFA] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow border border-white/10">Federation Studio</span>
       </button>
 
       <div class="w-px h-8 bg-white/10 mx-1"></div>
@@ -47,13 +47,14 @@ import { WindowManagerService } from '../../services/window-manager.service';
       <!-- Active Process Icons -->
       @for (proc of windowManager.processes(); track proc.pid) {
         <button
+          type="button"
           class="relative group w-12 h-12 rounded-xl bg-[#1A1C23] hover:bg-[#22252F] border flex flex-col items-center justify-center transition-all hover:scale-110 shadow-md"
           [class.border-[#E0218A]]="proc.isOpen"
           [class.border-white/10]="!proc.isOpen"
           (click)="toggleProcess(proc.pid)"
           [title]="proc.title"
         >
-          <mat-icon class="text-xl text-[#dfb7ff]">{{ proc.icon }}</mat-icon>
+          <app-tabler-icon [name]="getTablerIconName(proc.icon)" size="20" class="text-[#dfb7ff]" />
           @if (proc.isOpen) {
             <span class="absolute bottom-1 w-1.5 h-1.5 rounded-full bg-[#E0218A]"></span>
           }
@@ -65,6 +66,15 @@ import { WindowManagerService } from '../../services/window-manager.service';
 })
 export class DockComponent {
   readonly windowManager = inject(WindowManagerService);
+
+  getTablerIconName(icon: string): string {
+    if (icon === 'terminal') return 'terminal';
+    if (icon === 'settings') return 'settings';
+    if (icon === 'security' || icon === 'shield') return 'shield';
+    if (icon === 'storefront') return 'store';
+    if (icon === 'hub') return 'network';
+    return 'apps';
+  }
 
   openAppLauncher() {
     this.windowManager.openApp({

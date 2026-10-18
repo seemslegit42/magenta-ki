@@ -65,5 +65,22 @@
 - **OpenAPI 3.1 Contract (`contracts/openapi/webos.v1.yaml`)**: Neutral REST/RPC interface definitions decoupling the Go gateway from the Angular host shell.
 - **Downstream Generation Pipelines (`contracts/scripts/`)**: Automated `codegen-ts.sh` and `codegen-go.sh` producing zero-drift TypeScript contracts (`src/generated/api.types.ts`) and Go struct models (`go/pkg/contracts/`).
 
+### 9. The Aetheric Sigils Icon System (Crystalline Canon)
+- **Dual Manifestation:**
+  - *Common Icons (Tabler Primal Forms):* Ubiquitous utility and universal legibility for standard navigation, actions, and statuses.
+  - *Specialized Icons (Bespoke Aetheric Glyphs):* Custom-forged vector assets adhering to the Ancient Roman Glass aesthetic with faceted forms, rich internal glow, and unique silhouettes for core Nexus entities, ritualistic elements, and agentic mythware micro-apps.
+- **SigilDNA Metadata:** Annotations defining intent, rituals, and aetheric weight.
+- **Icon Orders & Lumina Aetheris™ Integration:** Classification into Primal, Mythic, and Cognitive orders with dynamic behavior hooks (glows, pulses, ritual breath) triggered by Psyche Matrix state or Aegis alerts.
+
+### 10. The Agentic Value Framework (AVF) Subsystem (`AvfService`, `AgenticValueFrameworkComponent`)
+- **Generalized Revenue Formula:** $\text{Revenue} = V_{\text{base}} \times N_{\text{agents}} \times M_c \times F_{\text{adopt}}$.
+- **Unit of Agentic Value (UAV) Engine:** Discrete, verifiable, goal-oriented outcomes across Logistics, Support, Marketing, Compliance, and Healthcare domains with cryptographic proofs and human cost delta calculations.
+- **Compounding Intelligence Flywheel:** 4-stage self-reinforcing flywheel simulating real-time micro-experiments, dynamic personalization at scale, and network density scaling.
+- **Fleet Governance & Anti-Sprawl Registry:** Immutable agent inventory, autonomy tiers (Supervised, Semi-Autonomous, Fully Autonomous), emergency kill-switches, and bias/alignment drift monitors.
+- **Return on Intelligence Compounded (ROIC):** Real-time learning velocity calculus measuring economic appreciation per unit of data/pipeline infrastructure capital.
+- **Interoperability & Exporting:** Native WindowManager integration, Application Matrix launcher tile, Spotlight Cmd+Space search index, and zero-dependency JSON/CSV report generation.
+
+
+
 
 

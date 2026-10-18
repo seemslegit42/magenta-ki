@@ -1,43 +1,37 @@
 import { Component, signal, inject, afterNextRender } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatIconModule } from '@angular/material/icon';
+import { TablerIconComponent } from '../common/tabler-icon.component';
 import { WindowManagerService } from '../../services/window-manager.service';
 
 @Component({
   selector: 'app-statusbar',
   standalone: true,
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule, TablerIconComponent],
   template: `
-    <header class="h-12 bg-[#08090C]/90 backdrop-blur-xl border-b border-[rgba(245,255,250,0.12)] px-4 flex items-center justify-between select-none z-50">
+    <header class="h-12 bg-[#08090C]/95 backdrop-blur-2xl border-b border-[rgba(245,255,250,0.18)] px-4 flex items-center justify-between select-none z-50 shadow-lg">
       <!-- Left: OS Branding & Active Menu -->
       <div class="flex items-center space-x-4">
         <div class="flex items-center space-x-2">
-          <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-[#6A0DAD] to-[#E0218A] flex items-center justify-center text-white shadow-md shadow-[#E0218A]/20">
-            <mat-icon class="text-sm">hexagon</mat-icon>
+          <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-[#6A0DAD] to-[#E0218A] flex items-center justify-center text-white shadow-lg shadow-[#E0218A]/30 ring-1 ring-white/20">
+            <app-tabler-icon name="hexagon" size="16" class="drop-shadow-[0_0_4px_rgba(255,255,255,0.6)]" />
           </div>
-          <span class="font-display font-bold text-sm text-[#F5FFFA] tracking-wide">VERDIGRIS <span class="text-[#E0218A]">OS</span></span>
+          <span class="font-display font-bold text-sm text-[#F5FFFA] tracking-[0.2em]">Λ Ξ V <span class="text-[#E0218A] drop-shadow-[0_0_6px_rgba(224,33,138,0.5)]">O S</span></span>
         </div>
 
-        <nav aria-label="System Menu" class="hidden md:flex items-center space-x-1 text-xs text-[#8C94A8]">
-          <button type="button" class="px-2.5 py-1 rounded-lg hover:bg-white/5 hover:text-[#3EB991] cursor-pointer transition-colors focus:outline-none flex items-center space-x-1" (click)="openLauncher()">
-            <mat-icon class="text-xs text-[#3EB991]">apps</mat-icon>
-            <span>Applications</span>
+        <nav aria-label="System Menu" class="hidden md:flex items-center space-x-1.5 text-xs text-[#8C94A8]">
+          <button type="button" class="px-3 py-1.5 rounded-xl hover:bg-white/10 hover:text-[#3EB991] cursor-pointer transition-all focus:outline-none flex items-center space-x-1.5 border border-transparent hover:border-[#3EB991]/30 shadow-sm" (click)="openLauncher()">
+            <app-tabler-icon name="apps" size="16" class="text-[#3EB991] drop-shadow-[0_0_6px_rgba(62,185,145,0.4)]" />
+            <span class="font-medium text-[#F5FFFA]">Applications</span>
           </button>
-          <button type="button" class="px-2.5 py-1 rounded-lg hover:bg-white/5 hover:text-[#F5FFFA] cursor-pointer transition-colors focus:outline-none" (click)="openStore()">App Store</button>
-          <button type="button" class="px-2.5 py-1 rounded-lg hover:bg-white/5 hover:text-[#F5FFFA] cursor-pointer transition-colors focus:outline-none" (click)="openStudio()">Federation Studio</button>
+          <button type="button" class="px-3 py-1.5 rounded-xl hover:bg-white/10 hover:text-[#20B2AA] cursor-pointer transition-all focus:outline-none border border-transparent hover:border-[#20B2AA]/30 font-medium text-[#F5FFFA] shadow-sm" (click)="openStore()">App Store</button>
         </nav>
       </div>
 
       <!-- Right: System Status & Clock -->
       <div class="flex items-center space-x-4 text-xs text-[#8C94A8]">
-        <div class="hidden sm:flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-[#14161C] border border-white/10">
-          <span class="w-2 h-2 rounded-full bg-[#3EB991] animate-pulse"></span>
-          <span class="text-[#F5FFFA] font-mono">Native Fed v22</span>
-        </div>
-
-        <div class="flex items-center space-x-1.5 text-[#F5FFFA] font-mono">
-          <mat-icon class="text-sm text-[#20B2AA]">schedule</mat-icon>
-          <span>{{ currentTime() }}</span>
+        <div class="flex items-center space-x-1.5 text-[#F5FFFA] font-mono px-3 py-1 rounded-full bg-white/5 border border-white/10">
+          <app-tabler-icon name="clock" size="16" class="text-[#20B2AA] drop-shadow-[0_0_6px_rgba(32,178,170,0.5)]" />
+          <span class="font-semibold">{{ currentTime() }}</span>
         </div>
       </div>
     </header>

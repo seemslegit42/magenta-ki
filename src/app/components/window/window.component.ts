@@ -11,6 +11,7 @@ import { SecurityAuditComponent } from '../apps/security-audit/security-audit.co
 import { AppwriteDatabasesComponent } from '../apps/appwrite-databases/appwrite-databases.component';
 import { RemoteContainerComponent } from '../apps/remote-container/remote-container.component';
 import { AppLauncherComponent } from '../apps/app-launcher/app-launcher.component';
+import { AgenticValueFrameworkComponent } from '../apps/agentic-value-framework/agentic-value-framework.component';
 
 @Component({
   selector: 'app-window',
@@ -25,11 +26,12 @@ import { AppLauncherComponent } from '../apps/app-launcher/app-launcher.componen
     SecurityAuditComponent,
     AppwriteDatabasesComponent,
     RemoteContainerComponent,
-    AppLauncherComponent
+    AppLauncherComponent,
+    AgenticValueFrameworkComponent
   ],
   template: `
     <div
-      class="syncopated-window absolute flex flex-col overflow-hidden transition-all duration-200"
+      class="syncopated-window absolute flex flex-col overflow-hidden transition-all duration-200 bg-[#10131A]/98 backdrop-blur-2xl border border-white/20 rounded-2xl shadow-2xl"
       [class.is-focused]="isFocused()"
       [class.is-background]="!isFocused()"
       [class.hidden]="bounds.isMinimized"
@@ -46,40 +48,61 @@ import { AppLauncherComponent } from '../apps/app-launcher/app-launcher.componen
       
       <!-- Window Chrome (Touch & Desktop Drag Zone) -->
       <div 
-        class="window-chrome h-12 md:h-11 bg-[#151922]/95 border-b border-white/10 px-3 md:px-4 flex flex-col justify-center cursor-grab active:cursor-grabbing select-none relative touch-none"
+        class="window-chrome h-11 bg-gradient-to-r from-[#171B26] to-[#12151D] border-b border-white/10 px-4 flex flex-col justify-center cursor-grab active:cursor-grabbing select-none relative touch-none shadow-sm"
         (mousedown)="startDrag($event)"
         (touchstart)="startDrag($event)">
 
         <!-- Tall Screen Mobile Pull-Down Sheet Pill Indicator -->
-        <div class="w-10 h-1 rounded-full bg-white/20 mx-auto -mt-0.5 mb-1 sm:hidden pointer-events-none"></div>
+        <div class="w-10 h-1 rounded-full bg-white/25 mx-auto -mt-0.5 mb-1 sm:hidden pointer-events-none"></div>
 
         <div class="flex items-center justify-between w-full">
           <!-- Window Title & Metadata -->
           <div class="flex items-center space-x-2.5 overflow-hidden">
-            <span class="material-icons text-base md:text-sm text-[#E0218A] shrink-0">{{ descriptor.icon || 'apps' }}</span>
+            <svg class="w-4 h-4 text-[#3EB991] shrink-0 drop-shadow-[0_0_6px_rgba(62,185,145,0.4)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+              <path d="M4 10h16"></path>
+              <path d="M10 4v16"></path>
+            </svg>
             <span class="font-display font-semibold text-xs tracking-wide text-[#F5FFFA] truncate">{{ descriptor.title }}</span>
-            <span class="hidden sm:inline-block text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-[#8C94A8] border border-white/5">{{ descriptor.pid }}</span>
+            <span class="hidden sm:inline-block text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/5 text-[#8C94A8] border border-white/10">{{ descriptor.pid }}</span>
           </div>
           
-          <!-- Desktop & Mobile Window Control Buttons (Minimum 36-40px touch hitboxes) -->
-          <div class="flex items-center space-x-1" (mousedown)="$event.stopPropagation()" (touchstart)="$event.stopPropagation()">
+          <!-- Desktop & Mobile Window Control Buttons (Tabler Sigils) -->
+          <div class="flex items-center space-x-1.5" (mousedown)="$event.stopPropagation()" (touchstart)="$event.stopPropagation()">
             <button 
-              class="w-9 h-9 md:w-7 md:h-7 rounded-lg hover:bg-white/10 active:bg-white/20 flex items-center justify-center text-[#8C94A8] hover:text-white transition-colors"
+              class="w-7 h-7 rounded-lg hover:bg-white/10 active:bg-white/20 flex items-center justify-center text-[#8C94A8] hover:text-white transition-colors border border-transparent hover:border-white/10"
               (click)="onMinimize()"
               title="Minimize Window">
-              <span class="material-icons text-base md:text-sm">remove</span>
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14"></path>
+              </svg>
             </button>
             <button 
-              class="w-9 h-9 md:w-7 md:h-7 rounded-lg hover:bg-white/10 active:bg-white/20 flex items-center justify-center text-[#8C94A8] hover:text-white transition-colors"
+              class="w-7 h-7 rounded-lg hover:bg-white/10 active:bg-white/20 flex items-center justify-center text-[#8C94A8] hover:text-white transition-colors border border-transparent hover:border-white/10"
               (click)="onMaximize()"
               title="Toggle Fullscreen">
-              <span class="material-icons text-base md:text-sm">{{ bounds.isMaximized ? 'fullscreen_exit' : 'fullscreen' }}</span>
+              @if (bounds.isMaximized) {
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M15 19v-2a2 2 0 0 1 2 -2h2"></path>
+                  <path d="M15 5v2a2 2 0 0 0 2 2h2"></path>
+                  <path d="M5 15h2a2 2 0 0 1 2 2v2"></path>
+                  <path d="M5 9h2a2 2 0 0 0 2 -2v-2"></path>
+                </svg>
+              } @else {
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"></path>
+                  <path d="M9 4v16"></path>
+                </svg>
+              }
             </button>
             <button 
-              class="w-9 h-9 md:w-7 md:h-7 rounded-lg hover:bg-[#FF4D6D]/20 active:bg-[#FF4D6D]/40 flex items-center justify-center text-[#8C94A8] hover:text-[#FF4D6D] transition-colors"
+              class="w-7 h-7 rounded-lg hover:bg-[#FF4D6D]/20 active:bg-[#FF4D6D]/40 flex items-center justify-center text-[#8C94A8] hover:text-[#FF4D6D] transition-colors border border-transparent hover:border-[#FF4D6D]/30"
               (click)="onClose()"
               title="Close Application">
-              <span class="material-icons text-base md:text-sm">close</span>
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 6l-12 12"></path>
+                <path d="M6 6l12 12"></path>
+              </svg>
             </button>
           </div>
         </div>
@@ -126,6 +149,9 @@ import { AppLauncherComponent } from '../apps/app-launcher/app-launcher.componen
           }
           @case ('AppLauncherComponent') {
             <app-app-launcher [pid]="descriptor.pid" />
+          }
+          @case ('AgenticValueFrameworkComponent') {
+            <app-agentic-value-framework [pid]="descriptor.pid" />
           }
           @case ('RemoteContainerComponent') {
             <app-remote-container [pid]="descriptor.pid" [descriptor]="descriptor" />

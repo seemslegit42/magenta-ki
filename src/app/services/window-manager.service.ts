@@ -109,6 +109,7 @@ export class WindowManagerService {
       else if (app.id === 'security-audit') component = 'SecurityAuditComponent';
       else if (app.id === 'appwrite-databases') component = 'AppwriteDatabasesComponent';
       else if (app.id === 'gateway' || app.id === 'gateway-console') component = 'GatewayConsoleComponent';
+      else if (app.id === 'agentic-value-framework' || app.id === 'avf') component = 'AgenticValueFrameworkComponent';
       else component = 'RemoteContainerComponent';
     }
     return this.spawnProcess(

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { StatusbarComponent } from './components/statusbar/statusbar.component';
 import { DockComponent } from './components/dock/dock.component';
 import { WindowComponent } from './components/window/window.component';
+import { SearchComponent } from './components/search/search.component';
 import { WindowManagerService } from './services/window-manager.service';
 
 @Component({
@@ -12,7 +13,8 @@ import { WindowManagerService } from './services/window-manager.service';
     CommonModule,
     StatusbarComponent,
     DockComponent,
-    WindowComponent
+    WindowComponent,
+    SearchComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
