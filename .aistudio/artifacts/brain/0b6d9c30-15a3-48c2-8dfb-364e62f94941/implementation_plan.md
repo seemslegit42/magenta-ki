@@ -1,38 +1,27 @@
-# Implementation Plan: Phase 1 (/contracts/)
+# Revised Implementation Plan: Appwrite Go SDK & Micro App Refinement
 
-## Objective
-Formalize the neutral data layer and API specification as the single source of truth for the Verdigris Cloud OS, decoupling the Go gateway and Angular host.
+This revised plan integrates Appwrite Go SDK best practices (multi-tenancy, team-based permissions, TablesDB row operations, and schema initialization) alongside micro app window refactoring and Native Federation enhancements.
 
-## Proposed Actions
+## Proposed Steps
 
-### 1. File System Scaffolding
-- Create:
-  - `/contracts/sql/`
-  - `/contracts/openapi/`
-  - `/contracts/scripts/`
+### 1. Appwrite Go SDK Best Practices Alignment
+- **Target File**: `/go/app.go`
+- **Actions**:
+  - Enforce multi-tenant tenant isolation using `role.Team(teamId, role)` permission patterns.
+  - Implement idempotent schema provisioning scripts ensuring tables, columns (`title`, `description`, `isComplete`, `createdBy`, `teamId`), and indexes are configured properly.
+  - Apply immutable column guards (`$id`, `$createdAt`, `$updatedAt`, `createdBy`, `teamId`) on all update operations.
 
-### 2. Contract Formalization
-- Populate `contracts/sql/schema.sql` with full DDL for:
-  - System/OS state (`system_preferences`, `active_processes`, `window_states`)
-  - RBAC (`user_profiles`, `roles`, `permissions`)
-  - Appwrite/Polar persistence (`databases`, `tables`, `license_keys`, `meters`)
-  - Xi Economy (`cogs_breakdown`, `ledger`, `proposals`)
-- Populate `contracts/openapi/webos.v1.yaml` with REST boundaries for:
-  - AI Assistant (`/api/ai/chat`)
-  - Polar Billing/Metering (`/api/polar/*`)
-  - Xi Economy Engine (`/api/xi/*`)
+### 2. Micro App Windows Refinement
+- **Target Files**: `/src/app/components/window/window.component.ts`, `/src/app/components/apps/app-launcher/app-launcher.component.ts`
+- **Actions**:
+  - Purge any placeholder or speculative telemetry text across all main micro app windows.
+  - Standardize glassmorphic borders, touch/drag handles, and responsive layouts.
 
-### 3. Generation Pipeline
-- Create `contracts/scripts/codegen-ts.sh` to generate TypeScript types into `src/generated/api.types.ts`.
-- Create `contracts/scripts/codegen-go.sh` to generate Go models into `go/pkg/contracts/api.gen.go`.
+### 3. Native Federation & PWA Offline Caching
+- **Target Files**: `/src/app/components/apps/remote-container/remote-container.component.ts`, `/src/server.ts`
+- **Actions**:
+  - Integrate dynamic module loading using `@angular-architects/native-federation`.
+  - Add robust manifest probing and offline service worker caching rules for federated chunks.
 
-### 4. Integration
-- Run `codegen-ts.sh`.
-- Replace legacy static `src/app/models/webos.models.ts` references with imports from `src/generated/api.types.ts`.
-- Verify compilation and linting.
-
-## Risks & Mitigation
-- **Schema Drift**: Mitigation is enforced via strict generation pipeline (no manual model definitions allowed).
-- **Migration Complexity**: Entities are mapped 1:1; database DDL is generated first, then TS interfaces.
-
-Please review this plan. If you approve, I will proceed with creating the directory structure and populating the contract files.
+## Next Steps
+Please review and approve this revised plan to proceed with execution.

@@ -71,6 +71,7 @@ export class DockComponent {
     if (icon === 'terminal') return 'terminal';
     if (icon === 'settings') return 'settings';
     if (icon === 'security' || icon === 'shield') return 'shield';
+    if (icon === 'chat' || icon === 'message') return 'message';
     if (icon === 'storefront') return 'store';
     if (icon === 'hub') return 'network';
     return 'apps';

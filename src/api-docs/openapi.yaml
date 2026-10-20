@@ -139,3 +139,79 @@ paths:
                 properties:
                   error:
                     type: string
+  /api/todos:
+    get:
+      summary: List todos (Appwrite TablesDB via Gin)
+      description: Returns multi-tenant todos with optional filtering by teamId, createdBy, and completion status.
+      parameters:
+        - in: query
+          name: teamId
+          schema:
+            type: string
+          description: Filter by tenant team ID
+        - in: query
+          name: createdBy
+          schema:
+            type: string
+          description: Filter by user ID
+        - in: query
+          name: isComplete
+          schema:
+            type: boolean
+          description: Filter by completion flag
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Max rows to return (default 25)
+      responses:
+        '200':
+          description: List of todos returned successfully.
+        '500':
+          description: Database error.
+    post:
+      summary: Create todo
+      description: Inserts a new todo with team-based role permissions.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title]
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                isComplete:
+                  type: boolean
+                teamId:
+                  type: string
+                createdBy:
+                  type: string
+      responses:
+        '201':
+          description: Todo created successfully.
+        '400':
+          description: Validation error.
+  /api/ai/agent:
+    post:
+      summary: Invoke Blades AI Agent via Go Gin
+      description: Executes cognitive reasoning on Appwrite database state.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [prompt]
+              properties:
+                prompt:
+                  type: string
+                context:
+                  type: object
+      responses:
+        '200':
+          description: Agent response generated successfully.
+

@@ -66,6 +66,34 @@ import { CommonModule } from '@angular/common';
           <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
           <path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3" />
         }
+        @case ('message') {
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+          <path d="M8 9h8" />
+          <path d="M8 13h6" />
+          <path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
+        }
+        @case ('send') {
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+          <path d="M10 14l11 -11" />
+          <path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5" />
+        }
+        @case ('sparkles') {
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+          <path d="M16 18a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2zm0 -12a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2zm-7 12a6 6 0 0 1 6 -6a6 6 0 0 1 -6 -6a6 6 0 0 1 -6 6a6 6 0 0 1 6 6z" />
+        }
+        @case ('trash') {
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+          <path d="M4 7l16 0" />
+          <path d="M10 11l0 6" />
+          <path d="M14 11l0 6" />
+          <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+          <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+        }
+        @case ('fast-forward') {
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+          <path d="M4 4l10 8l-10 8z" />
+          <path d="M14 4l10 8l-10 8z" />
+        }
         @default {
           <circle cx="12" cy="12" r="9" />
         }

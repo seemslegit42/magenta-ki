@@ -2,9 +2,13 @@
 
 All notable changes to the Verdigris Cloud OS workspace are documented in this file.
 
-## [Unreleased] - 2026-10-16
+## [Unreleased] - 2026-10-20
 
 ### Added
+- **Appwrite Go SDK & Gin Refactoring (`go/app.go`)**: Completely refactored `go/app.go` into a high-performance Gin web server featuring team-based tenant isolation, ownership enforcement (`createdBy`, `teamId`), immutable column protections, centralized Appwrite client/TablesDB schema management, and Blades AI agent integration.
+- **Gin REST Endpoints**: Added `/health`, `/api/health`, `/api/todos` (CRUD & list filtering with team isolation), `/api/todos/seed`, and `/api/ai/agent`.
+- **OpenAPI 3.0 Documentation**: Documented all new Go Gin Appwrite endpoints in `/src/api-docs/openapi.yaml`.
+
 - **Subsystem 1: Neutral /contracts/ Architecture**: Created language-agnostic data contract specification establishing immutable boundaries between Go gateway and Angular host.
 - **Canonical SQLite / libSQL DDL**: Formalized `contracts/sql/schema.sql` and `contracts/sql/queries/system.sql` covering OS state, processes, windows, RBAC, Appwrite, Polar meters, and Xi Economy.
 - **Canonical OpenAPI 3.1 Spec**: Implemented `contracts/openapi/webos.v1.yaml` capturing all REST/RPC control plane endpoints and components schemas.

@@ -18,6 +18,13 @@ export class SearchService {
   constructor() {
     this.items.set([
       { 
+        id: 'chat-window', 
+        name: 'Sovereign AI Copilot & Chat', 
+        type: 'app', 
+        icon: 'message', 
+        action: () => this.wm.openApp({ id: 'chat-window', name: 'Sovereign AI Copilot', icon: 'chat', category: 'ai' }) 
+      },
+      { 
         id: 'avf', 
         name: 'Agentic Value Framework (AVF)', 
         type: 'app', 

@@ -116,13 +116,26 @@ export class TerminalComponent {
       this.isLoading.set(true);
       try {
         const res = await this.http.post<{ reply: string }>('/api/ai/chat', { prompt, context: { pid: this.pid } }).toPromise();
-        this.logs.update(list => [...list, {
-          time: new Date().toLocaleTimeString(),
-          prefix: 'ai>',
-          text: res?.reply || 'Task completed successfully.',
-          type: 'ai'
-        }]);
+        const fullReply = res?.reply || 'Task completed successfully.';
+        this.isLoading.set(false);
+
+        // Streaming typing effect into terminal log
+        const logIndex = this.logs().length;
+        const time = new Date().toLocaleTimeString();
+        this.logs.update(list => [...list, { time, prefix: 'ai>', text: '', type: 'ai' }]);
+
+        let charIndex = 0;
+        const typeInterval = setInterval(() => {
+          if (charIndex < fullReply.length) {
+            charIndex = Math.min(charIndex + 2, fullReply.length);
+            const partial = fullReply.slice(0, charIndex);
+            this.logs.update(list => list.map((item, idx) => idx === logIndex ? { ...item, text: partial } : item));
+          } else {
+            clearInterval(typeInterval);
+          }
+        }, 12);
       } catch (err: unknown) {
+        this.isLoading.set(false);
         const errorMsg = err instanceof Error ? err.message : 'Failed to reach Gemini AI backend service.';
         this.logs.update(list => [...list, {
           time: new Date().toLocaleTimeString(),
@@ -130,8 +143,6 @@ export class TerminalComponent {
           text: errorMsg,
           type: 'error'
         }]);
-      } finally {
-        this.isLoading.set(false);
       }
       return;
     }

@@ -12,6 +12,7 @@ import { AppwriteDatabasesComponent } from '../apps/appwrite-databases/appwrite-
 import { RemoteContainerComponent } from '../apps/remote-container/remote-container.component';
 import { AppLauncherComponent } from '../apps/app-launcher/app-launcher.component';
 import { AgenticValueFrameworkComponent } from '../apps/agentic-value-framework/agentic-value-framework.component';
+import { ChatWindowComponent } from '../apps/chat-window/chat-window.component';
 
 @Component({
   selector: 'app-window',
@@ -27,7 +28,8 @@ import { AgenticValueFrameworkComponent } from '../apps/agentic-value-framework/
     AppwriteDatabasesComponent,
     RemoteContainerComponent,
     AppLauncherComponent,
-    AgenticValueFrameworkComponent
+    AgenticValueFrameworkComponent,
+    ChatWindowComponent
   ],
   template: `
     <div
@@ -152,6 +154,9 @@ import { AgenticValueFrameworkComponent } from '../apps/agentic-value-framework/
           }
           @case ('AgenticValueFrameworkComponent') {
             <app-agentic-value-framework [pid]="descriptor.pid" />
+          }
+          @case ('ChatWindowComponent') {
+            <app-chat-window [pid]="descriptor.pid" />
           }
           @case ('RemoteContainerComponent') {
             <app-remote-container [pid]="descriptor.pid" [descriptor]="descriptor" />

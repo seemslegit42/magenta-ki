@@ -4,52 +4,86 @@ import { RemoteDefinition } from '../models/webos.models';
 
 export type { RemoteDefinition } from '../models/webos.models';
 
+const STORAGE_KEY_MANIFEST = 'webos_federation_manifest_cache';
+
 @Injectable({
   providedIn: 'root'
 })
 export class NativeFederationService {
-  public manifestUrl = signal<string>('/federation.manifest.json');
-  public manifest = signal<Record<string, string>>({});
-  public remotes = signal<RemoteDefinition[]>([
+  public readonly manifestUrl = signal<string>('/federation.manifest.json');
+  public readonly manifest = signal<Record<string, string>>({});
+  public readonly remotes = signal<RemoteDefinition[]>([
     {
       name: 'remote-analytics',
       url: 'http://localhost:3001/remoteEntry.json',
       status: 'STANDBY',
-      description: 'Enterprise telemetry, predictive load telemetry & Verdigris analytics mesh',
-      version: 'v2.4.1',
+      description: 'System telemetry and analytics micro-frontend',
+      version: 'v1.2.0',
       exposedModule: './Component'
     },
     {
       name: 'remote-copilot',
       url: 'http://localhost:3002/remoteEntry.json',
       status: 'STANDBY',
-      description: 'Distributed autonomous Gemini multi-agent reasoning cluster',
-      version: 'v3.0.0',
+      description: 'Autonomous copilot and task processing module',
+      version: 'v2.0.0',
       exposedModule: './Component'
     },
     {
       name: 'remote-wopi-editor',
       url: 'http://localhost:3003/remoteEntry.json',
       status: 'STANDBY',
-      description: 'Distributed WOPI collaborative spreadsheet & presentation engine',
-      version: 'v2026.4',
+      description: 'WOPI document and spreadsheet editor module',
+      version: 'v2026.1',
       exposedModule: './Component'
     }
   ]);
-  public isInitialized = signal<boolean>(true);
-  public loadLog = signal<string[]>(['[Native Federation] Host adapter initialized for Angular 22 ApplicationBuilder']);
+
+  public readonly isInitialized = signal<boolean>(true);
+  public readonly isOffline = signal<boolean>(typeof navigator !== 'undefined' ? !navigator.onLine : false);
+  public readonly loadLog = signal<string[]>(['[Native Federation] Host adapter initialized for Angular ApplicationBuilder']);
 
   constructor() {
+    this.hydrateFromStorage();
     this.refreshManifest();
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('online', () => {
+        this.isOffline.set(false);
+        this.addLog('[Network] Connection restored. Refreshing federation manifest...');
+        this.refreshManifest();
+      });
+      window.addEventListener('offline', () => {
+        this.isOffline.set(true);
+        this.addLog('[Network] Switched to offline mode. Using cached federation manifest.');
+      });
+    }
+  }
+
+  private hydrateFromStorage(): void {
+    if (typeof window === 'undefined') return;
+    try {
+      const cached = localStorage.getItem(STORAGE_KEY_MANIFEST);
+      if (cached) {
+        const parsed = JSON.parse(cached) as Record<string, string>;
+        this.manifest.set(parsed);
+        this.addLog(`[Offline Cache] Hydrated ${Object.keys(parsed).length} remote route(s) from local cache`);
+      }
+    } catch {
+      // Storage hydration failed silently
+    }
   }
 
   public async refreshManifest(): Promise<Record<string, string>> {
     if (typeof window === 'undefined') return {};
     try {
-      const response = await fetch('/federation.manifest.json');
+      const response = await fetch('/federation.manifest.json', {
+        headers: { 'Cache-Control': 'no-cache' }
+      });
       if (response.ok) {
         const data = await response.json() as Record<string, string>;
         this.manifest.set(data);
+        localStorage.setItem(STORAGE_KEY_MANIFEST, JSON.stringify(data));
         this.addLog(`[Manifest] Loaded federation.manifest.json with ${Object.keys(data).length} remote(s)`);
         
         // Update statuses
@@ -63,9 +97,9 @@ export class NativeFederationService {
       }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
-      this.addLog(`[Manifest Warning] Could not fetch manifest: ${msg}`);
+      this.addLog(`[Manifest Warning] Could not fetch remote manifest: ${msg}. Retaining local cache.`);
     }
-    return {};
+    return this.manifest();
   }
 
   public addLog(entry: string): void {
@@ -77,20 +111,29 @@ export class NativeFederationService {
     const startTime = performance.now();
     try {
       this.updateRemoteStatus(remote.name, 'CONNECTING');
-      this.addLog(`[Probe] Pinging remoteEntry.json at ${remote.url}...`);
+      this.addLog(`[Probe] Testing remote entrypoint at ${remote.url}...`);
       
-      const res = await fetch(remote.url, { method: 'HEAD', mode: 'no-cors' });
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3500);
+
+      const res = await fetch(remote.url, { 
+        method: 'HEAD', 
+        mode: 'no-cors',
+        signal: controller.signal 
+      });
+      clearTimeout(timeoutId);
+
       const latencyMs = Math.round(performance.now() - startTime);
       const probeDetails = res.type ? ` (${res.type})` : '';
       
       this.updateRemoteStatus(remote.name, 'ONLINE', latencyMs);
-      this.addLog(`[Probe Success] ${remote.name} reachable (${latencyMs}ms)${probeDetails}`);
+      this.addLog(`[Probe Success] Remote '${remote.name}' is reachable (${latencyMs}ms)${probeDetails}`);
       return { success: true, latencyMs };
     } catch (err: unknown) {
       const latencyMs = Math.round(performance.now() - startTime);
-      const msg = err instanceof Error ? err.message : 'Unreachable';
+      const msg = err instanceof Error ? err.message : 'Connection timed out';
       this.updateRemoteStatus(remote.name, 'ERROR', latencyMs);
-      this.addLog(`[Probe Error] ${remote.name} failed: ${msg} (standby mode active)`);
+      this.addLog(`[Probe Error] Remote '${remote.name}' failed: ${msg}. Encapsulated fallback enabled.`);
       return { success: false, latencyMs, error: msg };
     }
   }
@@ -107,11 +150,11 @@ export class NativeFederationService {
         exposedModule: options.exposedModule,
         remoteEntry: options.remoteEntry
       });
-      this.addLog(`[Dynamic Load Success] Remote '${options.remoteName}' loaded successfully`);
+      this.addLog(`[Dynamic Load Success] Remote module '${options.remoteName}' loaded cleanly`);
       return { component: mod };
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Unknown loading failure';
-      this.addLog(`[Dynamic Load Notice] Remote '${options.remoteName}' returned: ${msg}. Falling back to encapsulated sandbox.`);
+      const msg = err instanceof Error ? err.message : 'Unknown load exception';
+      this.addLog(`[Dynamic Load Notice] Remote '${options.remoteName}' offline (${msg}). Activating sandbox container.`);
       return { error: msg };
     }
   }
@@ -130,7 +173,7 @@ export class NativeFederationService {
     }));
   }
 
-  public registerDynamicRemote(name: string, url: string, exposedModule = './Component', description = 'Dynamic Runtime Remote'): void {
+  public registerDynamicRemote(name: string, url: string, exposedModule = './Component', description = 'Dynamic Runtime Micro-Frontend'): void {
     this.remotes.update(list => [
       ...list.filter(r => r.name !== name),
       {
@@ -143,8 +186,14 @@ export class NativeFederationService {
         lastChecked: Date.now()
       }
     ]);
-    this.manifest.update(m => ({ ...m, [name]: url }));
-    this.addLog(`[Registry] Registered new dynamic remote '${name}' -> ${url}`);
+    this.manifest.update(m => {
+      const updated = { ...m, [name]: url };
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(STORAGE_KEY_MANIFEST, JSON.stringify(updated));
+      }
+      return updated;
+    });
+    this.addLog(`[Registry] Registered dynamic remote '${name}' -> ${url}`);
   }
 
   public async testRemoteHealth(url: string): Promise<{ success: boolean; latencyMs: number; status: 'ONLINE' | 'STANDBY' | 'CONNECTING' | 'ERROR'; error?: string }> {

@@ -230,6 +230,15 @@ export class AppLauncherComponent {
   // Base core catalogue
   private readonly coreApps: AppLauncherItem[] = [
     {
+      id: 'chat-window',
+      name: 'Sovereign AI Copilot',
+      category: 'ai',
+      icon: 'chat',
+      description: 'Autonomous conversational assistant powered by Blades and Gemini with live streaming typewriter animation.',
+      version: 'v1.1.0',
+      componentName: 'ChatWindowComponent'
+    },
+    {
       id: 'agentic-value-framework',
       name: 'Agentic Value Framework (AVF)',
       category: 'ai',
