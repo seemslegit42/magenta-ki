@@ -32,33 +32,33 @@ export interface ChatMessage {
   imports: [FormField, TablerIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="flex flex-col h-full space-y-3 font-['Lexend'] text-[#F5FFFA] select-text">
+    <div class="flex flex-col h-full space-y-3 font-body text-on-surface select-text">
       <!-- Window Subheader with Live Telemetry and Controls -->
       <header class="flex items-center justify-between pb-2.5 border-b border-white/10 shrink-0">
         <div class="flex items-center space-x-2.5">
-          <div class="w-8 h-8 rounded-xl bg-[#20B2AA]/15 border border-[#20B2AA]/30 flex items-center justify-center text-[#20B2AA] shadow-sm">
+          <div class="w-8 h-8 rounded-xl bg-secondary/15 border border-secondary/30 flex items-center justify-center text-secondary shadow-xs">
             <app-tabler-icon name="sparkles" size="18" />
           </div>
           <div>
-            <h2 class="font-['Comfortaa'] text-sm font-bold text-[#F5FFFA] flex items-center space-x-2">
-              <span>Sovereign Copilot</span>
-              <span class="text-[9px] font-mono px-1.5 py-0.5 rounded-full bg-[#3EB991]/20 text-[#3EB991] border border-[#3EB991]/30">VIP v2.4</span>
+            <h2 class="font-display text-sm font-bold text-on-surface flex items-center space-x-2">
+              <span>Copilot</span>
+              
             </h2>
-            <p class="text-[10px] text-[#8C94A8] font-light">Autonomous Agent & Streaming Cognitive Runtime</p>
+            <p class="text-[10px] text-on-surface-variant font-light">Autonomous Agent & Streaming Cognitive Runtime</p>
           </div>
         </div>
 
         <!-- Controls: Speed, Sound & Actions -->
         <div class="flex items-center space-x-1.5 text-xs">
           <!-- Animation Speed Selector -->
-          <div class="flex items-center bg-[#151922] border border-white/10 rounded-lg p-0.5 text-[10px] font-mono">
+          <div class="flex items-center bg-surface-panel border border-white/10 rounded-lg p-0.5 text-[10px] font-mono">
             <button
               type="button"
               class="px-2 py-0.5 rounded transition-colors"
-              [class.bg-[#3EB991]]="typingSpeed() === 1"
-              [class.text-[#0E1015]]="typingSpeed() === 1"
+              [class.bg-tertiary]="typingSpeed() === 1"
+              [class.text-surface]="typingSpeed() === 1"
               [class.font-bold]="typingSpeed() === 1"
-              [class.text-[#8C94A8]]="typingSpeed() !== 1"
+              [class.text-on-surface-variant]="typingSpeed() !== 1"
               (click)="setTypingSpeed(1)"
               title="Normal typing cadence (1x)">
               1x
@@ -66,10 +66,10 @@ export interface ChatMessage {
             <button
               type="button"
               class="px-2 py-0.5 rounded transition-colors"
-              [class.bg-[#3EB991]]="typingSpeed() === 2"
-              [class.text-[#0E1015]]="typingSpeed() === 2"
+              [class.bg-tertiary]="typingSpeed() === 2"
+              [class.text-surface]="typingSpeed() === 2"
               [class.font-bold]="typingSpeed() === 2"
-              [class.text-[#8C94A8]]="typingSpeed() !== 2"
+              [class.text-on-surface-variant]="typingSpeed() !== 2"
               (click)="setTypingSpeed(2)"
               title="Fast typing stream (2x)">
               2x
@@ -77,10 +77,10 @@ export interface ChatMessage {
             <button
               type="button"
               class="px-2 py-0.5 rounded transition-colors"
-              [class.bg-[#3EB991]]="typingSpeed() === 0"
-              [class.text-[#0E1015]]="typingSpeed() === 0"
+              [class.bg-tertiary]="typingSpeed() === 0"
+              [class.text-surface]="typingSpeed() === 0"
               [class.font-bold]="typingSpeed() === 0"
-              [class.text-[#8C94A8]]="typingSpeed() !== 0"
+              [class.text-on-surface-variant]="typingSpeed() !== 0"
               (click)="setTypingSpeed(0)"
               title="Instant rendering (no animation)">
               Instant
@@ -91,12 +91,12 @@ export interface ChatMessage {
           <button
             type="button"
             class="px-2 py-1 rounded-lg border text-[10px] font-mono flex items-center space-x-1 transition-all"
-            [class.bg-[#6A0DAD]/30]="soundEnabled()"
-            [class.border-[#dfb7ff]/40]="soundEnabled()"
-            [class.text-[#dfb7ff]]="soundEnabled()"
+            [class.bg-primary/30]="soundEnabled()"
+            [class.border-primary-muted/40]="soundEnabled()"
+            [class.text-primary-muted]="soundEnabled()"
             [class.bg-white/5]="!soundEnabled()"
             [class.border-white/10]="!soundEnabled()"
-            [class.text-[#8C94A8]]="!soundEnabled()"
+            [class.text-on-surface-variant]="!soundEnabled()"
             (click)="toggleSound()"
             title="Toggle mechanical typing acoustic resonance">
             <span>Sound {{ soundEnabled() ? 'ON' : 'OFF' }}</span>
@@ -105,7 +105,7 @@ export interface ChatMessage {
           <!-- Clear Memory -->
           <button
             type="button"
-            class="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-[#8C94A8] hover:text-[#FF4D6D] transition-colors"
+            class="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-on-surface-variant hover:text-error transition-colors"
             (click)="clearMessages()"
             title="Clear Conversation Logs">
             <app-tabler-icon name="trash" size="14" />
@@ -124,17 +124,17 @@ export interface ChatMessage {
             [class.items-start]="msg.role === 'assistant' || msg.role === 'system'">
             
             <!-- Message Attribution Header -->
-            <div class="flex items-center space-x-1.5 mb-1 px-1 text-[10px] font-mono text-[#8C94A8]">
+            <div class="flex items-center space-x-1.5 mb-1 px-1 text-[10px] font-mono text-on-surface-variant">
               @if (msg.role === 'user') {
                 <span>Initiate</span>
                 <span>•</span>
                 <span>{{ formatTime(msg.timestamp) }}</span>
               } @else {
-                <span class="text-[#20B2AA] font-bold">Reluctant Saviour</span>
+                <span class="text-secondary font-bold">Reluctant Saviour</span>
                 <span>•</span>
                 <span>{{ formatTime(msg.timestamp) }}</span>
                 @if (msg.tokens) {
-                  <span class="hidden sm:inline-block text-[#3EB991] px-1 py-0.2 rounded bg-[#3EB991]/10 border border-[#3EB991]/20">
+                  <span class="hidden sm:inline-block text-tertiary px-1 py-0.2 rounded bg-tertiary/10 border border-tertiary/20">
                     {{ msg.tokens }} tok
                   </span>
                 }
@@ -144,36 +144,36 @@ export interface ChatMessage {
             <!-- Message Bubble -->
             <div 
               class="relative max-w-[85%] rounded-2xl px-4 py-3 shadow-lg transition-all"
-              [class.bg-gradient-to-br]="msg.role === 'user'"
-              [class.from-[#6A0DAD]/30]="msg.role === 'user'"
-              [class.to-[#3B0764]/40]="msg.role === 'user'"
+              [class.bg-linear-to-br]="msg.role === 'user'"
+              [class.from-primary/30]="msg.role === 'user'"
+              [class.to-primary-container/40]="msg.role === 'user'"
               [class.border]="true"
-              [class.border-[#6A0DAD]/40]="msg.role === 'user'"
-              [class.text-[#F5FFFA]]="msg.role === 'user'"
-              [class.bg-[#121620]/95]="msg.role === 'assistant'"
+              [class.border-primary/40]="msg.role === 'user'"
+              [class.text-on-surface]="msg.role === 'user'"
+              [class.bg-surface-deep/95]="msg.role === 'assistant'"
               [class.border-white/15]="msg.role === 'assistant'"
-              [class.text-[#F5FFFA]]="msg.role === 'assistant'"
+              [class.text-on-surface]="msg.role === 'assistant'"
               [class.shadow-[0_8px_32px_0_rgba(28,25,52,0.2)]]="msg.role === 'assistant'">
               
               <!-- Content with Typing Animation -->
-              <div class="whitespace-pre-wrap leading-relaxed text-[13px] font-normal selection:bg-[#3EB991]/30">
+              <div class="whitespace-pre-wrap leading-relaxed text-[13px] font-normal selection:bg-tertiary/30">
                 {{ msg.displayContent }}
                 @if (msg.isTyping) {
                   <!-- Active Typewriter Cursor -->
-                  <span class="inline-block w-1.5 h-4 ml-0.5 bg-[#3EB991] rounded-xs animate-pulse align-middle shadow-[0_0_8px_#3EB991]"></span>
+                  <span class="inline-block w-1.5 h-4 ml-0.5 bg-tertiary rounded-xs animate-pulse align-middle shadow-[0_0_8px_#3EB991]"></span>
                 }
               </div>
 
               <!-- Quick Skip Button for Active Typing Message -->
               @if (msg.isTyping) {
                 <div class="mt-2 pt-2 border-t border-white/10 flex items-center justify-between">
-                  <div class="flex items-center space-x-1.5 text-[10px] text-[#3EB991] font-mono">
-                    <span class="w-1.5 h-1.5 rounded-full bg-[#3EB991] animate-ping"></span>
+                  <div class="flex items-center space-x-1.5 text-[10px] text-tertiary font-mono">
+                    <span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-ping"></span>
                     <span>Streaming neural cognition...</span>
                   </div>
                   <button
                     type="button"
-                    class="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-[10px] font-mono text-[#F5FFFA] flex items-center space-x-1 transition-all"
+                    class="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-[10px] font-mono text-on-surface flex items-center space-x-1 transition-all"
                     (click)="skipTyping(msg)">
                     <app-tabler-icon name="fast-forward" size="12" />
                     <span>Instant</span>
@@ -186,8 +186,8 @@ export interface ChatMessage {
 
         <!-- Active Waiting Spinner -->
         @if (isGenerating()) {
-          <div class="flex items-center space-x-2 px-3 py-2 rounded-xl bg-[#151922]/80 border border-white/10 text-xs text-[#20B2AA] w-fit font-mono animate-pulse">
-            <span class="w-2 h-2 rounded-full bg-[#20B2AA] animate-bounce"></span>
+          <div class="flex items-center space-x-2 px-3 py-2 rounded-xl bg-surface-panel/80 border border-white/10 text-xs text-secondary w-fit font-mono animate-pulse">
+            <span class="w-2 h-2 rounded-full bg-secondary animate-bounce"></span>
             <span>Summoning Blades Copilot cognition...</span>
           </div>
         }
@@ -198,7 +198,7 @@ export interface ChatMessage {
         @for (suggestion of suggestions; track suggestion) {
           <button
             type="button"
-            class="px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#3EB991]/40 text-[11px] text-[#8C94A8] hover:text-[#F5FFFA] transition-all whitespace-nowrap cursor-pointer shrink-0"
+            class="px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-tertiary/40 text-[11px] text-on-surface-variant hover:text-on-surface transition-all whitespace-nowrap cursor-pointer shrink-0"
             (click)="selectSuggestion(suggestion)">
             {{ suggestion }}
           </button>
@@ -211,15 +211,15 @@ export interface ChatMessage {
           <input
             type="text"
             [formField]="inputForm.text"
-            placeholder="Direct the Sovereign Copilot (e.g., 'Transmute system logs', 'Audit fleet', 'Calculate AVF Flywheel')..."
-            class="w-full pl-4 pr-10 py-3 rounded-xl bg-[#11131A] border border-white/15 focus:border-[#20B2AA] focus:ring-1 focus:ring-[#20B2AA]/50 text-xs text-[#F5FFFA] placeholder-[#8C94A8]/60 outline-none transition-all font-['Lexend'] shadow-inner"
+            placeholder="Ask the copilot…"
+            class="w-full pl-4 pr-10 py-3 rounded-xl bg-surface-deep border border-white/15 focus:border-secondary focus:ring-1 focus:ring-secondary/50 text-xs text-on-surface placeholder-on-surface-variant/60 outline-none transition-all font-body shadow-inner"
           />
         </div>
 
         <button
           type="submit"
           [disabled]="isGenerating() || !inputModel().text.trim()"
-          class="h-10 px-4 rounded-xl bg-gradient-to-r from-[#20B2AA] to-[#3EB991] hover:from-[#1E9F98] hover:to-[#37A783] active:scale-95 disabled:opacity-40 disabled:pointer-events-none text-[#0E1015] font-bold text-xs flex items-center space-x-1.5 shadow-lg shadow-[#20B2AA]/20 transition-all cursor-pointer"
+          class="h-10 px-4 rounded-xl bg-linear-to-r from-secondary to-tertiary hover:from-secondary hover:to-tertiary active:scale-95 disabled:opacity-40 disabled:pointer-events-none text-surface font-bold text-xs flex items-center space-x-1.5 shadow-lg shadow-secondary/20 transition-all cursor-pointer"
           title="Transmit Prompt to Copilot">
           <app-tabler-icon name="send" size="14" />
           <span class="hidden sm:inline">Transmit</span>
@@ -258,8 +258,8 @@ export class ChatWindowComponent implements AfterViewChecked, OnDestroy {
     {
       id: 'init_welcome',
       role: 'assistant',
-      fullContent: 'I am your Sovereign Copilot. I have witnessed the collapse of digital order. What inefficient chaos do you require me to transmute into silence?',
-      displayContent: 'I am your Sovereign Copilot. I have witnessed the collapse of digital order. What inefficient chaos do you require me to transmute into silence?',
+      fullContent: 'Copilot ready. How can I help?',
+      displayContent: 'Copilot ready. How can I help?',
       isTyping: false,
       timestamp: Date.now() - 60000,
       tokens: 28
@@ -334,7 +334,7 @@ export class ChatWindowComponent implements AfterViewChecked, OnDestroy {
           context: { 
             pid: this.pid() || 'proc_chat',
             framework: 'blades-copilot-runtime',
-            cadence: 'syncopated_magenta'
+            cadence: 'default'
           } 
         }
       ).toPromise();

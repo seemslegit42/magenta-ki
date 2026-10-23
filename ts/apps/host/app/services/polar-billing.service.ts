@@ -82,7 +82,7 @@ export class PolarBillingService {
   private productsState = signal<PolarProduct[]>([
     {
       id: 'prod_core_kernel',
-      name: 'Verdigris Cloud OS Core',
+      name: 'lxvOS Core',
       description: 'Zoneless Angular 22 enterprise microkernel with native federation and WOPI editor access.',
       isRecurring: true,
       recurringInterval: 'monthly',
@@ -98,7 +98,7 @@ export class PolarBillingService {
     },
     {
       id: 'prod_enterprise_cluster',
-      name: 'Sovereign Edge Cluster (Dedicated)',
+      name: 'Edge Cluster (Dedicated)',
       description: 'Dedicated isolated NVMe database engine processing high-throughput edge telemetry and multi-tenant security auditing.',
       isRecurring: true,
       recurringInterval: 'monthly',
@@ -107,7 +107,7 @@ export class PolarBillingService {
         { id: 'prc_cluster_seat', amountType: 'seat_based', priceAmount: 2900, priceCurrency: 'usd' }
       ],
       benefits: [
-        { id: 'ben_repo_access', type: 'github_repository', description: 'Automated collaborator access to private Verdigris kernel repo', isGranted: true },
+        { id: 'ben_repo_access', type: 'github_repository', description: 'Repository collaborator access', isGranted: true },
         { id: 'ben_credits', type: 'meter_credit', description: '5,000,000 monthly rollover AI tokens', isGranted: true, metadata: { units: 5000000, rollover: true } }
       ]
     },
@@ -127,15 +127,15 @@ export class PolarBillingService {
 
   private customerStatesState = signal<Record<string, PolarCustomerState>>({
     usr_operator_7842: {
-      customerId: 'cus_verdigris_operator',
+      customerId: 'cus_lxvos_operator',
       externalCustomerId: 'usr_operator_7842',
-      email: 'operator@verdigris.cloud',
+      email: 'operator@lxvos.local',
       name: 'Elena Rostova (Lead Architect)',
       subscriptions: [
         {
           id: 'sub_active_core_01',
           productId: 'prod_core_kernel',
-          productName: 'Verdigris Cloud OS Core',
+          productName: 'lxvOS Core',
           status: 'active',
           currentPeriodStart: Date.now() - 86400000 * 14,
           currentPeriodEnd: Date.now() + 86400000 * 16,

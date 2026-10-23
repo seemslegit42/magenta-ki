@@ -15,16 +15,16 @@ import { WopiDocument, AuditCategory, AuditSeverity } from '../../../models/webo
       <div class="flex items-center justify-between border-b border-white/10 pb-4">
         <div>
           <h2 class="font-display text-xl font-bold text-white flex items-center space-x-2">
-            <span class="material-icons text-[#E0218A]">description</span>
+            <span class="material-icons text-magenta">description</span>
             <span>WOPI Office Suite & Collaborative Authoring</span>
           </h2>
-          <p class="text-xs text-[#8C94A8] mt-1">Web Application Open Platform Interface (WOPI) protocol with atomic locks, GetFile/PutFile, and real-time co-authoring.</p>
+          <p class="text-xs text-on-surface-variant mt-1">Web Application Open Platform Interface (WOPI) protocol with atomic locks, GetFile/PutFile, and real-time co-authoring.</p>
         </div>
         <div class="flex items-center space-x-2">
-          <span class="text-xs px-2.5 py-1 rounded-full bg-[#E0218A]/10 text-[#FF2A9D] border border-[#E0218A]/20 font-mono">
+          <span class="text-xs px-2.5 py-1 rounded-full bg-magenta/10 text-magenta-glow border border-magenta/20 font-mono">
             Role: {{ authRbac.currentRole() }}
           </span>
-          <span class="text-xs px-2.5 py-1 rounded-full bg-[#20B2AA]/10 text-[#20B2AA] border border-[#20B2AA]/20 font-mono">
+          <span class="text-xs px-2.5 py-1 rounded-full bg-secondary/10 text-secondary border border-secondary/20 font-mono">
             WOPI Host: Go Engine
           </span>
         </div>
@@ -32,21 +32,21 @@ import { WopiDocument, AuditCategory, AuditSeverity } from '../../../models/webo
 
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <!-- Document Sidebar List -->
-        <div class="bg-[#151922] border border-white/10 rounded-xl p-4 space-y-3">
+        <div class="bg-surface-panel border border-white/10 rounded-xl p-4 space-y-3">
           <h3 class="font-display text-sm font-semibold text-white">Enterprise Documents</h3>
           <div class="space-y-2">
             @for (doc of documents; track doc.fileId) {
               <div 
                 role="button"
                 tabindex="0"
-                class="p-3 rounded-xl border transition-all cursor-pointer flex items-center space-x-3 outline-none focus:ring-2 focus:ring-[#E0218A]"
-                [class.bg-[#E0218A]/15]="selectedDoc()?.fileId === doc.fileId"
-                [class.border-[#E0218A]]="selectedDoc()?.fileId === doc.fileId"
+                class="p-3 rounded-xl border transition-all cursor-pointer flex items-center space-x-3 outline-none focus:ring-2 focus:ring-magenta"
+                [class.bg-magenta/15]="selectedDoc()?.fileId === doc.fileId"
+                [class.border-magenta]="selectedDoc()?.fileId === doc.fileId"
                 [class.bg-white/5]="selectedDoc()?.fileId !== doc.fileId"
                 [class.border-white/5]="selectedDoc()?.fileId !== doc.fileId"
                 (click)="selectDocument(doc)"
                 (keydown.enter)="selectDocument(doc)">
-                <span class="material-icons text-xl text-[#20B2AA]">
+                <span class="material-icons text-xl text-secondary">
                   @switch (doc.fileType) {
                     @case ('spreadsheet') { table_chart }
                     @case ('presentation') { slides }
@@ -55,7 +55,7 @@ import { WopiDocument, AuditCategory, AuditSeverity } from '../../../models/webo
                 </span>
                 <div class="overflow-hidden">
                   <p class="font-display text-xs font-semibold text-white truncate">{{ doc.baseFileName }}</p>
-                  <p class="text-[10px] text-[#8C94A8] font-mono">v{{ doc.version }} • {{ doc.size }} B</p>
+                  <p class="text-[10px] text-on-surface-variant font-mono">v{{ doc.version }} • {{ doc.size }} B</p>
                 </div>
               </div>
             }
@@ -63,12 +63,12 @@ import { WopiDocument, AuditCategory, AuditSeverity } from '../../../models/webo
         </div>
 
         <!-- Document Editor & WOPI Inspector -->
-        <div class="bg-[#151922] border border-white/10 rounded-xl p-4 space-y-4 lg:col-span-3">
+        <div class="bg-surface-panel border border-white/10 rounded-xl p-4 space-y-4 lg:col-span-3">
           @if (selectedDoc(); as doc) {
             <div class="flex items-center justify-between border-b border-white/10 pb-3">
               <div>
                 <h3 class="font-display text-base font-semibold text-white">{{ doc.baseFileName }}</h3>
-                <p class="text-[11px] text-[#8C94A8] font-mono">Owner: {{ doc.ownerId }} | User: {{ doc.userFriendlyName }}</p>
+                <p class="text-[11px] text-on-surface-variant font-mono">Owner: {{ doc.ownerId }} | User: {{ doc.userFriendlyName }}</p>
               </div>
               <div class="flex items-center space-x-2">
                 @if (!canEdit()) {
@@ -85,7 +85,7 @@ import { WopiDocument, AuditCategory, AuditSeverity } from '../../../models/webo
                   <span>{{ isLocked() ? 'Release Lock' : 'Acquire X-WOPI-Lock' }}</span>
                 </button>
                 <button
-                  class="px-3.5 py-1.5 rounded-lg bg-[#E0218A] hover:bg-[#FF2A9D] text-white text-xs font-medium transition-colors flex items-center space-x-1 shadow-lg"
+                  class="px-3.5 py-1.5 rounded-lg bg-magenta hover:bg-magenta-glow text-white text-xs font-medium transition-colors flex items-center space-x-1 shadow-lg"
                   [disabled]="!canEdit()"
                   [class.opacity-50]="!canEdit()"
                   (click)="saveChanges(doc.fileId)">
@@ -96,12 +96,12 @@ import { WopiDocument, AuditCategory, AuditSeverity } from '../../../models/webo
             </div>
 
             <textarea
-              class="w-full h-80 bg-[#0E1015] border border-white/10 rounded-xl p-4 text-sm text-white font-mono focus:outline-none focus:border-[#E0218A] leading-relaxed"
+              class="w-full h-80 bg-surface border border-white/10 rounded-xl p-4 text-sm text-white font-mono focus:outline-none focus:border-magenta leading-relaxed"
               [value]="editableContent()" (input)="editableContent.set($any($event.target).value)"
               [disabled]="!canEdit() || (isLocked() && !myLockToken)"></textarea>
 
             @if (saveMessage()) {
-              <div class="p-3 rounded-lg bg-[#3EB991]/10 border border-[#3EB991]/30 text-[#3EB991] text-xs font-mono">
+              <div class="p-3 rounded-lg bg-tertiary/10 border border-tertiary/30 text-tertiary text-xs font-mono">
                 {{ saveMessage() }}
               </div>
             }

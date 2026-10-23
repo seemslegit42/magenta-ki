@@ -3,10 +3,12 @@
 Tags: auth, turso, gateway, demos
 
 ## Facts
-- `go/internal/middleware/auth.go` — default operator if no Bearer; token not verified.
-- `GatewayService` (`ts/apps/host/app/services/gateway.service.ts`) — mock tenant, fake Turso URL/logs/queries.
-- Many Appwrite/Polar UI paths are client-side services with tests asserting mock behavior.
+- `go/internal/middleware/auth.go` — default operator if no Bearer; token not verified (no auth product yet).
+- `GatewayService` now calls Bun `/api/db/*` (live Turso local file by default).
+- Many Appwrite Databases / Polar / AgentFS UI paths remain client-side mocks.
+- VFS tree is live in Turso; blobs default to `data/blobs/` unless Appwrite env is complete.
 
 ## Implication
-Do not treat green unit/e2e suites as proof of live Appwrite/Turso/Polar wiring.
-Live peel today: Bun Gemini + optional Go Xi routes + Bun Polar URL shaping.
+Green gateway tests with mocked `fetch` ≠ proof of a running Bun server.
+Live peel today: Bun Gemini + Turso/VFS + optional Go Xi + Polar URL shaping.
+

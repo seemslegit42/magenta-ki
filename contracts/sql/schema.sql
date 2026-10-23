@@ -189,3 +189,21 @@ CREATE TABLE IF NOT EXISTS xi_hpvc_proposals (
     rejections INTEGER NOT NULL DEFAULT 0,
     created_at INTEGER NOT NULL
 );
+
+-- 10. Domain VFS tree (Turso is source of truth — blobs live in Appwrite or local)
+CREATE TABLE IF NOT EXISTS vfs_nodes (
+    id TEXT PRIMARY KEY,
+    parent_id TEXT REFERENCES vfs_nodes(id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    kind TEXT NOT NULL CHECK(kind IN ('dir', 'file')),
+    blob_id TEXT,
+    size INTEGER NOT NULL DEFAULT 0,
+    mime TEXT,
+    updated_at INTEGER NOT NULL,
+    UNIQUE(parent_id, name)
+);
+
+CREATE TABLE IF NOT EXISTS schema_migrations (
+    id TEXT PRIMARY KEY,
+    applied_at INTEGER NOT NULL
+);

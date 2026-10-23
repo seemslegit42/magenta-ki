@@ -118,7 +118,7 @@ export class AvfService {
     },
     {
       id: 'agent-mkt-03',
-      name: 'Sovereign Growth Engine',
+      name: 'Growth Engine',
       role: 'Continuous Budget Allocator',
       domain: 'marketing',
       autonomy: 'semi_autonomous',

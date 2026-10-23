@@ -95,9 +95,9 @@ export class AppwriteDatabaseService {
             { key: 'two_factor_enabled', type: 'boolean', required: false, defaultValue: true },
           ],
           sampleRecords: [
-            { user_id: 'usr_admin_01', email: 'elena.rostova@verdigris.cloud', role: 'administrator', status: 'active', two_factor_enabled: true },
-            { user_id: 'usr_creator_02', email: 'marcus.vance@verdigris.cloud', role: 'content_creator', status: 'active', two_factor_enabled: true },
-            { user_id: 'usr_user_03', email: 'sarah.chen@verdigris.cloud', role: 'general_user', status: 'active', two_factor_enabled: false },
+            { user_id: 'usr_admin_01', email: 'elena@lxvos.local', role: 'administrator', status: 'active', two_factor_enabled: true },
+            { user_id: 'usr_creator_02', email: 'marcus@lxvos.local', role: 'content_creator', status: 'active', two_factor_enabled: true },
+            { user_id: 'usr_user_03', email: 'sarah@lxvos.local', role: 'general_user', status: 'active', two_factor_enabled: false },
           ]
         },
         {
@@ -365,7 +365,7 @@ export class AppwriteDatabaseService {
       enabled,
       createdAt,
       tables,
-      description: params.description || `Appwrite ${infrastructure} database managed under Verdigris Cloud OS.`,
+      description: params.description || `Appwrite ${infrastructure} database.`,
       region: infrastructure === 'dedicated' ? 'us-east-dedicated-01' : 'us-central-shared',
       totalRecords: 0,
     };
@@ -666,7 +666,7 @@ export class AppwriteDatabaseService {
 
   public generateServerSdkSnippet(language: string, config: SdkCodeConfig): string {
     const ep = config.endpoint || 'https://cloud.appwrite.io/v1';
-    const proj = config.projectId || 'verdigris-cloud-os';
+    const proj = config.projectId || 'lxvos';
     const key = config.apiKey || '919c2d18fb5d4...a2ae413da83346ad2';
     const dbId = config.databaseId || 'prod_core_db';
     const dbName = config.name || 'Production Database';
@@ -968,7 +968,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     const stdoutLogs = [
       `[${language.toUpperCase()}_SDK] Initializing client -> ${config.endpoint || 'https://cloud.appwrite.io/v1'}`,
-      `[AUTH] API Key verified against project ${config.projectId || 'verdigris-cloud-os'}`,
+      `[AUTH] API Key verified against project ${config.projectId || 'lxvos'}`,
       `[POST /v1/databases] Payload: { databaseId: "${dbId}", name: "${name}" }`,
       `[HTTP 201 Created] Latency: ${latency}ms | Edge cluster response verified.`,
       `[OUTPUT] Created Database ID: ${dbId}`

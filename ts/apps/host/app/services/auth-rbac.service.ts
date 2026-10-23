@@ -47,7 +47,7 @@ export class AuthRbacService {
     {
       id: 'usr_admin_01',
       name: 'Elena Rostova',
-      email: 'elena.rostova@verdigris.cloud',
+      email: 'elena@lxvos.local',
       role: 'administrator',
       avatar: 'shield',
       department: 'Platform Engineering & SecOps',
@@ -56,7 +56,7 @@ export class AuthRbacService {
     {
       id: 'usr_creator_02',
       name: 'Marcus Vance',
-      email: 'marcus.vance@verdigris.cloud',
+      email: 'marcus@lxvos.local',
       role: 'content_creator',
       avatar: 'palette',
       department: 'Digital Strategy & Content Ops',
@@ -65,7 +65,7 @@ export class AuthRbacService {
     {
       id: 'usr_user_03',
       name: 'Sarah Chen',
-      email: 'sarah.chen@verdigris.cloud',
+      email: 'sarah@lxvos.local',
       role: 'general_user',
       avatar: 'person',
       department: 'Business Analytics & Audit',

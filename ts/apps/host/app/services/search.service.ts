@@ -19,10 +19,10 @@ export class SearchService {
     this.items.set([
       { 
         id: 'chat-window', 
-        name: 'Sovereign AI Copilot & Chat', 
+        name: 'AI Copilot', 
         type: 'app', 
         icon: 'message', 
-        action: () => this.wm.openApp({ id: 'chat-window', name: 'Sovereign AI Copilot', icon: 'chat', category: 'ai' }) 
+        action: () => this.wm.openApp({ id: 'chat-window', name: 'AI Copilot', icon: 'chat', category: 'ai' }) 
       },
       { 
         id: 'avf', 
@@ -43,7 +43,7 @@ export class SearchService {
         name: 'Terminal & Copilot', 
         type: 'app', 
         icon: 'terminal', 
-        action: () => this.wm.openApp({ id: 'terminal', name: 'WebOS AI Copilot & Terminal', icon: 'terminal', category: 'ai' }) 
+        action: () => this.wm.openApp({ id: 'terminal', name: 'Terminal & Copilot', icon: 'terminal', category: 'ai' }) 
       },
       { 
         id: 'databases', 
@@ -64,7 +64,7 @@ export class SearchService {
         name: 'System Settings', 
         type: 'app', 
         icon: 'settings', 
-        action: () => this.wm.openApp({ id: 'settings', name: 'Verdigris System Settings', icon: 'settings', category: 'system' }) 
+        action: () => this.wm.openApp({ id: 'settings', name: 'System Settings', icon: 'settings', category: 'system' }) 
       }
     ]);
   }

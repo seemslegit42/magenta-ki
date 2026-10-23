@@ -12,27 +12,24 @@ import { DockComponent } from '../dock/dock.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, DatePipe, StatusBarComponent, WindowComponent, DockComponent],
   template: `
-    <div class="syncopated-desktop-stage w-screen h-[100dvh] max-h-[100dvh] overflow-hidden relative flex flex-col justify-between select-none pt-[env(safe-area-inset-top,0px)] pb-[env(safe-area-inset-bottom,0px)]">
-      <!-- Status Bar -->
+    <div class="desktop-stage w-screen h-[100dvh] max-h-[100dvh] overflow-hidden relative flex flex-col justify-between select-none pt-[env(safe-area-inset-top,0px)] pb-[env(safe-area-inset-bottom,0px)]">
       <app-status-bar />
 
-      <!-- Real-Time Desktop Notification Toast Overlays (Top-Right) -->
       <div class="absolute top-12 right-4 sm:right-6 z-50 flex flex-col space-y-3 pointer-events-none max-w-sm w-full px-2 sm:px-0">
         @for (toast of notificationService.toasts(); track toast.id) {
           <div 
-            class="pointer-events-auto p-3.5 rounded-2xl bg-[#151922]/95 backdrop-blur-xl border border-white/10 shadow-2xl flex items-start space-x-3 transition-all animate-bounce-once duration-300"
-            [class.border-[#E0218A]/50]="toast.priority === 'urgent' || toast.category === 'security'"
-            [class.shadow-[0_0_20px_rgba(224,33,138,0.2)]]="toast.priority === 'urgent' || toast.category === 'security'">
+            class="pointer-events-auto p-3 rounded-xl bg-surface-panel border border-white/10 flex items-start space-x-3"
+            [class.border-magenta/45]="toast.priority === 'urgent' || toast.category === 'security'">
             <div 
-              class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
-              [class.bg-[#3EB991]/20]="toast.category === 'update'"
-              [class.text-[#3EB991]]="toast.category === 'update'"
-              [class.bg-[#20B2AA]/20]="toast.category === 'task'"
-              [class.text-[#20B2AA]]="toast.category === 'task'"
-              [class.bg-[#E0218A]/20]="toast.category === 'security'"
-              [class.text-[#FF2A9D]]="toast.category === 'security'"
-              [class.bg-[#6A0DAD]/20]="toast.category === 'message'"
-              [class.text-[#6A0DAD]]="toast.category === 'message'">
+              class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+              [class.bg-tertiary/20]="toast.category === 'update'"
+              [class.text-tertiary]="toast.category === 'update'"
+              [class.bg-secondary/20]="toast.category === 'task'"
+              [class.text-secondary]="toast.category === 'task'"
+              [class.bg-magenta/20]="toast.category === 'security'"
+              [class.text-magenta-glow]="toast.category === 'security'"
+              [class.bg-primary/20]="toast.category === 'message'"
+              [class.text-primary]="toast.category === 'message'">
               <span class="material-icons text-sm">
                 @switch (toast.category) {
                   @case ('security') { security }
@@ -44,23 +41,24 @@ import { DockComponent } from '../dock/dock.component';
             </div>
 
             <div class="flex-1 overflow-hidden">
-              <div class="flex items-center justify-between">
+              <div class="flex items-center justify-between gap-2">
                 <h4 class="font-display font-semibold text-white text-xs truncate">{{ toast.title }}</h4>
-                <span class="text-[9px] text-[#8C94A8] font-mono ml-1">{{ toast.timestamp | date:'HH:mm:ss' }}</span>
+                <span class="text-[9px] text-on-surface-variant font-mono shrink-0">{{ toast.timestamp | date:'HH:mm:ss' }}</span>
               </div>
-              <p class="text-[11px] text-[#8C94A8] mt-0.5 leading-snug">{{ toast.message }}</p>
+              <p class="text-[11px] text-on-surface-variant mt-0.5 leading-snug">{{ toast.message }}</p>
             </div>
 
             <button
-              class="w-6 h-6 rounded-lg hover:bg-white/10 flex items-center justify-center text-[#8C94A8] hover:text-white transition-colors"
-              (click)="notificationService.dismissToast(toast.id)">
+              type="button"
+              class="w-6 h-6 rounded-md hover:bg-white/10 flex items-center justify-center text-on-surface-variant hover:text-white transition-colors"
+              (click)="notificationService.dismissToast(toast.id)"
+              aria-label="Dismiss notification">
               <span class="material-icons text-xs">close</span>
             </button>
           </div>
         }
       </div>
 
-      <!-- Desktop Working Surface (Windows Stage) -->
       <div class="flex-1 relative overflow-hidden">
         @for (item of windowMgr.openWindows(); track item[0]) {
           @let pid = item[0];
@@ -71,38 +69,38 @@ import { DockComponent } from '../dock/dock.component';
           }
         }
 
-        <!-- Welcome Banner on Empty Desktop -->
         @if (windowMgr.activeProcesses().length === 0) {
-          <div class="absolute inset-0 flex flex-col items-center justify-center p-4 sm:p-8 text-center pointer-events-none">
-            <div class="max-w-xl space-y-4 bg-[#151922]/85 backdrop-blur-xl border border-white/10 p-6 sm:p-8 rounded-3xl shadow-2xl pointer-events-auto">
-              <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-[#E0218A]/20 border border-[#E0218A]/40 flex items-center justify-center mx-auto text-[#FF2A9D] shadow-[0_0_30px_rgba(224,33,138,0.3)]">
-                <span class="material-icons text-2xl sm:text-3xl">hub</span>
-              </div>
-              <h1 class="font-display text-xl sm:text-2xl font-bold text-white">Verdigris Cloud OS</h1>
-              <p class="text-xs text-[#8C94A8] leading-relaxed">
-                Federated Enterprise Web Operating System with Touch & Gesture Navigation, Zoneless Angular Signals, Immutable Audit Trails, RBAC, AgentFS, and WOPI Document Federation.
+          <div class="absolute inset-0 flex flex-col items-center justify-center p-6 sm:p-10 text-center pointer-events-none">
+            <div class="max-w-md space-y-5 pointer-events-auto">
+              <h1 class="font-display text-3xl sm:text-4xl font-bold tracking-[0.12em] text-on-surface">Λ Ξ V <span class="text-magenta">O S</span></h1>
+              <p class="text-sm text-on-surface-variant leading-relaxed">
+                Desktop shell with federated apps, AgentFS, and WOPI.
               </p>
-              <div class="pt-2 flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
+              <div class="pt-1 flex flex-wrap items-center justify-center gap-2">
                 <button
-                  class="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-[#20B2AA] hover:bg-[#3EB991] active:scale-95 text-[#0E1015] text-xs font-bold transition-all shadow-lg flex items-center space-x-1.5 touch-manipulation"
+                  type="button"
+                  class="px-3.5 py-2 rounded-lg bg-secondary hover:bg-tertiary text-surface text-xs font-bold transition-colors flex items-center gap-1.5 touch-manipulation"
                   (click)="launchAppwriteDatabases()">
                   <span class="material-icons text-xs">dataset</span>
                   <span>Appwrite Databases</span>
                 </button>
                 <button
-                  class="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-[#E0218A] hover:bg-[#FF2A9D] active:scale-95 text-white text-xs font-semibold transition-all shadow-lg flex items-center space-x-1.5 touch-manipulation"
+                  type="button"
+                  class="px-3.5 py-2 rounded-lg bg-magenta hover:bg-magenta-glow text-white text-xs font-semibold transition-colors flex items-center gap-1.5 touch-manipulation"
                   (click)="launchSecurityAudit()">
                   <span class="material-icons text-xs">verified_user</span>
-                  <span>Audit Trail & RBAC</span>
+                  <span>Audit Trail &amp; RBAC</span>
                 </button>
                 <button
-                  class="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-white/10 hover:bg-white/20 active:scale-95 text-white text-xs font-semibold transition-all border border-white/10 flex items-center space-x-1.5 touch-manipulation"
+                  type="button"
+                  class="px-3.5 py-2 rounded-lg bg-transparent hover:bg-white/8 text-white text-xs font-semibold transition-colors border border-white/15 flex items-center gap-1.5 touch-manipulation"
                   (click)="launchAppStore()">
                   <span class="material-icons text-xs">storefront</span>
                   <span>App Store</span>
                 </button>
                 <button
-                  class="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-white/10 hover:bg-white/20 active:scale-95 text-white text-xs font-semibold transition-all border border-white/10 flex items-center space-x-1.5 touch-manipulation"
+                  type="button"
+                  class="px-3.5 py-2 rounded-lg bg-transparent hover:bg-white/8 text-white text-xs font-semibold transition-colors border border-white/15 flex items-center gap-1.5 touch-manipulation"
                   (click)="launchTerminal()">
                   <span class="material-icons text-xs">terminal</span>
                   <span>Terminal</span>
@@ -113,21 +111,18 @@ import { DockComponent } from '../dock/dock.component';
         }
       </div>
 
-      <!-- Offset Floating Dock with Safe Area -->
       @if (windowMgr.dockVisible()) {
         <div class="absolute bottom-[calc(1.25rem+env(safe-area-inset-bottom,0px))] left-1/2 -translate-x-1/2 z-50 transition-all duration-200">
           <app-dock />
         </div>
       }
 
-      <!-- Mandatory Brand Signature (Fixed Bottom-Left, z-index: 9999) -->
-      <div class="fixed bottom-2 left-3 z-[9999] opacity-40 mix-blend-overlay pointer-events-none select-none hidden sm:block">
-        <div class="font-display font-bold text-[10px] tracking-normal text-white">ΛΞV Inc</div>
-        <div class="font-['Lexend'] font-light text-[8px] tracking-[0.2em] text-[#F5FFFA] uppercase">
+      <div class="fixed bottom-2 left-3 z-[9999] opacity-50 pointer-events-none select-none hidden sm:block">
+        <div class="font-display font-bold text-[10px] text-on-surface">ΛΞV Inc</div>
+        <div class="font-body font-light text-[8px] tracking-[0.18em] text-on-surface-variant uppercase">
           The Future Needs Context • Innovate, Automate, Dominate
         </div>
       </div>
-
     </div>
   `
 })
@@ -148,7 +143,7 @@ export class DesktopComponent {
   }
 
   public launchTerminal(): void {
-    this.windowMgr.spawnProcess('terminal', 'WebOS Terminal & Shell', 'terminal', 'TerminalComponent', 'developer');
+    this.windowMgr.spawnProcess('terminal', 'Terminal', 'terminal', 'TerminalComponent', 'developer');
   }
 
   public launchSecurityAudit(): void {

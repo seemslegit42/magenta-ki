@@ -22,46 +22,46 @@ export interface AppLauncherItem {
   imports: [MatIconModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="flex flex-col h-full space-y-5 font-['Lexend'] text-[#F5FFFA]">
+    <div class="flex flex-col h-full space-y-5 font-body text-on-surface">
       <!-- Header & Top Command Telemetry -->
       <header class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-white/10 gap-3">
         <div>
-          <h2 class="font-['Comfortaa'] text-2xl font-bold text-[#F5FFFA] flex items-center space-x-2.5">
-            <mat-icon class="text-[#3EB991] text-2xl">apps</mat-icon>
+          <h2 class="font-display text-2xl font-bold text-on-surface flex items-center space-x-2.5">
+            <mat-icon class="text-tertiary text-2xl">apps</mat-icon>
             <span>Application Matrix</span>
           </h2>
-          <p class="text-xs text-[#8C94A8] mt-1 font-light">
-            Sovereign workspace launcher for system kernels, local tools, and Native Federation micro-frontends.
+          <p class="text-xs text-on-surface-variant mt-1 font-light">
+            Launch apps and federated remotes.
           </p>
         </div>
 
         <!-- Telemetry Badges -->
         <div class="flex items-center flex-wrap gap-2 text-xs">
-          <div class="px-3 py-1.5 rounded-full bg-[#1A1D24] border border-[#20B2AA]/30 text-[#20B2AA] flex items-center space-x-1.5 font-mono">
-            <span class="w-2 h-2 rounded-full bg-[#20B2AA] animate-pulse"></span>
+          <div class="px-3 py-1.5 rounded-full bg-surface-container border border-secondary/30 text-secondary flex items-center space-x-1.5 font-mono">
+            <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
             <span>{{ runningProcessesCount() }} Active Windows</span>
           </div>
-          <div class="px-3 py-1.5 rounded-full bg-[#1A1D24] border border-[#3EB991]/30 text-[#3EB991] flex items-center space-x-1.5 font-mono">
-            <mat-icon class="text-sm text-[#3EB991]">hub</mat-icon>
+          <div class="px-3 py-1.5 rounded-full bg-surface-container border border-tertiary/30 text-tertiary flex items-center space-x-1.5 font-mono">
+            <mat-icon class="text-sm text-tertiary">hub</mat-icon>
             <span>{{ federationService.remotes().length }} Remotes</span>
           </div>
-          <div class="px-3 py-1.5 rounded-full bg-[#6A0DAD]/25 border border-[#dfb7ff]/30 text-[#dfb7ff] flex items-center space-x-1 font-mono">
-            <span>VIP v2.4</span>
+          <div class="px-3 py-1.5 rounded-full bg-primary/25 border border-primary-muted/30 text-primary-muted flex items-center space-x-1 font-mono">
+            
           </div>
         </div>
       </header>
 
       <!-- Filter Bar: Search + Category Pills -->
-      <section aria-label="App Filters" class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-[#12141A]/80 border border-white/10 rounded-xl p-3">
+      <section aria-label="App Filters" class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-surface-deep/80 border border-white/10 rounded-xl p-3">
         <!-- Search Input -->
         <div class="relative flex-1">
-          <mat-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-[#8C94A8] text-sm pointer-events-none">search</mat-icon>
+          <mat-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm pointer-events-none">search</mat-icon>
           <input
             type="search"
             [value]="searchQuery()"
             (input)="searchQuery.set($any($event.target).value)"
             placeholder="Search applications, micro-frontends, or services..."
-            class="w-full pl-9 pr-4 py-2 rounded-lg bg-[#0D0E12] border border-white/10 text-xs text-[#F5FFFA] placeholder-[#8C94A8]/60 focus:outline-none focus:border-[#3EB991] focus:ring-1 focus:ring-[#3EB991]/50 transition-all font-['Lexend']"
+            class="w-full pl-9 pr-4 py-2 rounded-lg bg-surface-lowest border border-white/10 text-xs text-on-surface placeholder-on-surface-variant/60 focus:outline-none focus:border-tertiary focus:ring-1 focus:ring-tertiary/50 transition-all font-body"
           />
         </div>
 
@@ -71,14 +71,14 @@ export interface AppLauncherItem {
             <button
               type="button"
               class="px-2.5 py-1.5 rounded-lg border text-[11px] font-medium transition-all flex items-center space-x-1 cursor-pointer focus:outline-none"
-              [class.bg-[#3EB991]]="selectedCategory() === cat.id"
-              [class.text-[#0D0E12]]="selectedCategory() === cat.id"
-              [class.border-[#3EB991]]="selectedCategory() === cat.id"
+              [class.bg-tertiary]="selectedCategory() === cat.id"
+              [class.text-surface-lowest]="selectedCategory() === cat.id"
+              [class.border-tertiary]="selectedCategory() === cat.id"
               [class.font-bold]="selectedCategory() === cat.id"
-              [class.bg-[#1A1D24]]="selectedCategory() !== cat.id"
-              [class.text-[#8C94A8]]="selectedCategory() !== cat.id"
+              [class.bg-surface-container]="selectedCategory() !== cat.id"
+              [class.text-on-surface-variant]="selectedCategory() !== cat.id"
               [class.border-white/10]="selectedCategory() !== cat.id"
-              [class.hover:text-[#F5FFFA]]="selectedCategory() !== cat.id"
+              [class.hover:text-on-surface]="selectedCategory() !== cat.id"
               [class.hover:border-white/20]="selectedCategory() !== cat.id"
               (click)="selectedCategory.set(cat.id)">
               <mat-icon class="text-xs">{{ cat.icon }}</mat-icon>
@@ -92,39 +92,39 @@ export interface AppLauncherItem {
       <div class="flex-1 overflow-y-auto pr-1">
         @if (filteredApps().length === 0) {
           <div class="flex flex-col items-center justify-center h-48 rounded-xl border border-dashed border-white/10 p-6 text-center">
-            <mat-icon class="text-3xl text-[#8C94A8] mb-2">search_off</mat-icon>
-            <p class="text-sm font-semibold text-[#F5FFFA]">No matching applications found</p>
-            <p class="text-xs text-[#8C94A8] mt-1">Try refining your search keyword or switching category filters.</p>
+            <mat-icon class="text-3xl text-on-surface-variant mb-2">search_off</mat-icon>
+            <p class="text-sm font-semibold text-on-surface">No matching applications found</p>
+            <p class="text-xs text-on-surface-variant mt-1">Try refining your search keyword or switching category filters.</p>
           </div>
         } @else {
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
             @for (app of filteredApps(); track app.id) {
               @let procState = getProcessState(app.id);
               <article 
-                class="relative flex flex-col justify-between rounded-xl bg-[rgba(18,20,26,0.72)] backdrop-blur-md border border-white/10 hover:border-[#3EB991] p-4 transition-all duration-200 hover:-translate-y-0.5 shadow-md hover:shadow-[#3EB991]/15 group">
+                class="relative flex flex-col justify-between rounded-xl bg-[rgba(18,20,26,0.72)] backdrop-blur-md border border-white/10 hover:border-tertiary p-4 transition-all duration-200 hover:-translate-y-0.5 shadow-md hover:shadow-tertiary/15 group">
                 
                 <!-- Card Header -->
                 <div>
                   <div class="flex items-start justify-between mb-3">
-                    <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#1A1D24] to-[#12141A] border border-white/10 flex items-center justify-center text-[#3EB991] group-hover:scale-105 group-hover:border-[#3EB991]/50 group-hover:shadow-[0_0_12px_rgba(62,185,145,0.3)] transition-all">
+                    <div class="w-11 h-11 rounded-xl bg-linear-to-br from-surface-container to-surface-deep border border-white/10 flex items-center justify-center text-tertiary group-hover:scale-105 group-hover:border-tertiary/50 group-hover:shadow-[0_0_12px_rgba(62,185,145,0.3)] transition-all">
                       <mat-icon class="text-xl">{{ app.icon }}</mat-icon>
                     </div>
 
                     <!-- Category & Status Badge -->
                     <div class="flex flex-col items-end space-y-1">
                       <span class="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full border"
-                        [class.bg-[#3EB991]/10]="app.category === 'productivity'"
-                        [class.text-[#3EB991]]="app.category === 'productivity'"
-                        [class.border-[#3EB991]/25]="app.category === 'productivity'"
-                        [class.bg-[#20B2AA]/10]="app.category === 'database' || app.category === 'system'"
-                        [class.text-[#20B2AA]]="app.category === 'database' || app.category === 'system'"
-                        [class.border-[#20B2AA]/25]="app.category === 'database' || app.category === 'system'"
-                        [class.bg-[#dfb7ff]/10]="app.category === 'security' || app.category === 'ai'"
-                        [class.text-[#dfb7ff]]="app.category === 'security' || app.category === 'ai'"
-                        [class.border-[#dfb7ff]/25]="app.category === 'security' || app.category === 'ai'"
-                        [class.bg-[#E0218A]/10]="app.category === 'federated' || app.category === 'developer'"
-                        [class.text-[#FF2A9D]]="app.category === 'federated' || app.category === 'developer'"
-                        [class.border-[#E0218A]/25]="app.category === 'federated' || app.category === 'developer'">
+                        [class.bg-tertiary/10]="app.category === 'productivity'"
+                        [class.text-tertiary]="app.category === 'productivity'"
+                        [class.border-tertiary/25]="app.category === 'productivity'"
+                        [class.bg-secondary/10]="app.category === 'database' || app.category === 'system'"
+                        [class.text-secondary]="app.category === 'database' || app.category === 'system'"
+                        [class.border-secondary/25]="app.category === 'database' || app.category === 'system'"
+                        [class.bg-primary-muted/10]="app.category === 'security' || app.category === 'ai'"
+                        [class.text-primary-muted]="app.category === 'security' || app.category === 'ai'"
+                        [class.border-primary-muted/25]="app.category === 'security' || app.category === 'ai'"
+                        [class.bg-magenta/10]="app.category === 'federated' || app.category === 'developer'"
+                        [class.text-magenta-glow]="app.category === 'federated' || app.category === 'developer'"
+                        [class.border-magenta/25]="app.category === 'federated' || app.category === 'developer'">
                         {{ app.category }}
                       </span>
 
@@ -138,33 +138,33 @@ export interface AppLauncherItem {
                   </div>
 
                   <!-- Title & Description -->
-                  <h3 class="font-['Comfortaa'] font-semibold text-sm text-[#F5FFFA] group-hover:text-[#3EB991] transition-colors flex items-center space-x-1.5">
+                  <h3 class="font-display font-semibold text-sm text-on-surface group-hover:text-tertiary transition-colors flex items-center space-x-1.5">
                     <span>{{ app.name }}</span>
                     @if (app.isFederated) {
-                      <span class="text-[9px] font-mono px-1 rounded bg-[#6A0DAD]/30 text-[#dfb7ff] border border-[#dfb7ff]/30">MFE</span>
+                      <span class="text-[9px] font-mono px-1 rounded bg-primary/30 text-primary-muted border border-primary-muted/30">MFE</span>
                     }
                   </h3>
-                  <p class="text-xs text-[#8C94A8] mt-1.5 line-clamp-2 leading-relaxed font-light">
+                  <p class="text-xs text-on-surface-variant mt-1.5 line-clamp-2 leading-relaxed font-light">
                     {{ app.description }}
                   </p>
                 </div>
 
                 <!-- Footer with Version & Launch Action -->
                 <div class="mt-4 pt-3 border-t border-white/5 flex items-center justify-between">
-                  <span class="text-[10px] font-mono text-[#8C94A8]">{{ app.version }}</span>
+                  <span class="text-[10px] font-mono text-on-surface-variant">{{ app.version }}</span>
 
                   <button
                     type="button"
-                    class="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-all cursor-pointer shadow-sm focus:outline-none"
-                    [class.bg-[#3EB991]]="!procState"
-                    [class.text-[#0D0E12]]="!procState"
-                    [class.hover:bg-[#52caa1]]="!procState"
+                    class="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-all cursor-pointer shadow-xs focus:outline-none"
+                    [class.bg-tertiary]="!procState"
+                    [class.text-surface-lowest]="!procState"
+                    [class.hover:bg-tertiary]="!procState"
                     [class.hover:shadow-[0_0_12px_rgba(62,185,145,0.5)]]="!procState"
-                    [class.bg-[#20B2AA]/20]="procState"
-                    [class.text-[#20B2AA]]="procState"
+                    [class.bg-secondary/20]="procState"
+                    [class.text-secondary]="procState"
                     [class.border]="procState"
-                    [class.border-[#20B2AA]/50]="procState"
-                    [class.hover:bg-[#20B2AA]/30]="procState"
+                    [class.border-secondary/50]="procState"
+                    [class.hover:bg-secondary/30]="procState"
                     (click)="launch(app)">
                     <mat-icon class="text-sm">{{ procState ? 'visibility' : 'launch' }}</mat-icon>
                     <span>{{ procState ? (isProcessMinimized(procState.pid) ? 'Restore' : 'Bring to Front') : 'Launch' }}</span>
@@ -177,10 +177,10 @@ export interface AppLauncherItem {
       </div>
 
       <!-- Bottom Quick Launch Toolbar -->
-      <footer class="pt-3 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-xs text-[#8C94A8] gap-2">
+      <footer class="pt-3 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-xs text-on-surface-variant gap-2">
         <div class="flex items-center space-x-3">
           <span class="flex items-center space-x-1">
-            <mat-icon class="text-sm text-[#3EB991]">check_circle</mat-icon>
+            <mat-icon class="text-sm text-tertiary">check_circle</mat-icon>
             <span>Angular 22 Native Federation Host</span>
           </span>
           <span class="hidden sm:inline-block">•</span>
@@ -190,9 +190,9 @@ export interface AppLauncherItem {
         <div class="flex items-center space-x-2">
           <button
             type="button"
-            class="px-2.5 py-1 rounded bg-[#1A1D24] hover:bg-[#22252F] text-[#F5FFFA] text-[11px] font-mono border border-white/10 flex items-center space-x-1 transition-colors"
+            class="px-2.5 py-1 rounded bg-surface-container hover:bg-surface-high text-on-surface text-[11px] font-mono border border-white/10 flex items-center space-x-1 transition-colors"
             (click)="launchAllEssentials()">
-            <mat-icon class="text-xs text-[#20B2AA]">rocket_launch</mat-icon>
+            <mat-icon class="text-xs text-secondary">rocket_launch</mat-icon>
             <span>Launch Core Suite</span>
           </button>
         </div>
@@ -223,7 +223,7 @@ export class AppLauncherComponent {
   private readonly coreApps: AppLauncherItem[] = [
     {
       id: 'chat-window',
-      name: 'Sovereign AI Copilot',
+      name: 'AI Copilot',
       category: 'ai',
       icon: 'chat',
       description: 'Autonomous conversational assistant powered by Blades and Gemini with live streaming typewriter animation.',
@@ -286,7 +286,7 @@ export class AppLauncherComponent {
     },
     {
       id: 'terminal',
-      name: 'WebOS AI Copilot & Terminal',
+      name: 'Terminal & Copilot',
       category: 'ai',
       icon: 'terminal',
       description: 'Interactive CLI shell and Gemini AI assistant for running automated enterprise operations.',
@@ -295,7 +295,7 @@ export class AppLauncherComponent {
     },
     {
       id: 'app-store',
-      name: 'Verdigris App Store',
+      name: 'App Store',
       category: 'system',
       icon: 'storefront',
       description: 'Dynamic micro-frontend marketplace, W3C import map manager, and remote component registration.',
@@ -313,10 +313,10 @@ export class AppLauncherComponent {
     },
     {
       id: 'settings',
-      name: 'Verdigris System Settings',
+      name: 'System Settings',
       category: 'system',
       icon: 'settings',
-      description: 'Configure syncopated UI rhythm cadence, window boundaries, audio synthesizer, and haptic feedback.',
+      description: 'Configure preferences, windows, audio, and haptics.',
       version: 'v2.4.0',
       componentName: 'SettingsComponent'
     }

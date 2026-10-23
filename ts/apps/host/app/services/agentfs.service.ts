@@ -5,7 +5,7 @@ import { ToolCallRecord, VfsInode } from '../models/webos.models';
 export class AgentFSService {
   private inodes = signal<Map<number, VfsInode>>(new Map([
     [1, { id: 1, mode: 16877, size: 4096, mtime: Date.now(), data: '' }], // root directory
-    [2, { id: 2, mode: 33188, size: 1024, mtime: Date.now(), data: '# Verdigris WebOS Workspace\nAutonomous Agent workspace initialized via AgentFS v2.' }],
+    [2, { id: 2, mode: 33188, size: 1024, mtime: Date.now(), data: '# lxvOS Workspace\nAutonomous Agent workspace initialized via AgentFS v2.' }],
     [3, { id: 3, mode: 33188, size: 2048, mtime: Date.now(), data: '{"project": "enterprise-crm", "version": "2.4.0", "sync": "turso"}' }]
   ]));
 

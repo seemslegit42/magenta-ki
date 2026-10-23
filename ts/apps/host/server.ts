@@ -114,6 +114,6 @@ if (isMainModule(import.meta.url) || env('pm_id') || env('NF_SSR_ENTRY')) {
       res.end('Not Found');
     });
   }).listen(port, () => {
-    console.log(`ΛΞVOS Angular SSR host listening on http://localhost:${port}`);
+    console.log(`lxvOS Angular SSR host listening on http://localhost:${port}`);
   });
 }

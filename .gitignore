@@ -4,6 +4,9 @@
 .env*
 !.env.example
 
+# Local Turso DB + VFS blobs
+/data/
+
 # Compiled output
 /dist
 /tmp

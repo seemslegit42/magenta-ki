@@ -1,36 +1,74 @@
 @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&family=Lexend:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
+@theme {
+  --color-surface: #0e1015;
+  --color-surface-dim: #0e1015;
+  --color-surface-bright: #38393d;
+  --color-surface-lowest: #08090c;
+  --color-surface-low: #14161c;
+  --color-surface-container: #1a1c23;
+  --color-surface-high: #22252f;
+  --color-surface-highest: #2d303c;
+  --color-surface-panel: #151922;
+  --color-surface-deep: #12141a;
+  --color-surface-chrome: #171b26;
+
+  --color-primary: #6a0dad;
+  --color-primary-container: #3b0764;
+  --color-primary-muted: #dfb7ff;
+  --color-secondary: #20b2aa;
+  --color-secondary-container: #115e59;
+  --color-tertiary: #3eb991;
+  --color-tertiary-container: #14532d;
+  --color-on-tertiary: #002116;
+  --color-magenta: #e0218a;
+  --color-magenta-glow: #ff2a9d;
+  --color-magenta-dim: #8b1254;
+
+  --color-background: #0e1015;
+  --color-on-surface: #f5fffa;
+  --color-on-surface-variant: #8c94a8;
+  --color-outline: #f5fffa;
+  --color-outline-variant: #8c94a8;
+  --color-error: #ff4d6d;
+  --color-error-soft: #ff8096;
+  --color-warning: #fbbf24;
+
+  --font-display: "Comfortaa", cursive;
+  --font-body: "Lexend", sans-serif;
+}
+
 :root {
-  --surface: #0E1015;
-  --surface-dim: #0E1015;
-  --surface-bright: #38393d;
-  --surface-container-lowest: #08090C;
-  --surface-container-low: #14161C;
-  --surface-container: #1A1C23;
-  --surface-container-high: #22252F;
-  --surface-container-highest: #2D303C;
-  --primary: #6A0DAD;
-  --primary-container: #3B0764;
-  --secondary: #20B2AA;
-  --secondary-container: #115E59;
-  --tertiary: #3EB991;
-  --tertiary-container: #14532D;
-  --magenta: #E0218A;
-  --magenta-glow: #FF2A9D;
-  --magenta-dim: #8B1254;
-  --background: #0E1015;
-  --on-surface: #F5FFFA;
-  --on-surface-variant: #8C94A8;
-  --outline: rgba(245, 255, 250, 0.18);
-  --outline-variant: rgba(140, 148, 168, 0.25);
-  --error: #FF4D6D;
+  --surface: var(--color-surface);
+  --surface-dim: var(--color-surface-dim);
+  --surface-bright: var(--color-surface-bright);
+  --surface-container-lowest: var(--color-surface-lowest);
+  --surface-container-low: var(--color-surface-low);
+  --surface-container: var(--color-surface-container);
+  --surface-container-high: var(--color-surface-high);
+  --surface-container-highest: var(--color-surface-highest);
+  --primary: var(--color-primary);
+  --primary-container: var(--color-primary-container);
+  --secondary: var(--color-secondary);
+  --secondary-container: var(--color-secondary-container);
+  --tertiary: var(--color-tertiary);
+  --tertiary-container: var(--color-tertiary-container);
+  --magenta: var(--color-magenta);
+  --magenta-glow: var(--color-magenta-glow);
+  --magenta-dim: var(--color-magenta-dim);
+  --background: var(--color-background);
+  --on-surface: var(--color-on-surface);
+  --on-surface-variant: var(--color-on-surface-variant);
+  --outline: color-mix(in oklab, var(--color-outline) 18%, transparent);
+  --outline-variant: color-mix(in oklab, var(--color-outline-variant) 25%, transparent);
+  --error: var(--color-error);
 }
 
 body {
-  background-color: var(--background);
-  color: var(--on-surface);
-  font-family: 'Lexend', sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-on-surface);
+  font-family: var(--font-body);
   margin: 0;
   padding: 0;
   overflow: hidden;
@@ -39,26 +77,22 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-.font-display {
-  font-family: 'Comfortaa', cursive;
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--color-on-surface-variant) 35%, transparent) transparent;
 }
 
-.font-body {
-  font-family: 'Lexend', sans-serif;
-}
-
-/* Custom scrollbar for WebOS */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(20, 22, 28, 0.6);
+  background: color-mix(in oklab, var(--color-surface-low) 60%, transparent);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(106, 13, 173, 0.5);
-  border-radius: 3px;
+  background: color-mix(in oklab, var(--color-on-surface-variant) 35%, transparent);
+  border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(224, 33, 138, 0.8);
+  background: color-mix(in oklab, var(--color-magenta) 55%, transparent);
 }

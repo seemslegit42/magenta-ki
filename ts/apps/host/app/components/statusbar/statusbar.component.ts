@@ -9,30 +9,28 @@ import { WindowManagerService } from '../../services/window-manager.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, TablerIconComponent],
   template: `
-    <header class="h-12 bg-[#08090C]/95 backdrop-blur-2xl border-b border-[rgba(245,255,250,0.18)] px-4 flex items-center justify-between select-none z-50 shadow-lg">
-      <!-- Left: OS Branding & Active Menu -->
+    <header class="h-12 bg-surface-lowest border-b border-outline/12 px-4 flex items-center justify-between select-none z-50">
       <div class="flex items-center space-x-4">
         <div class="flex items-center space-x-2">
-          <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-[#6A0DAD] to-[#E0218A] flex items-center justify-center text-white shadow-lg shadow-[#E0218A]/30 ring-1 ring-white/20">
-            <app-tabler-icon name="hexagon" size="16" class="drop-shadow-[0_0_4px_rgba(255,255,255,0.6)]" />
+          <div class="w-7 h-7 rounded-lg bg-linear-to-tr from-primary to-magenta flex items-center justify-center text-white" aria-hidden="true">
+            <app-tabler-icon name="hexagon" size="16" />
           </div>
-          <span class="font-display font-bold text-sm text-[#F5FFFA] tracking-[0.2em]">Λ Ξ V <span class="text-[#E0218A] drop-shadow-[0_0_6px_rgba(224,33,138,0.5)]">O S</span></span>
+          <span class="font-display font-bold text-sm text-on-surface tracking-[0.2em]">Λ Ξ V <span class="text-magenta">O S</span></span>
         </div>
 
-        <nav aria-label="System Menu" class="hidden md:flex items-center space-x-1.5 text-xs text-[#8C94A8]">
-          <button type="button" class="px-3 py-1.5 rounded-xl hover:bg-white/10 hover:text-[#3EB991] cursor-pointer transition-all focus:outline-none flex items-center space-x-1.5 border border-transparent hover:border-[#3EB991]/30 shadow-sm" (click)="openLauncher()">
-            <app-tabler-icon name="apps" size="16" class="text-[#3EB991] drop-shadow-[0_0_6px_rgba(62,185,145,0.4)]" />
-            <span class="font-medium text-[#F5FFFA]">Applications</span>
+        <nav aria-label="System Menu" class="hidden md:flex items-center space-x-1 text-xs text-on-surface-variant">
+          <button type="button" class="px-3 py-1.5 rounded-lg hover:bg-white/8 hover:text-tertiary cursor-pointer transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-tertiary/50 flex items-center space-x-1.5" (click)="openLauncher()">
+            <app-tabler-icon name="apps" size="16" class="text-tertiary" />
+            <span class="font-medium text-on-surface">Applications</span>
           </button>
-          <button type="button" class="px-3 py-1.5 rounded-xl hover:bg-white/10 hover:text-[#20B2AA] cursor-pointer transition-all focus:outline-none border border-transparent hover:border-[#20B2AA]/30 font-medium text-[#F5FFFA] shadow-sm" (click)="openStore()">App Store</button>
+          <button type="button" class="px-3 py-1.5 rounded-lg hover:bg-white/8 hover:text-secondary cursor-pointer transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-secondary/50 font-medium text-on-surface" (click)="openStore()">App Store</button>
         </nav>
       </div>
 
-      <!-- Right: System Status & Clock -->
-      <div class="flex items-center space-x-4 text-xs text-[#8C94A8]">
-        <div class="flex items-center space-x-1.5 text-[#F5FFFA] font-mono px-3 py-1 rounded-full bg-white/5 border border-white/10">
-          <app-tabler-icon name="clock" size="16" class="text-[#20B2AA] drop-shadow-[0_0_6px_rgba(32,178,170,0.5)]" />
-          <span class="font-semibold">{{ currentTime() }}</span>
+      <div class="flex items-center space-x-3 text-xs text-on-surface-variant">
+        <div class="flex items-center space-x-1.5 text-on-surface font-mono px-2.5 py-1 rounded-lg">
+          <app-tabler-icon name="clock" size="16" class="text-secondary" />
+          <span class="font-semibold tabular-nums">{{ currentTime() }}</span>
         </div>
       </div>
     </header>
@@ -65,7 +63,7 @@ export class StatusbarComponent {
   openStore() {
     this.windowManager.openApp({
       id: 'app-store',
-      name: 'Verdigris App Store & Catalog',
+      name: 'App Store',
       icon: 'storefront'
     });
   }

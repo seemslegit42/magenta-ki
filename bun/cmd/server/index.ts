@@ -3,6 +3,8 @@
  * Serves /api/* — Angular NF host proxies here in development.
  */
 import { config } from "../../internal/config";
+import { migrate } from "../../internal/db/migrate";
+import { dbMode } from "../../internal/db/client";
 import { apiRoutes } from "../../internal/handlers";
 import { corsPreflight, withCors } from "../../internal/middleware/cors";
 
@@ -19,12 +21,13 @@ function withCorsRoutes(
     for (const [method, handler] of Object.entries(methods)) {
       wrapped[method] = async (req: Request) => withCors(await handler(req));
     }
-    // Preflight on each path
     wrapped.OPTIONS = () => corsPreflight();
     out[path] = wrapped;
   }
   return out;
 }
+
+await migrate();
 
 const server = Bun.serve({
   hostname: config.host,
@@ -40,5 +43,5 @@ const server = Bun.serve({
 });
 
 console.log(
-  `ΛΞVOS Bun control plane listening on ${server.url} (GO_API_URL=${config.goApiUrl || "unset — local Xi stubs"})`,
+  `ΛΞVOS Bun control plane listening on ${server.url} (db=${dbMode()} url=${config.tursoUrl}; GO_API_URL=${config.goApiUrl || "unset — local Xi stubs"}; blobs=${config.useAppwriteBlobs ? "appwrite" : "local"})`,
 );

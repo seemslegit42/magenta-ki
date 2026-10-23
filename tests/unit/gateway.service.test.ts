@@ -1,19 +1,27 @@
-import { describe, it, expect, beforeEach } from 'bun:test';
+import { describe, it, expect, beforeEach, afterEach, mock } from 'bun:test';
 import { GatewayService } from '../../ts/apps/host/app/services/gateway.service';
 
 describe('GatewayService', () => {
   let service: GatewayService;
+  let originalFetch: typeof fetch;
 
   beforeEach(() => {
     service = new GatewayService();
+    service.setApiBase('http://test.local');
+    originalFetch = globalThis.fetch;
   });
 
-  it('should initialize with tenant context and default connection parameters', () => {
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+    mock.restore();
+  });
+
+  it('should initialize with tenant context and local Turso file URL', () => {
     const tenant = service.currentTenant();
     expect(tenant.userId).toBe('usr_operator_7842');
     expect(tenant.tenantId).toBe('default_enterprise_corp');
     expect(tenant.roles).toContain('workspace:admin');
-    expect(tenant.tursoConnUrl).toContain('turso.io');
+    expect(tenant.tursoConnUrl).toContain('lxvos-shell.db');
   });
 
   it('should authenticate a session with valid session token and log the request', () => {
@@ -25,38 +33,45 @@ describe('GatewayService', () => {
 
     const latest = service.logs()[0];
     expect(latest.method).toBe('GET');
-    expect(latest.path).toBe('/api/v1/account');
+    expect(latest.path).toBe('/api/db/health');
     expect(latest.status).toBe(200);
-    expect(latest.latencyMs).toBeLessThan(15); // SLA verification (<15ms)
   });
 
   it('should reject session authentication when token is empty', () => {
     expect(() => {
       service.authenticateSession('');
-    }).toThrow('Appwrite identity verification rejected: missing session token.');
+    }).toThrow('Session token required.');
   });
 
-  it('should execute desktop_state query on Turso edge database and return configuration rows', () => {
-    const res = service.queryEdgeDatabase('SELECT config_key, config_val FROM desktop_state WHERE user_id = "test"');
-    expect(res.columns).toContain('config_key');
-    expect(res.columns).toContain('config_val');
-    expect(res.rows.length).toBeGreaterThanOrEqual(3);
+  it('should refresh DB health from Bun control plane', async () => {
+    globalThis.fetch = mock(async () =>
+      Response.json({
+        mode: 'local',
+        url: 'file:./data/lxvos-shell.db',
+        syncConfigured: false,
+      }),
+    ) as unknown as typeof fetch;
 
-    const keys = res.rows.map(r => r[0]);
-    expect(keys).toContain('theme_cadence');
-    expect(keys).toContain('dock_position');
+    const health = await service.refreshDbHealth();
+    expect(health.mode).toBe('local');
+    expect(service.currentTenant().tursoConnUrl).toBe('file:./data/lxvos-shell.db');
+    expect(service.logs()[0].path).toBe('/api/db/health');
   });
 
-  it('should execute arbitrary entity query on Turso edge database and log request latency', () => {
-    const initialLogCount = service.logs().length;
-    const res = service.queryEdgeDatabase('SELECT id, entity_name, status FROM cluster_nodes');
+  it('should execute SQL via POST /api/db/query', async () => {
+    globalThis.fetch = mock(async () =>
+      Response.json({
+        columns: ['id', 'theme', 'dock_position', 'updated_at'],
+        rows: [['default', 'dark', 'bottom', 1]],
+      }),
+    ) as unknown as typeof fetch;
 
-    expect(res.columns).toEqual(['id', 'entity_name', 'status', 'created_at']);
-    expect(res.rows.length).toBe(3);
-
-    const latestLog = service.logs()[0];
-    expect(latestLog.path).toBe('/api/v1/turso/query');
-    expect(latestLog.latencyMs).toBeLessThan(10); // SLA verification (<10ms)
-    expect(service.logs().length).toBe(initialLogCount + 1);
+    const res = await service.queryEdgeDatabase(
+      'SELECT id, theme, dock_position, updated_at FROM system_preferences',
+    );
+    expect(res.columns).toContain('theme');
+    expect(res.rows[0][1]).toBe('dark');
+    expect(service.logs()[0].path).toBe('/api/db/query');
+    expect(service.logs()[0].method).toBe('POST');
   });
 });

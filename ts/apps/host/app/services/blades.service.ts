@@ -26,8 +26,8 @@ export interface ModelProvider {
   providedIn: 'root'
 })
 export class BladesService implements Agent {
-  private agentName = signal<string>('Blades-WebOS-Agent');
-  private agentDescription = signal<string>('Multimodal AI Agent framework wrapper for Λ Ξ V O S executing chain-of-thought reasoning.');
+  private agentName = signal<string>('Blades-lxvOS-Agent');
+  private agentDescription = signal<string>('Blades agent wrapper for lxvOS.');
   private memoryLogs = signal<Message[]>([]);
   private isExecuting = signal<boolean>(false);
 

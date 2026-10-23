@@ -34,7 +34,7 @@ import { ChatWindowComponent } from '../apps/chat-window/chat-window.component';
   ],
   template: `
     <div
-      class="syncopated-window absolute flex flex-col overflow-hidden transition-all duration-200 bg-[#10131A]/98 backdrop-blur-2xl border border-white/20 rounded-2xl shadow-2xl"
+      class="shell-window absolute flex flex-col overflow-hidden transition-colors duration-150 bg-surface-deep border border-white/15 rounded-xl shadow-lg"
       [class.is-focused]="isFocused()"
       [class.is-background]="!isFocused()"
       [class.hidden]="bounds().isMinimized"
@@ -49,31 +49,27 @@ import { ChatWindowComponent } from '../apps/chat-window/chat-window.component';
       [style.z-index]="bounds().zIndex"
       (mousedown)="onFocus()">
       
-      <!-- Window Chrome (Touch & Desktop Drag Zone) -->
       <div 
-        class="window-chrome h-11 bg-gradient-to-r from-[#171B26] to-[#12151D] border-b border-white/10 px-4 flex flex-col justify-center cursor-grab active:cursor-grabbing select-none relative touch-none shadow-sm"
+        class="window-chrome h-11 bg-surface-chrome border-b border-white/10 px-4 flex flex-col justify-center cursor-grab active:cursor-grabbing select-none relative touch-none"
         (mousedown)="startDrag($event)"
         (touchstart)="startDrag($event)">
 
-        <!-- Tall Screen Mobile Pull-Down Sheet Pill Indicator -->
-        <div class="w-10 h-1 rounded-full bg-white/25 mx-auto -mt-0.5 mb-1 sm:hidden pointer-events-none"></div>
+        <div class="w-8 h-0.5 rounded-xs bg-white/25 mx-auto -mt-0.5 mb-1 sm:hidden pointer-events-none" aria-hidden="true"></div>
 
         <div class="flex items-center justify-between w-full">
-          <!-- Window Title & Metadata -->
           <div class="flex items-center space-x-2.5 overflow-hidden">
-            <svg class="w-4 h-4 text-[#3EB991] shrink-0 drop-shadow-[0_0_6px_rgba(62,185,145,0.4)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="w-4 h-4 text-tertiary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <rect x="4" y="4" width="16" height="16" rx="2"></rect>
               <path d="M4 10h16"></path>
               <path d="M10 4v16"></path>
             </svg>
-            <span class="font-display font-semibold text-xs tracking-wide text-[#F5FFFA] truncate">{{ descriptor().title }}</span>
-            <span class="hidden sm:inline-block text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/5 text-[#8C94A8] border border-white/10">{{ descriptor().pid }}</span>
+            <span class="font-display font-semibold text-xs tracking-wide text-on-surface truncate">{{ descriptor().title }}</span>
+            <span class="hidden sm:inline text-[10px] font-mono text-on-surface-variant/80">{{ descriptor().pid }}</span>
           </div>
-          
-          <!-- Desktop & Mobile Window Control Buttons (Tabler Sigils) -->
+
           <div class="flex items-center space-x-1.5" (mousedown)="$event.stopPropagation()" (touchstart)="$event.stopPropagation()">
             <button 
-              class="w-7 h-7 rounded-lg hover:bg-white/10 active:bg-white/20 flex items-center justify-center text-[#8C94A8] hover:text-white transition-colors border border-transparent hover:border-white/10"
+              class="w-7 h-7 rounded-lg hover:bg-white/10 active:bg-white/20 flex items-center justify-center text-on-surface-variant hover:text-white transition-colors border border-transparent hover:border-white/10"
               (click)="onMinimize()"
               title="Minimize Window">
               <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -81,7 +77,7 @@ import { ChatWindowComponent } from '../apps/chat-window/chat-window.component';
               </svg>
             </button>
             <button 
-              class="w-7 h-7 rounded-lg hover:bg-white/10 active:bg-white/20 flex items-center justify-center text-[#8C94A8] hover:text-white transition-colors border border-transparent hover:border-white/10"
+              class="w-7 h-7 rounded-lg hover:bg-white/10 active:bg-white/20 flex items-center justify-center text-on-surface-variant hover:text-white transition-colors border border-transparent hover:border-white/10"
               (click)="onMaximize()"
               title="Toggle Fullscreen">
               @if (bounds().isMaximized) {
@@ -99,7 +95,7 @@ import { ChatWindowComponent } from '../apps/chat-window/chat-window.component';
               }
             </button>
             <button 
-              class="w-7 h-7 rounded-lg hover:bg-[#FF4D6D]/20 active:bg-[#FF4D6D]/40 flex items-center justify-center text-[#8C94A8] hover:text-[#FF4D6D] transition-colors border border-transparent hover:border-[#FF4D6D]/30"
+              class="w-7 h-7 rounded-lg hover:bg-error/20 active:bg-error/40 flex items-center justify-center text-on-surface-variant hover:text-error transition-colors border border-transparent hover:border-error/30"
               (click)="onClose()"
               title="Close Application">
               <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -111,10 +107,9 @@ import { ChatWindowComponent } from '../apps/chat-window/chat-window.component';
         </div>
       </div>
 
-      <!-- Live Pull-Down-to-Dismiss Visual Indicator -->
       @if (pullDistance() > 40) {
-        <div class="absolute top-14 left-1/2 -translate-x-1/2 z-40 px-3.5 py-1.5 rounded-full bg-[#151922]/95 border border-[#E0218A]/50 text-white shadow-2xl flex items-center space-x-2 pointer-events-none transition-all">
-          <span class="material-icons text-sm text-[#FF2A9D] animate-bounce">
+        <div class="absolute top-14 left-1/2 -translate-x-1/2 z-40 px-3 py-1.5 rounded-lg bg-surface-panel border border-magenta/40 text-white flex items-center space-x-2 pointer-events-none">
+          <span class="material-icons text-sm text-magenta-glow">
             {{ pullDistance() > 95 ? 'close' : 'south' }}
           </span>
           <span class="text-[11px] font-display font-medium">
@@ -123,8 +118,7 @@ import { ChatWindowComponent } from '../apps/chat-window/chat-window.component';
         </div>
       }
 
-      <!-- Window Body -->
-      <div class="window-body flex-1 overflow-auto bg-[#0E1015]/95 p-3 md:p-4 relative">
+      <div class="window-body flex-1 overflow-auto bg-surface/95 p-3 md:p-4 relative">
         @switch (descriptor().entryComponent) {
           @case ('AppStoreComponent') {
             <app-app-store [pid]="descriptor().pid" />
@@ -167,63 +161,57 @@ import { ChatWindowComponent } from '../apps/chat-window/chat-window.component';
           }
         }
         
-        <!-- Large Touch-Accessible Resize Handles (Desktop & Touch) -->
         @if (!bounds().isMaximized) {
           <div class="absolute right-0 top-0 bottom-0 w-4 cursor-col-resize touch-none" (mousedown)="startResize($event, 'right')" (touchstart)="startResize($event, 'right')"></div>
           <div class="absolute left-0 right-0 bottom-0 h-4 cursor-row-resize touch-none" (mousedown)="startResize($event, 'bottom')" (touchstart)="startResize($event, 'bottom')"></div>
           <div class="absolute right-0 bottom-0 w-8 h-8 cursor-nwse-resize touch-none flex items-end justify-end p-1" (mousedown)="startResize($event, 'bottom-right')" (touchstart)="startResize($event, 'bottom-right')">
-            <!-- Tactile Corner Resize Grip -->
-            <div class="w-3 h-3 border-r-2 border-b-2 border-[#20B2AA]/50 rounded-br pointer-events-none"></div>
+            <div class="w-3 h-3 border-r-2 border-b-2 border-secondary/50 rounded-br pointer-events-none"></div>
           </div>
         }
       </div>
 
-      <!-- Tall Screens & Mobile Thumb Reachability Bottom Bar -->
       @if (windowMgr.isMobile() || windowMgr.isTallScreen()) {
-        <div class="h-12 bg-[#151922]/95 border-t border-white/10 px-3 flex items-center justify-between select-none shrink-0 z-30 touch-none">
-          <!-- Window Navigation: Previous / Next Window Buttons -->
+        <div class="h-12 bg-surface-panel/95 border-t border-white/10 px-3 flex items-center justify-between select-none shrink-0 z-30 touch-none">
           <div class="flex items-center space-x-1.5">
             <button 
-              class="w-8 h-8 rounded-lg bg-white/5 active:bg-white/20 flex items-center justify-center text-[#8C94A8] active:text-white transition-colors"
+              class="w-8 h-8 rounded-lg bg-white/5 active:bg-white/20 flex items-center justify-center text-on-surface-variant active:text-white transition-colors"
               (click)="onPrevWindow($event)"
               title="Previous Open Window">
               <span class="material-icons text-base">chevron_left</span>
             </button>
-            <span class="text-[10px] font-mono text-[#8C94A8] px-1.5 py-0.5 rounded bg-white/5 border border-white/5">
+            <span class="text-[10px] font-mono text-on-surface-variant px-1.5 py-0.5 rounded bg-white/5 border border-white/5">
               {{ windowPosition().current }}/{{ windowPosition().total }}
             </span>
             <button 
-              class="w-8 h-8 rounded-lg bg-white/5 active:bg-white/20 flex items-center justify-center text-[#8C94A8] active:text-white transition-colors"
+              class="w-8 h-8 rounded-lg bg-white/5 active:bg-white/20 flex items-center justify-center text-on-surface-variant active:text-white transition-colors"
               (click)="onNextWindow($event)"
               title="Next Open Window">
               <span class="material-icons text-base">chevron_right</span>
             </button>
           </div>
 
-          <!-- Center Touch Gesture Pill for Easy Thumb Swipe -->
           <div 
-            class="flex flex-col items-center justify-center px-4 py-1 rounded-full bg-white/5 border border-white/10 active:bg-[#20B2AA]/20 cursor-grab active:cursor-grabbing"
+            class="flex flex-col items-center justify-center px-4 py-1 rounded-full bg-white/5 border border-white/10 active:bg-secondary/20 cursor-grab active:cursor-grabbing"
             (touchstart)="startBottomGesture($event)">
             <div class="w-8 h-1 rounded-full bg-white/40"></div>
-            <span class="text-[8px] font-mono text-[#8C94A8] uppercase tracking-widest mt-0.5">Gesture</span>
+            <span class="text-[8px] font-mono text-on-surface-variant uppercase tracking-widest mt-0.5">Gesture</span>
           </div>
 
-          <!-- Thumb Actions: Minimize, Maximize, Close -->
           <div class="flex items-center space-x-1">
             <button 
-              class="w-8 h-8 rounded-lg bg-white/5 active:bg-white/20 flex items-center justify-center text-[#8C94A8] active:text-white transition-colors"
+              class="w-8 h-8 rounded-lg bg-white/5 active:bg-white/20 flex items-center justify-center text-on-surface-variant active:text-white transition-colors"
               (click)="onMinimize()"
               title="Minimize to Dock">
               <span class="material-icons text-base">keyboard_arrow_down</span>
             </button>
             <button 
-              class="w-8 h-8 rounded-lg bg-white/5 active:bg-white/20 flex items-center justify-center text-[#8C94A8] active:text-white transition-colors"
+              class="w-8 h-8 rounded-lg bg-white/5 active:bg-white/20 flex items-center justify-center text-on-surface-variant active:text-white transition-colors"
               (click)="onMaximize()"
               title="Toggle Window Size">
               <span class="material-icons text-base">{{ bounds().isMaximized ? 'fullscreen_exit' : 'fullscreen' }}</span>
             </button>
             <button 
-              class="w-8 h-8 rounded-lg bg-[#FF4D6D]/15 active:bg-[#FF4D6D]/35 flex items-center justify-center text-[#FF4D6D] transition-colors"
+              class="w-8 h-8 rounded-lg bg-error/15 active:bg-error/35 flex items-center justify-center text-error transition-colors"
               (click)="onClose()"
               title="Close Application">
               <span class="material-icons text-base">close</span>

@@ -9,21 +9,21 @@ import { NativeFederationService } from '../../../services/native-federation.ser
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   template: `
-    <div class="space-y-4 p-2 font-['Lexend'] text-[#F5FFFA]">
+    <div class="space-y-4 p-2 font-body text-on-surface">
       <!-- Header Bar -->
       <div class="flex items-center justify-between border-b border-white/10 pb-3 gap-2">
         <div class="flex items-center space-x-3 overflow-hidden">
-          <div class="w-9 h-9 rounded-xl bg-[#20B2AA]/15 border border-[#20B2AA]/30 flex items-center justify-center text-[#20B2AA] shrink-0">
+          <div class="w-9 h-9 rounded-xl bg-secondary/15 border border-secondary/30 flex items-center justify-center text-secondary shrink-0">
             <span class="material-icons text-lg">hub</span>
           </div>
           <div class="truncate">
-            <h3 class="font-['Comfortaa'] font-bold text-sm text-[#F5FFFA] flex items-center space-x-2">
+            <h3 class="font-display font-bold text-sm text-on-surface flex items-center space-x-2">
               <span class="truncate">{{ remoteTitle() }}</span>
-              <span class="text-[9px] font-mono px-2 py-0.5 rounded-full bg-[#20B2AA]/20 text-[#20B2AA] border border-[#20B2AA]/30 shrink-0">
+              <span class="text-[9px] font-mono px-2 py-0.5 rounded-full bg-secondary/20 text-secondary border border-secondary/30 shrink-0">
                 Native Federation
               </span>
             </h3>
-            <p class="text-[11px] text-[#8C94A8] font-mono truncate">
+            <p class="text-[11px] text-on-surface-variant font-mono truncate">
               Remote: {{ remoteName() }} • Module: {{ exposedModule() }}
             </p>
           </div>
@@ -32,29 +32,29 @@ import { NativeFederationService } from '../../../services/native-federation.ser
         <div class="flex items-center space-x-2 shrink-0">
           <span 
             class="text-[11px] px-2.5 py-1 rounded-full font-mono border flex items-center space-x-1.5"
-            [class.bg-[#3EB991]/20]="status() === 'ONLINE'"
-            [class.text-[#3EB991]]="status() === 'ONLINE'"
-            [class.border-[#3EB991]/40]="status() === 'ONLINE'"
-            [class.bg-[#6A0DAD]/20]="status() === 'STANDBY' || status() === 'CONNECTING'"
-            [class.text-[#20B2AA]]="status() === 'STANDBY' || status() === 'CONNECTING'"
-            [class.border-[#20B2AA]/30]="status() === 'STANDBY' || status() === 'CONNECTING'"
+            [class.bg-tertiary/20]="status() === 'ONLINE'"
+            [class.text-tertiary]="status() === 'ONLINE'"
+            [class.border-tertiary/40]="status() === 'ONLINE'"
+            [class.bg-primary/20]="status() === 'STANDBY' || status() === 'CONNECTING'"
+            [class.text-secondary]="status() === 'STANDBY' || status() === 'CONNECTING'"
+            [class.border-secondary/30]="status() === 'STANDBY' || status() === 'CONNECTING'"
             [class.bg-rose-500/20]="status() === 'ERROR'"
             [class.text-rose-400]="status() === 'ERROR'"
             [class.border-rose-500/30]="status() === 'ERROR'">
             <span class="w-1.5 h-1.5 rounded-full" 
-              [class.bg-[#3EB991]]="status() === 'ONLINE'"
-              [class.bg-[#20B2AA]]="status() === 'STANDBY' || status() === 'CONNECTING'"
+              [class.bg-tertiary]="status() === 'ONLINE'"
+              [class.bg-secondary]="status() === 'STANDBY' || status() === 'CONNECTING'"
               [class.animate-ping]="status() === 'CONNECTING'"
               [class.bg-rose-400]="status() === 'ERROR'"></span>
             <span>{{ status() }}</span>
             @if (latencyMs() > 0) {
-              <span class="text-[10px] text-[#8C94A8]">({{ latencyMs() }}ms)</span>
+              <span class="text-[10px] text-on-surface-variant">({{ latencyMs() }}ms)</span>
             }
           </span>
 
           <button 
             type="button"
-            class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 active:bg-white/20 text-[#F5FFFA] text-[11px] font-mono border border-white/10 transition-colors flex items-center space-x-1 cursor-pointer"
+            class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 active:bg-white/20 text-on-surface text-[11px] font-mono border border-white/10 transition-colors flex items-center space-x-1 cursor-pointer"
             (click)="testProbe()"
             [disabled]="isTesting()">
             <span class="material-icons text-xs" [class.animate-spin]="isTesting()">refresh</span>
@@ -65,62 +65,62 @@ import { NativeFederationService } from '../../../services/native-federation.ser
 
       <!-- Federation Diagnostic Cards -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <div class="bg-[#121620]/80 border border-white/10 rounded-xl p-3 backdrop-blur-md">
-          <span class="text-[10px] text-[#8C94A8] font-mono uppercase tracking-wider block">Manifest Route</span>
-          <span class="text-xs font-semibold text-[#20B2AA] mt-1 block truncate font-mono">
+        <div class="bg-surface-deep/80 border border-white/10 rounded-xl p-3 backdrop-blur-md">
+          <span class="text-[10px] text-on-surface-variant font-mono uppercase tracking-wider block">Manifest Route</span>
+          <span class="text-xs font-semibold text-secondary mt-1 block truncate font-mono">
             {{ remoteUrl() }}
           </span>
-          <span class="text-[10px] text-[#8C94A8] mt-1 block">federation.manifest.json</span>
+          <span class="text-[10px] text-on-surface-variant mt-1 block">federation.manifest.json</span>
         </div>
 
-        <div class="bg-[#121620]/80 border border-white/10 rounded-xl p-3 backdrop-blur-md">
-          <span class="text-[10px] text-[#8C94A8] font-mono uppercase tracking-wider block">Module Loader</span>
-          <span class="text-xs font-semibold text-[#3EB991] mt-1 block font-mono">
+        <div class="bg-surface-deep/80 border border-white/10 rounded-xl p-3 backdrop-blur-md">
+          <span class="text-[10px] text-on-surface-variant font-mono uppercase tracking-wider block">Module Loader</span>
+          <span class="text-xs font-semibold text-tertiary mt-1 block font-mono">
             &#64;angular-architects/native-federation
           </span>
-          <span class="text-[10px] text-[#8C94A8] mt-1 block">ESM Browser Native Import Maps</span>
+          <span class="text-[10px] text-on-surface-variant mt-1 block">ESM Browser Native Import Maps</span>
         </div>
 
-        <div class="bg-[#121620]/80 border border-white/10 rounded-xl p-3 backdrop-blur-md">
-          <span class="text-[10px] text-[#8C94A8] font-mono uppercase tracking-wider block">Network State</span>
-          <span class="text-xs font-semibold mt-1 block font-mono" [class.text-[#3EB991]]="!federationService.isOffline()" [class.text-amber-400]="federationService.isOffline()">
+        <div class="bg-surface-deep/80 border border-white/10 rounded-xl p-3 backdrop-blur-md">
+          <span class="text-[10px] text-on-surface-variant font-mono uppercase tracking-wider block">Network State</span>
+          <span class="text-xs font-semibold mt-1 block font-mono" [class.text-tertiary]="!federationService.isOffline()" [class.text-amber-400]="federationService.isOffline()">
             {{ federationService.isOffline() ? 'Offline (Cache Enabled)' : 'Online Connected' }}
           </span>
-          <span class="text-[10px] text-[#8C94A8] mt-1 block">PWA service worker supported</span>
+          <span class="text-[10px] text-on-surface-variant mt-1 block">PWA service worker supported</span>
         </div>
       </div>
 
       <!-- Module Mounting Host & Container -->
-      <div class="bg-[#10141D] border border-white/10 rounded-xl p-4">
+      <div class="bg-surface-deep border border-white/10 rounded-xl p-4">
         <div class="flex items-center justify-between mb-3 border-b border-white/5 pb-2">
-          <h4 class="font-['Comfortaa'] font-semibold text-xs text-[#F5FFFA] flex items-center space-x-2">
-            <span class="material-icons text-sm text-[#20B2AA]">memory</span>
+          <h4 class="font-display font-semibold text-xs text-on-surface flex items-center space-x-2">
+            <span class="material-icons text-sm text-secondary">memory</span>
             <span>Remote Micro-Frontend Host</span>
           </h4>
-          <span class="text-[10px] font-mono text-[#8C94A8]">PID: {{ pid() }}</span>
+          <span class="text-[10px] font-mono text-on-surface-variant">PID: {{ pid() }}</span>
         </div>
 
         <!-- Dynamic Component ViewContainer Host -->
         <div #dynamicMountContainer></div>
 
         @if (status() === 'ONLINE') {
-          <div class="p-3.5 rounded-xl bg-[#3EB991]/10 border border-[#3EB991]/30 text-[#F5FFFA] space-y-1.5">
-            <div class="flex items-center space-x-2 text-[#3EB991]">
+          <div class="p-3.5 rounded-xl bg-tertiary/10 border border-tertiary/30 text-on-surface space-y-1.5">
+            <div class="flex items-center space-x-2 text-tertiary">
               <span class="material-icons text-sm">check_circle</span>
               <span class="font-semibold text-xs">Remote Module Verified Active</span>
             </div>
-            <p class="text-xs text-[#F5FFFA]/90 leading-relaxed font-['Lexend']">
+            <p class="text-xs text-on-surface/90 leading-relaxed font-body">
               The remote micro-frontend entry has been registered and verified in the host import map. Shared dependencies execute in the host zone without duplicate bundles.
             </p>
           </div>
         } @else {
-          <div class="p-4 rounded-xl bg-white/5 border border-white/10 text-[#F5FFFA] space-y-3">
+          <div class="p-4 rounded-xl bg-white/5 border border-white/10 text-on-surface space-y-3">
             <div class="flex items-start space-x-3">
-              <span class="material-icons text-lg text-[#20B2AA] mt-0.5">cloud_queue</span>
+              <span class="material-icons text-lg text-secondary mt-0.5">cloud_queue</span>
               <div>
                 <h5 class="font-semibold text-xs text-white">Standby Sandbox Container</h5>
-                <p class="text-xs text-[#8C94A8] mt-1 leading-relaxed">
-                  Remote <code class="text-[#20B2AA] font-mono">{{ remoteName() }}</code> is configured at <code class="text-[#3EB991] font-mono">{{ remoteUrl() }}</code>.
+                <p class="text-xs text-on-surface-variant mt-1 leading-relaxed">
+                  Remote <code class="text-secondary font-mono">{{ remoteName() }}</code> is configured at <code class="text-tertiary font-mono">{{ remoteUrl() }}</code>.
                   When running decoupled without an active remote server, the micro app runs in isolated local sandbox mode to guarantee system stability.
                 </p>
               </div>
@@ -129,7 +129,7 @@ import { NativeFederationService } from '../../../services/native-federation.ser
             <div class="flex items-center space-x-2.5 pt-1">
               <button 
                 type="button"
-                class="px-3.5 py-1.5 rounded-lg bg-[#20B2AA] hover:bg-[#1E9F98] text-[#0E1015] text-xs font-bold transition-all flex items-center space-x-1.5 shadow-md cursor-pointer"
+                class="px-3.5 py-1.5 rounded-lg bg-secondary hover:bg-secondary text-surface text-xs font-bold transition-all flex items-center space-x-1.5 shadow-md cursor-pointer"
                 (click)="testProbe()">
                 <span class="material-icons text-xs">bolt</span>
                 <span>Probe Endpoint</span>
@@ -148,18 +148,18 @@ import { NativeFederationService } from '../../../services/native-federation.ser
       </div>
 
       <!-- Live Diagnostics Telemetry Log -->
-      <div class="bg-[#090C12] border border-white/10 rounded-xl p-3 font-mono text-[10px]">
-        <div class="flex items-center justify-between text-[#8C94A8] border-b border-white/5 pb-1.5 mb-2">
+      <div class="bg-surface-lowest border border-white/10 rounded-xl p-3 font-mono text-[10px]">
+        <div class="flex items-center justify-between text-on-surface-variant border-b border-white/5 pb-1.5 mb-2">
           <span class="flex items-center space-x-1.5">
-            <span class="material-icons text-xs text-[#20B2AA]">terminal</span>
+            <span class="material-icons text-xs text-secondary">terminal</span>
             <span>Native Federation Diagnostic Stream</span>
           </span>
-          <span class="text-[9px] text-[#20B2AA]">Host: Port 3000</span>
+          <span class="text-[9px] text-secondary">Host: Port 3000</span>
         </div>
         <div class="space-y-1 max-h-32 overflow-y-auto select-text text-white/80 pr-1">
           @for (log of federationService.loadLog(); track log) {
             <div class="leading-relaxed font-mono">
-              <span class="text-[#8C94A8]">{{ log }}</span>
+              <span class="text-on-surface-variant">{{ log }}</span>
             </div>
           }
         </div>

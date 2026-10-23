@@ -13,76 +13,71 @@ import { UserRole, AuditCategory, AuditSeverity } from '../../models/webos.model
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, DatePipe],
   template: `
-    <header class="h-10 bg-[#0E1015]/95 backdrop-blur-md border-b border-white/10 px-4 flex items-center justify-between text-xs text-[#8C94A8] z-40 select-none relative">
-      <!-- Left: Brand & Tenant Info -->
+    <header class="h-10 bg-surface border-b border-white/10 px-4 flex items-center justify-between text-xs text-on-surface-variant z-40 select-none relative">
       <div class="flex items-center space-x-4">
-        <div class="flex items-center space-x-2 text-[#F5FFFA] font-display font-semibold">
-          <span class="w-2.5 h-2.5 rounded-full bg-[#E0218A] shadow-[0_0_10px_#E0218A]"></span>
-          <span>Verdigris WebOS</span>
-          <span class="text-[10px] text-[#20B2AA] bg-[#20B2AA]/10 px-1.5 py-0.5 rounded border border-[#20B2AA]/20 font-mono">VIP v2.4</span>
+        <div class="flex items-center space-x-2 text-on-surface font-display font-semibold tracking-[0.12em]">
+          <span class="w-2 h-2 rounded-xs bg-magenta" aria-hidden="true"></span>
+          <span>Λ Ξ V O S</span>
         </div>
-        
+
         <div class="hidden md:flex items-center space-x-2 border-l border-white/10 pl-4">
-          <span class="material-icons text-xs text-[#3EB991]">cloud_done</span>
+          <span class="material-icons text-xs text-tertiary">cloud_done</span>
           <span>Tenant: <strong class="text-white">{{ tenant().tenantId }}</strong></span>
         </div>
       </div>
 
-      <!-- Right: User Identity, Security Sentinel, Notifications & Clock -->
       <div class="flex items-center space-x-3">
-        <!-- Security & Audit Quick Launcher -->
         <button
           class="hidden sm:flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 text-white transition-colors"
           (click)="openSecurityAuditApp()"
           title="Open Security Governance & Audit Trail">
-          <span class="material-icons text-xs text-[#E0218A]">verified_user</span>
+          <span class="material-icons text-xs text-magenta">verified_user</span>
           <span class="font-display text-[11px]">Audit & RBAC</span>
           @if (auditService.securityAlertCount() > 0) {
-            <span class="w-1.5 h-1.5 rounded-full bg-[#FF2A9D] shadow-[0_0_6px_#FF2A9D]"></span>
+            <span class="w-1.5 h-1.5 rounded-xs bg-magenta-glow" aria-hidden="true"></span>
           }
         </button>
 
-        <!-- User Role Switcher Dropdown Trigger -->
         <div class="relative">
           <button
             class="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 text-white transition-colors"
             (click)="toggleUserMenu()"
             title="Switch User Identity & Role">
-            <span class="material-icons text-xs text-[#20B2AA]">{{ authRbac.currentUser().avatar }}</span>
+            <span class="material-icons text-xs text-secondary">{{ authRbac.currentUser().avatar }}</span>
             <span class="font-medium text-[11px]">{{ authRbac.currentUser().name.split(' ')[0] }}</span>
             <span
               class="text-[9px] px-1.5 py-0.2 rounded font-mono uppercase font-bold"
-              [class.bg-[#E0218A]/20]="authRbac.currentRole() === 'administrator'"
-              [class.text-[#FF2A9D]]="authRbac.currentRole() === 'administrator'"
-              [class.bg-[#20B2AA]/20]="authRbac.currentRole() === 'content_creator'"
-              [class.text-[#20B2AA]]="authRbac.currentRole() === 'content_creator'"
+              [class.bg-magenta/20]="authRbac.currentRole() === 'administrator'"
+              [class.text-magenta-glow]="authRbac.currentRole() === 'administrator'"
+              [class.bg-secondary/20]="authRbac.currentRole() === 'content_creator'"
+              [class.text-secondary]="authRbac.currentRole() === 'content_creator'"
               [class.bg-white/10]="authRbac.currentRole() === 'general_user'"
-              [class.text-[#8C94A8]]="authRbac.currentRole() === 'general_user'">
+              [class.text-on-surface-variant]="authRbac.currentRole() === 'general_user'">
               {{ authRbac.currentRole() === 'administrator' ? 'admin' : (authRbac.currentRole() === 'content_creator' ? 'creator' : 'user') }}
             </span>
-            <span class="material-icons text-[10px] text-[#8C94A8]">expand_more</span>
+            <span class="material-icons text-[10px] text-on-surface-variant">expand_more</span>
           </button>
 
           <!-- User Role Switcher Dropdown Menu -->
           @if (isUserMenuOpen()) {
-            <div class="absolute right-0 top-11 w-72 max-w-[calc(100vw-1.5rem)] bg-[#151922] border border-white/10 rounded-2xl p-3 shadow-2xl z-50 space-y-2">
+            <div class="absolute right-0 top-11 w-72 max-w-[calc(100vw-1.5rem)] bg-surface-panel border border-white/10 rounded-xl p-3 z-50 space-y-2">
               <div class="px-2 py-1 border-b border-white/5 flex items-center justify-between">
-                <span class="text-[10px] font-mono text-[#8C94A8] uppercase tracking-wider">Switch Identity Profile</span>
-                <span class="text-[10px] text-[#20B2AA] font-mono">RBAC Active</span>
+                <span class="text-[10px] font-mono text-on-surface-variant uppercase tracking-wider">Switch Identity Profile</span>
+                <span class="text-[10px] text-secondary font-mono">RBAC Active</span>
               </div>
 
               @for (profile of authRbac.allProfiles(); track profile.id) {
                 <button
                   class="w-full p-2 rounded-xl text-left transition-all flex items-center justify-between hover:bg-white/10"
-                  [class.bg-[#E0218A]/15]="authRbac.currentUser().id === profile.id"
+                  [class.bg-magenta/15]="authRbac.currentUser().id === profile.id"
                   [class.border]="authRbac.currentUser().id === profile.id"
-                  [class.border-[#E0218A]/30]="authRbac.currentUser().id === profile.id"
+                  [class.border-magenta/30]="authRbac.currentUser().id === profile.id"
                   (click)="selectUser(profile.id)">
                   <div class="flex items-center space-x-2.5">
-                    <span class="material-icons text-base text-[#20B2AA]">{{ profile.avatar }}</span>
+                    <span class="material-icons text-base text-secondary">{{ profile.avatar }}</span>
                     <div>
                       <p class="font-display font-semibold text-white text-xs">{{ profile.name }}</p>
-                      <p class="text-[10px] text-[#8C94A8]">{{ profile.department }}</p>
+                      <p class="text-[10px] text-on-surface-variant">{{ profile.department }}</p>
                     </div>
                   </div>
                   <span class="text-[9px] px-1.5 py-0.5 rounded font-mono font-bold uppercase bg-white/5 text-white">
@@ -91,7 +86,7 @@ import { UserRole, AuditCategory, AuditSeverity } from '../../models/webos.model
                 </button>
               }
 
-              <div class="pt-2 border-t border-white/5 text-[10px] text-[#8C94A8] px-2 flex items-center justify-between">
+              <div class="pt-2 border-t border-white/5 text-[10px] text-on-surface-variant px-2 flex items-center justify-between">
                 <span>Active Permissions:</span>
                 <span class="text-white font-mono font-bold">{{ authRbac.currentUser().permissions.length }}</span>
               </div>
@@ -105,9 +100,9 @@ import { UserRole, AuditCategory, AuditSeverity } from '../../models/webos.model
             class="relative w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 flex items-center justify-center text-white transition-colors"
             (click)="toggleNotifications()"
             title="Notification Center">
-            <span class="material-icons text-sm text-[#F5FFFA]">notifications</span>
+            <span class="material-icons text-sm text-on-surface">notifications</span>
             @if (notificationService.unreadCount() > 0) {
-              <span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#E0218A] text-white text-[9px] font-bold flex items-center justify-center shadow-[0_0_8px_#E0218A]">
+              <span class="absolute -top-1 -right-1 min-w-4 h-4 px-0.5 rounded-md bg-magenta text-white text-[9px] font-bold flex items-center justify-center">
                 {{ notificationService.unreadCount() }}
               </span>
             }
@@ -115,23 +110,23 @@ import { UserRole, AuditCategory, AuditSeverity } from '../../models/webos.model
 
           <!-- Notification Drawer / Dropdown -->
           @if (isNotificationsOpen()) {
-            <div class="absolute right-0 top-11 w-80 sm:w-96 max-w-[calc(100vw-1.5rem)] bg-[#151922] border border-white/10 rounded-2xl p-4 shadow-2xl z-50 space-y-3">
+            <div class="absolute right-0 top-11 w-80 sm:w-96 max-w-[calc(100vw-1.5rem)] bg-surface-panel border border-white/10 rounded-xl p-3 z-50 space-y-3">
               <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
-                <div class="flex items-center space-x-2">
-                  <span class="material-icons text-sm text-[#FF2A9D]">notifications_active</span>
+                <div class="flex items-center space-x-2 min-w-0">
+                  <span class="material-icons text-sm text-magenta-glow">notifications_active</span>
                   <span class="font-display font-semibold text-white text-xs">Notification Center</span>
-                  <span class="text-[10px] px-1.5 py-0.2 rounded-full bg-[#E0218A]/20 text-[#FF2A9D] font-mono">
+                  <span class="text-[10px] font-mono text-magenta-glow shrink-0">
                     {{ notificationService.unreadCount() }} unread
                   </span>
                 </div>
                 <div class="flex items-center space-x-1">
                   <button
-                    class="text-[10px] text-[#20B2AA] hover:underline px-1.5 py-0.5"
+                    class="text-[10px] text-secondary hover:underline px-1.5 py-0.5"
                     (click)="notificationService.markAllAsRead()">
                     Mark all read
                   </button>
                   <button
-                    class="text-[10px] text-[#8C94A8] hover:text-white px-1.5 py-0.5"
+                    class="text-[10px] text-on-surface-variant hover:text-white px-1.5 py-0.5"
                     (click)="notificationService.clearAll()">
                     Clear
                   </button>
@@ -144,15 +139,15 @@ import { UserRole, AuditCategory, AuditSeverity } from '../../models/webos.model
                   <div
                     class="p-2.5 rounded-xl border transition-all text-xs flex items-start space-x-2.5"
                     [class.bg-white/5]="notif.read"
-                    [class.bg-[#E0218A]/10]="!notif.read"
+                    [class.bg-magenta/10]="!notif.read"
                     [class.border-white/5]="notif.read"
-                    [class.border-[#E0218A]/30]="!notif.read">
+                    [class.border-magenta/30]="!notif.read">
                     <span 
                       class="material-icons text-base mt-0.5"
-                      [class.text-[#20B2AA]]="notif.category === 'task'"
-                      [class.text-[#3EB991]]="notif.category === 'update'"
-                      [class.text-[#FF2A9D]]="notif.category === 'security'"
-                      [class.text-[#6A0DAD]]="notif.category === 'message'">
+                      [class.text-secondary]="notif.category === 'task'"
+                      [class.text-tertiary]="notif.category === 'update'"
+                      [class.text-magenta-glow]="notif.category === 'security'"
+                      [class.text-primary]="notif.category === 'message'">
                       @switch (notif.category) {
                         @case ('task') { assignment }
                         @case ('update') { update }
@@ -165,19 +160,19 @@ import { UserRole, AuditCategory, AuditSeverity } from '../../models/webos.model
                     <div class="flex-1 overflow-hidden">
                       <div class="flex items-center justify-between">
                         <p class="font-display font-semibold text-white text-[11px] truncate">{{ notif.title }}</p>
-                        <span class="text-[9px] text-[#8C94A8] font-mono shrink-0 ml-1">
+                        <span class="text-[9px] text-on-surface-variant font-mono shrink-0 ml-1">
                           {{ notif.timestamp | date:'HH:mm' }}
                         </span>
                       </div>
-                      <p class="text-[10px] text-[#8C94A8] mt-0.5 leading-snug">{{ notif.message }}</p>
+                      <p class="text-[10px] text-on-surface-variant mt-0.5 leading-snug">{{ notif.message }}</p>
                       @if (notif.sourceApp) {
-                        <span class="text-[9px] text-[#20B2AA] font-mono mt-1 inline-block">via {{ notif.sourceApp }}</span>
+                        <span class="text-[9px] text-secondary font-mono mt-1 inline-block">via {{ notif.sourceApp }}</span>
                       }
                     </div>
 
                     @if (!notif.read) {
                       <button 
-                        class="text-[#8C94A8] hover:text-white"
+                        class="text-on-surface-variant hover:text-white"
                         (click)="notificationService.markAsRead(notif.id)"
                         title="Mark as read">
                         <span class="material-icons text-xs">done</span>
@@ -187,8 +182,8 @@ import { UserRole, AuditCategory, AuditSeverity } from '../../models/webos.model
                 }
 
                 @if (notificationService.allNotifications().length === 0) {
-                  <div class="py-8 text-center text-[#8C94A8]">
-                    <span class="material-icons text-2xl mb-1 text-[#8C94A8]">notifications_paused</span>
+                  <div class="py-8 text-center text-on-surface-variant">
+                    <span class="material-icons text-2xl mb-1 text-on-surface-variant">notifications_paused</span>
                     <p class="text-xs">All clear! No notifications in your queue.</p>
                   </div>
                 }
@@ -196,20 +191,20 @@ import { UserRole, AuditCategory, AuditSeverity } from '../../models/webos.model
 
               <!-- Test Alert Dispatcher -->
               <div class="pt-2 border-t border-white/10 flex items-center justify-between">
-                <span class="text-[10px] text-[#8C94A8]">Simulate:</span>
+                <span class="text-[10px] text-on-surface-variant">Simulate:</span>
                 <div class="flex items-center space-x-1">
                   <button
-                    class="px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-[10px] text-[#3EB991]"
+                    class="px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-[10px] text-tertiary"
                     (click)="sendTestNotification('task')">
                     + Task
                   </button>
                   <button
-                    class="px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-[10px] text-[#20B2AA]"
+                    class="px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-[10px] text-secondary"
                     (click)="sendTestNotification('message')">
                     + Msg
                   </button>
                   <button
-                    class="px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-[10px] text-[#FF2A9D]"
+                    class="px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-[10px] text-magenta-glow"
                     (click)="sendTestNotification('update')">
                     + Update
                   </button>
@@ -221,7 +216,7 @@ import { UserRole, AuditCategory, AuditSeverity } from '../../models/webos.model
 
         <!-- Clock -->
         <div class="flex items-center space-x-2 bg-white/5 px-2.5 py-1 rounded-lg border border-white/5 text-white font-mono text-[11px]">
-          <span class="material-icons text-xs text-[#FF2A9D]">schedule</span>
+          <span class="material-icons text-xs text-magenta-glow">schedule</span>
           <span>{{ currentTime() }}</span>
         </div>
       </div>

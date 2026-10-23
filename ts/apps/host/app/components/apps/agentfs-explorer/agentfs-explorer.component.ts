@@ -13,13 +13,13 @@ import { VfsInode } from '../../../models/webos.models';
       <div class="flex items-center justify-between border-b border-white/10 pb-4">
         <div>
           <h2 class="font-display text-xl font-bold text-white flex items-center space-x-2">
-            <span class="material-icons text-[#20B2AA]">folder_special</span>
+            <span class="material-icons text-secondary">folder_special</span>
             <span>AgentFS Virtual Filesystem</span>
           </h2>
-          <p class="text-xs text-[#8C94A8] mt-1">SQLite/OPFS sandboxed filesystem with Copy-on-Write (CoW) snapshots & append-only tool audit logs.</p>
+          <p class="text-xs text-on-surface-variant mt-1">SQLite/OPFS sandboxed filesystem with Copy-on-Write (CoW) snapshots & append-only tool audit logs.</p>
         </div>
         <button
-          class="px-3.5 py-1.5 rounded-lg bg-[#20B2AA] hover:bg-[#20B2AA]/80 text-[#00201E] text-xs font-semibold transition-colors flex items-center space-x-1"
+          class="px-3.5 py-1.5 rounded-lg bg-secondary hover:bg-secondary/80 text-on-tertiary text-xs font-semibold transition-colors flex items-center space-x-1"
           (click)="createSnapshot()">
           <span class="material-icons text-xs">camera</span>
           <span>Create CoW Snapshot</span>
@@ -28,9 +28,9 @@ import { VfsInode } from '../../../models/webos.models';
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Inodes Tree -->
-        <div class="bg-[#151922] border border-white/10 rounded-xl p-4 space-y-3">
+        <div class="bg-surface-panel border border-white/10 rounded-xl p-4 space-y-3">
           <h3 class="font-display text-sm font-semibold text-white flex items-center space-x-2">
-            <span class="material-icons text-xs text-[#E0218A]">dns</span>
+            <span class="material-icons text-xs text-magenta">dns</span>
             <span>Filesystem Inodes (SQLite)</span>
           </h3>
           <div class="space-y-2">
@@ -38,36 +38,36 @@ import { VfsInode } from '../../../models/webos.models';
               <div 
                 role="button"
                 tabindex="0"
-                class="p-2.5 rounded-lg bg-white/5 border border-white/5 hover:border-white/20 transition-all cursor-pointer flex items-center justify-between outline-none focus:ring-2 focus:ring-[#E0218A]"
+                class="p-2.5 rounded-lg bg-white/5 border border-white/5 hover:border-white/20 transition-all cursor-pointer flex items-center justify-between outline-none focus:ring-2 focus:ring-magenta"
                 (click)="selectedInode.set(entry[1])"
                 (keydown.enter)="selectedInode.set(entry[1])">
                 <div class="flex items-center space-x-2">
-                  <span class="material-icons text-xs text-[#3EB991]">
+                  <span class="material-icons text-xs text-tertiary">
                     {{ entry[1].mode === 16877 ? 'folder' : 'insert_drive_file' }}
                   </span>
                   <span class="font-mono text-xs text-white">inode_#{{ entry[0] }}</span>
                 </div>
-                <span class="text-[10px] text-[#8C94A8]">{{ entry[1].size }} B</span>
+                <span class="text-[10px] text-on-surface-variant">{{ entry[1].size }} B</span>
               </div>
             }
           </div>
         </div>
 
         <!-- Inode Content Editor / Inspector -->
-        <div class="bg-[#151922] border border-white/10 rounded-xl p-4 space-y-3 lg:col-span-2">
+        <div class="bg-surface-panel border border-white/10 rounded-xl p-4 space-y-3 lg:col-span-2">
           <h3 class="font-display text-sm font-semibold text-white flex items-center space-x-2">
-            <span class="material-icons text-xs text-[#FF2A9D]">code</span>
+            <span class="material-icons text-xs text-magenta-glow">code</span>
             <span>Inode Data Payload & Tool Audit Logs</span>
           </h3>
 
           @if (selectedInode(); as node) {
             <div class="space-y-3">
-              <div class="flex items-center justify-between text-xs text-[#8C94A8] bg-white/5 p-2 rounded">
+              <div class="flex items-center justify-between text-xs text-on-surface-variant bg-white/5 p-2 rounded">
                 <span>Mode: {{ node.mode }}</span>
                 <span>Modified: {{ node.mtime | date:'medium' }}</span>
               </div>
               <textarea
-                class="w-full h-36 bg-[#0E1015] border border-white/10 rounded-lg p-3 text-xs text-white font-mono focus:outline-none focus:border-[#E0218A]"
+                class="w-full h-36 bg-surface border border-white/10 rounded-lg p-3 text-xs text-white font-mono focus:outline-none focus:border-magenta"
                 [value]="node.data || ''"
                 (input)="updateNodeData($event)"></textarea>
             </div>
@@ -79,11 +79,11 @@ import { VfsInode } from '../../../models/webos.models';
               @for (call of toolCalls()(); track call.id) {
                 <div class="p-2 rounded bg-white/5 border border-white/5 text-[11px] font-mono flex items-center justify-between">
                   <div class="flex items-center space-x-2">
-                    <span class="w-2 h-2 rounded-full" [class.bg-[#3EB991]]="call.completedAt" [class.bg-amber-400]="!call.completedAt"></span>
+                    <span class="w-2 h-2 rounded-full" [class.bg-tertiary]="call.completedAt" [class.bg-amber-400]="!call.completedAt"></span>
                     <strong class="text-white">{{ call.toolName }}</strong>
-                    <span class="text-[#8C94A8]">({{ call.id }})</span>
+                    <span class="text-on-surface-variant">({{ call.id }})</span>
                   </div>
-                  <span class="text-[#8C94A8]">{{ call.startedAt | date:'mediumTime' }}</span>
+                  <span class="text-on-surface-variant">{{ call.startedAt | date:'mediumTime' }}</span>
                 </div>
               }
             </div>

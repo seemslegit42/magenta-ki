@@ -19,17 +19,17 @@ import { NativeFederationService, RemoteDefinition } from '../../../services/nat
       <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-white/10 pb-4 gap-3">
         <div>
           <h2 class="font-display text-xl font-bold text-white flex items-center space-x-2">
-            <span class="material-icons text-[#E0218A]">storefront</span>
+            <span class="material-icons text-magenta">storefront</span>
             <span>Native Federation App Store</span>
           </h2>
-          <p class="text-xs text-[#8C94A8] mt-1">Angular 22 ApplicationBuilder & &#64;angular-architects/native-federation runtime mesh.</p>
+          <p class="text-xs text-on-surface-variant mt-1">Angular 22 ApplicationBuilder & &#64;angular-architects/native-federation runtime mesh.</p>
         </div>
         <div class="flex items-center space-x-2">
-          <span class="text-xs px-2.5 py-1 rounded-full bg-[#3EB991]/10 text-[#3EB991] border border-[#3EB991]/20 font-mono flex items-center space-x-1.5">
-            <span class="w-2 h-2 rounded-full bg-[#3EB991] animate-pulse"></span>
+          <span class="text-xs px-2.5 py-1 rounded-full bg-tertiary/10 text-tertiary border border-tertiary/20 font-mono flex items-center space-x-1.5">
+            <span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
             <span>Federation Host: app (Port 3000)</span>
           </span>
-          <span class="text-xs px-2.5 py-1 rounded-full bg-[#6A0DAD]/20 text-[#20B2AA] border border-[#20B2AA]/30 font-mono">
+          <span class="text-xs px-2.5 py-1 rounded-full bg-primary/20 text-secondary border border-secondary/30 font-mono">
             Angular 22.2.0
           </span>
         </div>
@@ -39,9 +39,9 @@ import { NativeFederationService, RemoteDefinition } from '../../../services/nat
       <div class="flex items-center space-x-2 border-b border-white/10 pb-2 text-xs font-mono">
         <button
           class="px-3.5 py-1.5 rounded-lg transition-colors flex items-center space-x-1.5"
-          [class.bg-[#6A0DAD]]="activeTab() === 'catalog'"
+          [class.bg-primary]="activeTab() === 'catalog'"
           [class.text-white]="activeTab() === 'catalog'"
-          [class.text-[#8C94A8]]="activeTab() !== 'catalog'"
+          [class.text-on-surface-variant]="activeTab() !== 'catalog'"
           [class.hover:bg-white/5]="activeTab() !== 'catalog'"
           (click)="activeTab.set('catalog')">
           <span class="material-icons text-sm">apps</span>
@@ -50,9 +50,9 @@ import { NativeFederationService, RemoteDefinition } from '../../../services/nat
 
         <button
           class="px-3.5 py-1.5 rounded-lg transition-colors flex items-center space-x-1.5"
-          [class.bg-[#6A0DAD]]="activeTab() === 'remotes'"
+          [class.bg-primary]="activeTab() === 'remotes'"
           [class.text-white]="activeTab() === 'remotes'"
-          [class.text-[#8C94A8]]="activeTab() !== 'remotes'"
+          [class.text-on-surface-variant]="activeTab() !== 'remotes'"
           [class.hover:bg-white/5]="activeTab() !== 'remotes'"
           (click)="activeTab.set('remotes')">
           <span class="material-icons text-sm">hub</span>
@@ -61,9 +61,9 @@ import { NativeFederationService, RemoteDefinition } from '../../../services/nat
 
         <button
           class="px-3.5 py-1.5 rounded-lg transition-colors flex items-center space-x-1.5"
-          [class.bg-[#6A0DAD]]="activeTab() === 'manifest'"
+          [class.bg-primary]="activeTab() === 'manifest'"
           [class.text-white]="activeTab() === 'manifest'"
-          [class.text-[#8C94A8]]="activeTab() !== 'manifest'"
+          [class.text-on-surface-variant]="activeTab() !== 'manifest'"
           [class.hover:bg-white/5]="activeTab() !== 'manifest'"
           (click)="activeTab.set('manifest')">
           <span class="material-icons text-sm">integration_instructions</span>
@@ -72,9 +72,9 @@ import { NativeFederationService, RemoteDefinition } from '../../../services/nat
 
         <button
           class="px-3.5 py-1.5 rounded-lg transition-colors flex items-center space-x-1.5"
-          [class.bg-[#6A0DAD]]="activeTab() === 'register'"
+          [class.bg-primary]="activeTab() === 'register'"
           [class.text-white]="activeTab() === 'register'"
-          [class.text-[#8C94A8]]="activeTab() !== 'register'"
+          [class.text-on-surface-variant]="activeTab() !== 'register'"
           [class.hover:bg-white/5]="activeTab() !== 'register'"
           (click)="activeTab.set('register')">
           <span class="material-icons text-sm">add_link</span>
@@ -86,24 +86,24 @@ import { NativeFederationService, RemoteDefinition } from '../../../services/nat
       @if (activeTab() === 'catalog') {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           @for (app of catalog; track app.id) {
-            <div class="bg-[#151922] border border-white/10 rounded-xl p-5 flex flex-col justify-between hover:border-[#E0218A]/50 transition-all group">
+            <div class="bg-surface-panel border border-white/10 rounded-xl p-5 flex flex-col justify-between hover:border-magenta/50 transition-all group">
               <div>
                 <div class="flex items-start justify-between mb-3">
-                  <div class="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[#FF2A9D] group-hover:bg-[#E0218A]/20 transition-colors">
+                  <div class="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-magenta-glow group-hover:bg-magenta/20 transition-colors">
                     <span class="material-icons text-2xl">{{ app.icon }}</span>
                   </div>
-                  <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-[#8C94A8]">
+                  <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-on-surface-variant">
                     {{ app.sandboxType }}
                   </span>
                 </div>
                 <h3 class="font-display font-semibold text-white text-sm">{{ app.name }}</h3>
-                <p class="text-xs text-[#8C94A8] mt-1.5 leading-relaxed">{{ app.description }}</p>
+                <p class="text-xs text-on-surface-variant mt-1.5 leading-relaxed">{{ app.description }}</p>
               </div>
 
               <div class="mt-6 pt-4 border-t border-white/5 flex items-center justify-between">
-                <span class="text-[11px] font-mono text-[#20B2AA]">{{ app.version }}</span>
+                <span class="text-[11px] font-mono text-secondary">{{ app.version }}</span>
                 <button
-                  class="px-3.5 py-1.5 rounded-lg bg-[#6A0DAD] hover:bg-[#E0218A] text-white text-xs font-medium transition-colors flex items-center space-x-1 shadow-md"
+                  class="px-3.5 py-1.5 rounded-lg bg-primary hover:bg-magenta text-white text-xs font-medium transition-colors flex items-center space-x-1 shadow-md"
                   (click)="launchApp(app)">
                   <span class="material-icons text-xs">play_arrow</span>
                   <span>Launch</span>
@@ -120,7 +120,7 @@ import { NativeFederationService, RemoteDefinition } from '../../../services/nat
           <div class="p-4 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
             <div>
               <h4 class="text-xs font-semibold text-white font-display">Native Federation Runtime Remotes</h4>
-              <p class="text-[11px] text-[#8C94A8] mt-0.5 font-mono">Dynamic remote entries registered in public/federation.manifest.json</p>
+              <p class="text-[11px] text-on-surface-variant mt-0.5 font-mono">Dynamic remote entries registered in public/federation.manifest.json</p>
             </div>
             <button
               class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-mono transition-colors flex items-center space-x-1"
@@ -132,20 +132,20 @@ import { NativeFederationService, RemoteDefinition } from '../../../services/nat
 
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             @for (remote of federationService.remotes(); track remote.name) {
-              <div class="bg-[#151922] border border-white/10 rounded-xl p-5 flex flex-col justify-between hover:border-[#20B2AA]/50 transition-all">
+              <div class="bg-surface-panel border border-white/10 rounded-xl p-5 flex flex-col justify-between hover:border-secondary/50 transition-all">
                 <div>
                   <div class="flex items-start justify-between mb-3">
-                    <div class="w-12 h-12 rounded-xl bg-[#6A0DAD]/30 border border-[#6A0DAD]/50 flex items-center justify-center text-[#20B2AA]">
+                    <div class="w-12 h-12 rounded-xl bg-primary/30 border border-primary/50 flex items-center justify-center text-secondary">
                       <span class="material-icons text-2xl">layers</span>
                     </div>
                     <span 
                       class="text-[10px] font-mono px-2 py-0.5 rounded border"
-                      [class.bg-[#3EB991]/20]="remote.status === 'ONLINE'"
-                      [class.text-[#3EB991]]="remote.status === 'ONLINE'"
-                      [class.border-[#3EB991]/40]="remote.status === 'ONLINE'"
-                      [class.bg-[#6A0DAD]/20]="remote.status === 'STANDBY' || remote.status === 'CONNECTING'"
-                      [class.text-[#20B2AA]]="remote.status === 'STANDBY' || remote.status === 'CONNECTING'"
-                      [class.border-[#20B2AA]/30]="remote.status === 'STANDBY' || remote.status === 'CONNECTING'"
+                      [class.bg-tertiary/20]="remote.status === 'ONLINE'"
+                      [class.text-tertiary]="remote.status === 'ONLINE'"
+                      [class.border-tertiary/40]="remote.status === 'ONLINE'"
+                      [class.bg-primary/20]="remote.status === 'STANDBY' || remote.status === 'CONNECTING'"
+                      [class.text-secondary]="remote.status === 'STANDBY' || remote.status === 'CONNECTING'"
+                      [class.border-secondary/30]="remote.status === 'STANDBY' || remote.status === 'CONNECTING'"
                       [class.bg-rose-500/20]="remote.status === 'ERROR'"
                       [class.text-rose-400]="remote.status === 'ERROR'"
                       [class.border-rose-500/30]="remote.status === 'ERROR'">
@@ -156,9 +156,9 @@ import { NativeFederationService, RemoteDefinition } from '../../../services/nat
                     </span>
                   </div>
                   <h3 class="font-display font-semibold text-white text-sm">{{ remote.name }}</h3>
-                  <p class="text-xs text-[#8C94A8] mt-1 leading-relaxed">{{ remote.description }}</p>
+                  <p class="text-xs text-on-surface-variant mt-1 leading-relaxed">{{ remote.description }}</p>
                   
-                  <div class="mt-3 p-2 rounded bg-black/30 border border-white/5 font-mono text-[10px] text-[#20B2AA] truncate" [title]="remote.url">
+                  <div class="mt-3 p-2 rounded bg-black/30 border border-white/5 font-mono text-[10px] text-secondary truncate" [title]="remote.url">
                     URI: {{ remote.url }}
                   </div>
                 </div>
@@ -172,7 +172,7 @@ import { NativeFederationService, RemoteDefinition } from '../../../services/nat
                   </button>
 
                   <button
-                    class="px-3.5 py-1.5 rounded-lg bg-[#6A0DAD] hover:bg-[#E0218A] text-white text-xs font-medium transition-colors flex items-center space-x-1 shadow-md"
+                    class="px-3.5 py-1.5 rounded-lg bg-primary hover:bg-magenta text-white text-xs font-medium transition-colors flex items-center space-x-1 shadow-md"
                     (click)="launchRemote(remote)">
                     <span class="material-icons text-xs">open_in_new</span>
                     <span>Mount MFE</span>
@@ -189,42 +189,42 @@ import { NativeFederationService, RemoteDefinition } from '../../../services/nat
         <div class="space-y-4">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- Left: Manifest JSON -->
-            <div class="bg-[#151922] border border-white/10 rounded-xl p-4">
+            <div class="bg-surface-panel border border-white/10 rounded-xl p-4">
               <div class="flex items-center justify-between border-b border-white/10 pb-2 mb-3">
                 <span class="text-xs font-mono font-semibold text-white flex items-center space-x-1.5">
-                  <span class="material-icons text-sm text-[#20B2AA]">description</span>
+                  <span class="material-icons text-sm text-secondary">description</span>
                   <span>public/federation.manifest.json</span>
                 </span>
-                <span class="text-[10px] font-mono text-[#3EB991]">Active Manifest</span>
+                <span class="text-[10px] font-mono text-tertiary">Active Manifest</span>
               </div>
-              <pre class="bg-black/50 p-3 rounded-lg border border-white/5 font-mono text-xs text-[#F5FFFA] overflow-x-auto leading-relaxed">{{ manifestJson() }}</pre>
+              <pre class="bg-black/50 p-3 rounded-lg border border-white/5 font-mono text-xs text-on-surface overflow-x-auto leading-relaxed">{{ manifestJson() }}</pre>
             </div>
 
             <!-- Right: Config & Shared Packages -->
-            <div class="bg-[#151922] border border-white/10 rounded-xl p-4 space-y-3">
+            <div class="bg-surface-panel border border-white/10 rounded-xl p-4 space-y-3">
               <div class="border-b border-white/10 pb-2">
                 <span class="text-xs font-mono font-semibold text-white flex items-center space-x-1.5">
-                  <span class="material-icons text-sm text-[#E0218A]">tune</span>
+                  <span class="material-icons text-sm text-magenta">tune</span>
                   <span>federation.config.mjs Specifications</span>
                 </span>
               </div>
 
               <div class="space-y-2 text-xs">
                 <div class="flex items-center justify-between p-2 rounded bg-white/5">
-                  <span class="text-[#8C94A8] font-mono">Builder Adapter</span>
-                  <span class="text-[#3EB991] font-mono font-semibold">&#64;angular-architects/native-federation:build</span>
+                  <span class="text-on-surface-variant font-mono">Builder Adapter</span>
+                  <span class="text-tertiary font-mono font-semibold">&#64;angular-architects/native-federation:build</span>
                 </div>
                 <div class="flex items-center justify-between p-2 rounded bg-white/5">
-                  <span class="text-[#8C94A8] font-mono">Shared Core</span>
-                  <span class="text-[#20B2AA] font-mono font-semibold">&#64;angular/core (singleton, strictVersion)</span>
+                  <span class="text-on-surface-variant font-mono">Shared Core</span>
+                  <span class="text-secondary font-mono font-semibold">&#64;angular/core (singleton, strictVersion)</span>
                 </div>
                 <div class="flex items-center justify-between p-2 rounded bg-white/5">
-                  <span class="text-[#8C94A8] font-mono">Chunk Strategy</span>
+                  <span class="text-on-surface-variant font-mono">Chunk Strategy</span>
                   <span class="text-white font-mono">denseChunking: true</span>
                 </div>
                 <div class="flex items-center justify-between p-2 rounded bg-white/5">
-                  <span class="text-[#8C94A8] font-mono">Import Engine</span>
-                  <span class="text-[#FF2A9D] font-mono">W3C Native Import Maps / es-module-shims</span>
+                  <span class="text-on-surface-variant font-mono">Import Engine</span>
+                  <span class="text-magenta-glow font-mono">W3C Native Import Maps / es-module-shims</span>
                 </div>
               </div>
             </div>
@@ -234,58 +234,58 @@ import { NativeFederationService, RemoteDefinition } from '../../../services/nat
 
       <!-- Tab 4: Register Custom Dynamic Remote -->
       @if (activeTab() === 'register') {
-        <div class="bg-[#151922] border border-white/10 rounded-xl p-6 max-w-xl mx-auto">
+        <div class="bg-surface-panel border border-white/10 rounded-xl p-6 max-w-xl mx-auto">
           <div class="border-b border-white/10 pb-3 mb-4">
             <h3 class="font-display font-semibold text-sm text-white">Register Dynamic Micro-Frontend</h3>
-            <p class="text-xs text-[#8C94A8] mt-0.5">Dynamically add and resolve remote modules without rebuilding the host.</p>
+            <p class="text-xs text-on-surface-variant mt-0.5">Dynamically add and resolve remote modules without rebuilding the host.</p>
           </div>
 
           <form (submit)="$event.preventDefault(); submitNewRemote()" class="space-y-4">
             <div>
-              <label for="remote-mfe-name" class="block text-xs font-mono text-[#8C94A8] mb-1">Remote Package Name</label>
+              <label for="remote-mfe-name" class="block text-xs font-mono text-on-surface-variant mb-1">Remote Package Name</label>
               <input
                 id="remote-mfe-name"
                 type="text"
                 [formField]="remoteForm.name"
                 placeholder="e.g. mfe-crm, billing-portal"
-                class="w-full bg-black/40 border border-white/15 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#20B2AA] font-mono" />
+                class="w-full bg-black/40 border border-white/15 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-secondary font-mono" />
             </div>
 
             <div>
-              <label for="remote-mfe-url" class="block text-xs font-mono text-[#8C94A8] mb-1">Remote Entry URL</label>
+              <label for="remote-mfe-url" class="block text-xs font-mono text-on-surface-variant mb-1">Remote Entry URL</label>
               <input
                 id="remote-mfe-url"
                 type="text"
                 [formField]="remoteForm.url"
                 placeholder="e.g. http://localhost:3005/remoteEntry.json"
-                class="w-full bg-black/40 border border-white/15 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#20B2AA] font-mono" />
+                class="w-full bg-black/40 border border-white/15 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-secondary font-mono" />
             </div>
 
             <div>
-              <label for="remote-mfe-exposed" class="block text-xs font-mono text-[#8C94A8] mb-1">Exposed Module Key</label>
+              <label for="remote-mfe-exposed" class="block text-xs font-mono text-on-surface-variant mb-1">Exposed Module Key</label>
               <input
                 id="remote-mfe-exposed"
                 type="text"
                 [formField]="remoteForm.exposedModule"
                 placeholder="./Component"
-                class="w-full bg-black/40 border border-white/15 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#20B2AA] font-mono" />
+                class="w-full bg-black/40 border border-white/15 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-secondary font-mono" />
             </div>
 
             <div>
-              <label for="remote-mfe-desc" class="block text-xs font-mono text-[#8C94A8] mb-1">Description</label>
+              <label for="remote-mfe-desc" class="block text-xs font-mono text-on-surface-variant mb-1">Description</label>
               <input
                 id="remote-mfe-desc"
                 type="text"
                 [formField]="remoteForm.description"
                 placeholder="Brief description of the remote application..."
-                class="w-full bg-black/40 border border-white/15 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#20B2AA]" />
+                class="w-full bg-black/40 border border-white/15 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-secondary" />
             </div>
 
             <div class="pt-2 flex justify-end">
               <button
                 type="submit"
                 [disabled]="!remoteForm().valid()"
-                class="px-4 py-2 rounded-lg bg-[#6A0DAD] hover:bg-[#E0218A] disabled:opacity-40 disabled:hover:bg-[#6A0DAD] text-white text-xs font-semibold transition-colors flex items-center space-x-1.5 shadow-md">
+                class="px-4 py-2 rounded-lg bg-primary hover:bg-magenta disabled:opacity-40 disabled:hover:bg-primary text-white text-xs font-semibold transition-colors flex items-center space-x-1.5 shadow-md">
                 <span class="material-icons text-sm">add_circle</span>
                 <span>Register Remote MFE</span>
               </button>
@@ -371,7 +371,7 @@ export class AppStoreComponent {
     },
     {
       id: 'terminal',
-      name: 'WebOS AI Copilot & Terminal',
+      name: 'Terminal & Copilot',
       description: 'Interactive CLI shell and Gemini AI assistant for running automated enterprise scripts.',
       icon: 'terminal',
       component: 'TerminalComponent',
@@ -380,8 +380,8 @@ export class AppStoreComponent {
     },
     {
       id: 'settings',
-      name: 'Verdigris System Settings',
-      description: 'Configure syncopated UI rhythm cadence, window geometry, and security boundaries.',
+      name: 'System Settings',
+      description: 'Configure preferences, windows, and security.',
       icon: 'settings',
       component: 'SettingsComponent',
       sandboxType: 'Host Kernel',
