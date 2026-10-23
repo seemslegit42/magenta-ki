@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'bun:test';
-import { WopiService } from '../../src/app/services/wopi.service';
+import { WopiService } from '../../ts/apps/host/app/services/wopi.service';
 
 describe('WopiService', () => {
   let service: WopiService;

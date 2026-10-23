@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'bun:test';
-import { AuditService } from '../../src/app/services/audit.service';
-import { AuthRbacService } from '../../src/app/services/auth-rbac.service';
+import { AuditService } from '../../ts/apps/host/app/services/audit.service';
+import { AuthRbacService } from '../../ts/apps/host/app/services/auth-rbac.service';
 
 describe('AuditService', () => {
   let auditService: AuditService;

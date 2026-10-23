@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'bun:test';
-import { XiEconomyService } from '../../src/app/services/xi-economy.service';
-import { CogniOpsCogsBreakdown, PoAContributionParams } from '../../src/app/models/webos.models';
+import { XiEconomyService } from '../../ts/apps/host/app/services/xi-economy.service';
+import { CogniOpsCogsBreakdown, PoAContributionParams } from '../../ts/apps/host/app/models/webos.models';
 
 describe('XiEconomyService', () => {
   let service: XiEconomyService;

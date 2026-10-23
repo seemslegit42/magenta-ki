@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'bun:test';
-import { WindowManagerService } from '../../src/app/services/window-manager.service';
+import { WindowManagerService } from '../../ts/apps/host/app/services/window-manager.service';
 
 describe('WindowManagerService', () => {
   let service: WindowManagerService;

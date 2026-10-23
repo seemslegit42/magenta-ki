@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'bun:test';
-import { AvfService } from '../../src/app/services/avf.service';
+import { AvfService } from '../../ts/apps/host/app/services/avf.service';
 
 describe('AvfService (The Agentic Value Framework)', () => {
   let service: AvfService;

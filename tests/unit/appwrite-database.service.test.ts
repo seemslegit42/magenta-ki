@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach } from 'bun:test';
-import { AppwriteDatabaseService } from '../../src/app/services/appwrite-database.service';
-import { AuditService } from '../../src/app/services/audit.service';
-import { NotificationService } from '../../src/app/services/notification.service';
-import { AuthRbacService } from '../../src/app/services/auth-rbac.service';
+import { AppwriteDatabaseService } from '../../ts/apps/host/app/services/appwrite-database.service';
+import { AuditService } from '../../ts/apps/host/app/services/audit.service';
+import { NotificationService } from '../../ts/apps/host/app/services/notification.service';
+import { AuthRbacService } from '../../ts/apps/host/app/services/auth-rbac.service';
 
 describe('AppwriteDatabaseService', () => {
   let dbService: AppwriteDatabaseService;

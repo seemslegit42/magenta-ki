@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'bun:test';
-import { AppwriteDatabaseService } from '../../src/app/services/appwrite-database.service';
-import { WindowManagerService } from '../../src/app/services/window-manager.service';
-import { AuthRbacService } from '../../src/app/services/auth-rbac.service';
-import { AuditService } from '../../src/app/services/audit.service';
-import { NotificationService } from '../../src/app/services/notification.service';
+import { AppwriteDatabaseService } from '../../ts/apps/host/app/services/appwrite-database.service';
+import { WindowManagerService } from '../../ts/apps/host/app/services/window-manager.service';
+import { AuthRbacService } from '../../ts/apps/host/app/services/auth-rbac.service';
+import { AuditService } from '../../ts/apps/host/app/services/audit.service';
+import { NotificationService } from '../../ts/apps/host/app/services/notification.service';
 
 describe('E2E: Appwrite Databases & Server SDK Workflow', () => {
   it('should provision databases, manage schema tables, generate SDK snippets, and enforce RBAC and audit telemetry', async () => {

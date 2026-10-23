@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'bun:test';
-import { NotificationService } from '../../src/app/services/notification.service';
+import { NotificationService } from '../../ts/apps/host/app/services/notification.service';
 
 describe('NotificationService', () => {
   let service: NotificationService;

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'bun:test';
-import { WopiService } from '../../src/app/services/wopi.service';
+import { WopiService } from '../../ts/apps/host/app/services/wopi.service';
 
 describe('E2E: WOPI Office Suite & Collaborative Editing Flow', () => {
   it('should manage collaborative document editing lifecycle with atomic lock validation and persistence', () => {

@@ -1,5 +1,9 @@
-import { Client, Storage, ID, Query } from 'node-appwrite';
-import { InputFile } from 'node-appwrite/file';
+/**
+ * Appwrite Storage adapter for the Bun control plane.
+ * Moved from the Angular host — keep I/O at the API boundary.
+ */
+import { Client, Storage, ID, Query } from "node-appwrite";
+import { InputFile } from "node-appwrite/file";
 
 const client = new Client()
   .setEndpoint(process.env.APPWRITE_ENDPOINT!)
@@ -11,12 +15,12 @@ const BUCKET_ID = process.env.APPWRITE_BUCKET_ID!;
 
 export const fileStorage = {
   async listFiles() {
-    return await storage.listFiles(BUCKET_ID, [Query.orderDesc('$createdAt')]);
+    return await storage.listFiles(BUCKET_ID, [Query.orderDesc("$createdAt")]);
   },
 
   async upload(base64Data: string, fileName: string) {
-    const base64Clean = base64Data.replace(/^data:[^;]+;base64,/, '');
-    const buffer = Buffer.from(base64Clean, 'base64');
+    const base64Clean = base64Data.replace(/^data:[^;]+;base64,/, "");
+    const buffer = Buffer.from(base64Clean, "base64");
     const inputFile = InputFile.fromBuffer(buffer, fileName);
     return await storage.createFile(BUCKET_ID, ID.unique(), inputFile);
   },
@@ -27,5 +31,5 @@ export const fileStorage = {
 
   async getDownload(fileId: string) {
     return await storage.getFileDownload(BUCKET_ID, fileId);
-  }
+  },
 };

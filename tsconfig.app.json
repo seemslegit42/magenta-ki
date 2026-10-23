@@ -2,24 +2,24 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/app",
-    "types": []
+    "types": ["node"]
   },
   "files": [
-    "src/main.ts",
-    "src/main.server.ts",
-    "src/server.ts",
-    "src/app/app.ts",
-    "src/app/services/window-manager.service.ts",
-    "src/app/services/native-federation.service.ts",
-    "src/app/components/window/window.component.ts",
-    "src/app/components/dock/dock.component.ts",
-    "src/app/components/statusbar/statusbar.component.ts",
-    "src/app/components/apps/app-store/app-store.component.ts",
-    "src/app/components/apps/native-federation/native-federation-studio.component.ts",
-    "src/app/components/apps/app-launcher/app-launcher.component.ts",
-    "src/app/services/polar-billing.service.ts",
-    "src/app/services/xi-economy.service.ts",
-    "src/app/components/apps/gateway-console/gateway-console.component.ts",
-    "src/generated/api.types.ts"
+    "ts/apps/host/main.ts",
+    "ts/apps/host/main.server.ts",
+    "ts/apps/host/server.ts",
+    "ts/apps/host/app/app.ts",
+    "ts/apps/host/app/services/window-manager.service.ts",
+    "ts/apps/host/app/services/native-federation.service.ts",
+    "ts/apps/host/app/components/window/window.component.ts",
+    "ts/apps/host/app/components/dock/dock.component.ts",
+    "ts/apps/host/app/components/statusbar/statusbar.component.ts",
+    "ts/apps/host/app/components/apps/app-store/app-store.component.ts",
+    "ts/apps/host/app/components/apps/native-federation/native-federation-studio.component.ts",
+    "ts/apps/host/app/components/apps/app-launcher/app-launcher.component.ts",
+    "ts/apps/host/app/services/polar-billing.service.ts",
+    "ts/apps/host/app/services/xi-economy.service.ts",
+    "ts/apps/host/app/components/apps/gateway-console/gateway-console.component.ts",
+    "ts/apps/host/generated/api.types.ts"
   ]
 }

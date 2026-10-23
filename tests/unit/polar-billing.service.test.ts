@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'bun:test';
-import { PolarBillingService } from '../../src/app/services/polar-billing.service';
-import { PolarMeter, PolarIngestEvent, PolarBenefitType } from '../../src/app/models/webos.models';
+import { PolarBillingService } from '../../ts/apps/host/app/services/polar-billing.service';
+import { PolarMeter, PolarIngestEvent, PolarBenefitType } from '../../ts/apps/host/app/models/webos.models';
 
 describe('PolarBillingService', () => {
   let service: PolarBillingService;

@@ -10,8 +10,10 @@
     "test:unit": "bun test tests/unit",
     "test:e2e": "bun test tests/e2e",
     "test:watch": "bun test --watch",
+    "bun:api": "bun run bun/cmd/server/index.ts",
+    "dev:stack": "bun run bun:api & cross-env PORT=3000 ng serve",
     "lint": "ng lint",
-    "serve:ssr:app": "node --import @angular-architects/native-federation/node-preload dist/app/server/server.mjs"
+    "serve:ssr:app": "bun --import @angular-architects/native-federation/node-preload dist/app/server/server.mjs"
   },
   "private": true,
   "dependencies": {
@@ -29,9 +31,7 @@
     "@angular/ssr": "^22.2.0",
     "@google/genai": "^2.4.0",
     "@tabler/icons": "^3.49.0",
-    "cors": "^2.8.5",
     "es-module-shims": "^2.8.0",
-    "express": "^5.1.0",
     "motion": "^12.23.24",
     "rxjs": "~7.8.0",
     "tabler-icons-react": "^1.56.0",
@@ -44,7 +44,6 @@
     "@softarc/native-federation-orchestrator": "4.6.0",
     "@tailwindcss/postcss": "^4.1.12",
     "@types/bun": "^1.4.4",
-    "@types/express": "^5.0.1",
     "@types/node": "^20.17.19",
     "angular-eslint": "^22.6.0",
     "cross-env": "^10.1.0",

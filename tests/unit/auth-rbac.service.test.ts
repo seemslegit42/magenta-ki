@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'bun:test';
-import { AuthRbacService } from '../../src/app/services/auth-rbac.service';
+import { AuthRbacService } from '../../ts/apps/host/app/services/auth-rbac.service';
 
 describe('AuthRbacService', () => {
   let service: AuthRbacService;

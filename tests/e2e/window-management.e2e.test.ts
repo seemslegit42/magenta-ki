@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'bun:test';
-import { WindowManagerService } from '../../src/app/services/window-manager.service';
+import { WindowManagerService } from '../../ts/apps/host/app/services/window-manager.service';
 
 describe('E2E: Window Management System Flow', () => {
   it('should orchestrate a multi-window desktop session with focus stacking, positioning and lifecycle transitions', () => {

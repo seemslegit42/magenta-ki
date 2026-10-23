@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'bun:test';
-import { AuthRbacService } from '../../src/app/services/auth-rbac.service';
-import { AuditService } from '../../src/app/services/audit.service';
-import { NotificationService } from '../../src/app/services/notification.service';
-import { WopiService } from '../../src/app/services/wopi.service';
+import { AuthRbacService } from '../../ts/apps/host/app/services/auth-rbac.service';
+import { AuditService } from '../../ts/apps/host/app/services/audit.service';
+import { NotificationService } from '../../ts/apps/host/app/services/notification.service';
+import { WopiService } from '../../ts/apps/host/app/services/wopi.service';
 
 describe('E2E: Audit Trail, Notification System & RBAC Governance Flow', () => {
   it('should enforce role boundaries, capture comprehensive audit logs, and trigger real-time notifications', () => {

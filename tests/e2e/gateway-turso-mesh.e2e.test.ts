@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'bun:test';
-import { GatewayService } from '../../src/app/services/gateway.service';
+import { GatewayService } from '../../ts/apps/host/app/services/gateway.service';
 
 describe('E2E: Control Plane Gateway & Turso Edge DB Mesh Flow', () => {
   it('should authenticate user directory sessions and route tenant-isolated edge queries with low latency', () => {

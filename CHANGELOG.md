@@ -2,9 +2,21 @@
 
 All notable changes to the Verdigris Cloud OS workspace are documented in this file.
 
+## [Unreleased] - 2026-10-23
+
+### Changed
+- **Control-Plane Split**: Removed Express/`cors`. Domain APIs live in `bun/cmd/server` (port 1991). Angular SSR is Express-free Node `http` + `AngularNodeAppEngine` in `ts/apps/host/server.ts`.
+- **Host Evacuation**: Moved Angular app from `src/` → `ts/apps/host/` (NF `entryPoints` + codegen paths updated).
+- **Xi Peel**: Bun `/api/xi/*` proxies to Go when `GO_API_URL` is set (`go/gateway/README.md`).
+
+### Added
+- **Bun handlers**: `bun/internal/handlers/{ai,polar,xi}.ts` with consistent `{ error: { code, message } }` API errors.
+- **Dev proxy**: `proxy.conf.json` routes `/api` → Bun `:1991`.
+
 ## [Unreleased] - 2026-10-20
 
 ### Added
+
 - **Appwrite Go SDK & Gin Refactoring (`go/app.go`)**: Completely refactored `go/app.go` into a high-performance Gin web server featuring team-based tenant isolation, ownership enforcement (`createdBy`, `teamId`), immutable column protections, centralized Appwrite client/TablesDB schema management, and Blades AI agent integration.
 - **Gin REST Endpoints**: Added `/health`, `/api/health`, `/api/todos` (CRUD & list filtering with team isolation), `/api/todos/seed`, and `/api/ai/agent`.
 - **OpenAPI 3.0 Documentation**: Documented all new Go Gin Appwrite endpoints in `/src/api-docs/openapi.yaml`.

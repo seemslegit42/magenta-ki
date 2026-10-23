@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'bun:test';
-import { GatewayService } from '../../src/app/services/gateway.service';
+import { GatewayService } from '../../ts/apps/host/app/services/gateway.service';
 
 describe('GatewayService', () => {
   let service: GatewayService;

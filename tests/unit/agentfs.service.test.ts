@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'bun:test';
-import { AgentFSService } from '../../src/app/services/agentfs.service';
+import { AgentFSService } from '../../ts/apps/host/app/services/agentfs.service';
 
 describe('AgentFSService', () => {
   let service: AgentFSService;

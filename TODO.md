@@ -34,9 +34,10 @@
   - [x] Canonical sqlc queries (`contracts/sql/queries/system.sql`)
   - [x] Canonical OpenAPI 3.1 REST/RPC specification (`contracts/openapi/webos.v1.yaml`)
   - [x] Generation pipelines (`contracts/scripts/codegen-ts.sh`, `contracts/scripts/codegen-go.sh`)
-  - [x] Auto-generated TypeScript contract definitions (`src/generated/api.types.ts`) re-exported via `webos.models.ts`
-- [ ] Phase 2: Scaffold `/go/gateway/` reverse proxy and peel off `/api/*` endpoints
-- [ ] Phase 3: Decouple `/ts/apps/host` to pure Angular Native Federation Host
-- [ ] Phase 4: Root Evacuation & Lefthook Execution Scoping
+  - [x] Auto-generated TypeScript contract definitions (`ts/apps/host/generated/api.types.ts`) re-exported via `webos.models.ts`
+- [x] Phase 2 (partial): Bun control plane (`bun/`) owns `/api/*`; Go Xi peel via `GO_API_URL` + `go/gateway/README.md`
+- [x] Phase 3: Decouple `/ts/apps/host` to pure Angular Native Federation Host (evacuated from `src/`)
+- [x] Phase 4 (partial): Root evacuation of Angular `src/` → `ts/apps/host`; Express removed
+- [ ] Lefthook execution scoping (remaining Phase 4 polish)
 
 

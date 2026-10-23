@@ -3,9 +3,9 @@ import { Injector, runInInjectionContext } from '@angular/core';
 import {
   AppLauncherComponent,
   type AppLauncherItem,
-} from '../../src/app/components/apps/app-launcher/app-launcher.component';
-import { WindowManagerService } from '../../src/app/services/window-manager.service';
-import { NativeFederationService } from '../../src/app/services/native-federation.service';
+} from '../../ts/apps/host/app/components/apps/app-launcher/app-launcher.component';
+import { WindowManagerService } from '../../ts/apps/host/app/services/window-manager.service';
+import { NativeFederationService } from '../../ts/apps/host/app/services/native-federation.service';
 
 describe('AppLauncherComponent', () => {
   let component: AppLauncherComponent;

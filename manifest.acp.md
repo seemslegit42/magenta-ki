@@ -57,13 +57,13 @@
 - **Meters & Filter Clauses**: Event filtering on condition clauses (`eq`, `ne`, `gt`, `gte`, `lt`, `lte`, `contains`, `does_not_contain`) with `and`/`or` conjunctions and unit multipliers (Scalar, Token, Custom).
 - **Cost Insights Engine**: Sub-cent precision event cost tracking with 12-decimal micro-cost recording (`_cost: { amount, currency: 'usd' }`) and automatic LLM inference meter linkage.
 - **Entitlements & License Vault**: Cryptographic `POLAR_<UUID>` key issuance, multi-device activation tracking, and customer state resolution (`subscriptions`, `benefits`, `customer_meters`).
-- **Gateway Proxy Endpoints**: Express `/api/polar/*` routes for event ingestion, hosted checkout session links, and Standard Webhooks verification.
+- **Gateway Proxy Endpoints**: Bun control plane `/api/polar/*` routes for event ingestion, hosted checkout session links, and Standard Webhooks verification.
 
 ### 8. Neutral Cross-Language Contracts Subsystem (`/contracts/`)
 - **Canonical SQLite / libSQL DDL (`contracts/sql/schema.sql`)**: Single source of truth for database state including system preferences, active processes, window hydration, RBAC profiles, tenant routing, and Xi ledger.
 - **Query Contracts (`contracts/sql/queries/system.sql`)**: Canonical sqlc-compatible query definitions for deterministic code generation.
 - **OpenAPI 3.1 Contract (`contracts/openapi/webos.v1.yaml`)**: Neutral REST/RPC interface definitions decoupling the Go gateway from the Angular host shell.
-- **Downstream Generation Pipelines (`contracts/scripts/`)**: Automated `codegen-ts.sh` and `codegen-go.sh` producing zero-drift TypeScript contracts (`src/generated/api.types.ts`) and Go struct models (`go/pkg/contracts/`).
+- **Downstream Generation Pipelines (`contracts/scripts/`)**: Automated `codegen-ts.sh` and `codegen-go.sh` producing zero-drift TypeScript contracts (`ts/apps/host/generated/api.types.ts`) and Go struct models (`go/pkg/contracts/`).
 
 ### 9. The Aetheric Sigils Icon System (Crystalline Canon)
 - **Dual Manifestation:**

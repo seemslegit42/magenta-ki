@@ -6,5 +6,5 @@
     "outDir": "./out-tsc/spec",
     "types": ["bun"]
   },
-  "include": ["tests/**/*.ts", "src/**/*.d.ts"]
+  "include": ["tests/**/*.ts", "ts/apps/host/**/*.d.ts"]
 }

@@ -11,7 +11,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
 OPENAPI_SPEC="${ROOT_DIR}/contracts/openapi/webos.v1.yaml"
-OUTPUT_DIR="${ROOT_DIR}/src/generated"
+OUTPUT_DIR="${ROOT_DIR}/ts/apps/host/generated"
 OUTPUT_FILE="${OUTPUT_DIR}/api.types.ts"
 
 mkdir -p "${OUTPUT_DIR}"

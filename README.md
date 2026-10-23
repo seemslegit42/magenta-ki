@@ -3,92 +3,94 @@
 
 ---
 
-## 🏛️ Architectural Trinity
+## Architectural Trinity
 
 **ΛΞVOS** (Lambda Xi Von Operating System, or **lxvOS** when restricted to ASCII) is an enterprise-grade cloud operating system and native federation host. It bridges deterministic computation with stochastic intelligence through three foundational pillars:
 
-1. **Lambda (λ) — The Function:** Pure, reactive, stateless computation built on Angular v21+ Signals and immutable state transitions. Every UI mutation and process lifecycle event is modeled as a pure mathematical transformation.
-2. **Xi (Ξ) — The Unknown:** Stochastic intelligence and emergent agent workflows powered by Google Gemini APIs, decentralized telemetry meters, and the **Ξ (Xi) Economy** (cogniops pricing, proof-of-attribution rewards, and elastic feature gating).
-3. **Von (V) — The Machine:** The Von Neumann architectural homage. Sandboxed process memory spaces, Copy-on-Write AgentFS virtual filesystems, isolated virtual window stack management, and a robust Express/Node.js gateway control plane.
+1. **Lambda (λ) — The Function:** Pure, reactive, stateless computation built on Angular Signals and immutable state transitions.
+2. **Xi (Ξ) — The Unknown:** Stochastic intelligence and emergent agent workflows powered by Gemini APIs, telemetry meters, and the **Ξ (Xi) Economy**.
+3. **Von (V) — The Machine:** Sandboxed process memory, AgentFS, window stack management, and language-peer control planes (`go/`, `bun/`).
 
 ---
 
-## 📂 Repository Structure
+## Repository Structure
 
 ```text
 /
-├── contracts/               # Single source of truth for cross-language schemas & specs
-│   ├── openapi/             # REST & Gateway API specifications (webos.v1.yaml)
-│   └── sql/                 # Canonical SQLite DDL & migration state
-├── data/                    # Local runtime state, scratchpads, and SQLite DB files (gitignored)
-├── src/
-│   ├── app/                 # Angular Standalone Components & Signal Services
-│   │   ├── components/      # Desktop apps (App Store, AgentFS, WOPI Office, Terminal, Gateway, Security)
-│   │   ├── models/          # Enterprise TypeScript interfaces & schemas
-│   │   └── services/        # Window Manager, Gateway, Billing, RBAC, and Audit services
-│   ├── server.ts            # Express Gateway & SSR entry point (AI, Polar billing, Ξ Economy API)
-│   └── main.ts / main.server.ts # Client & Server bootstrap modules
-├── tests/
-│   ├── e2e/                 # End-to-end orchestrator flows (Window management, AgentFS, Gateway mesh)
-│   └── unit/                # Unit test suites (Polar billing, Xi Economy, RBAC, Window Manager)
-└── angular.json             # Angular CLI & Native Federation build configuration
+├── contracts/               # Cross-language schemas & OpenAPI (SoT)
+├── go/                      # Go control plane (Xi authority, Appwrite)
+│   ├── cmd/server/
+│   └── gateway/             # Peel docs — set GO_API_URL on Bun
+├── bun/                     # Bun control plane (AI, Polar, Xi shim/proxy)
+│   ├── cmd/server/
+│   └── internal/handlers/
+├── ts/apps/host/            # Angular Native Federation host (ex-src/)
+│   ├── app/
+│   ├── server.ts            # SSR + static only (no Express)
+│   └── generated/
+├── tests/                   # bun:test unit + e2e
+├── proxy.conf.json          # ng serve → Bun :1991 for /api
+└── angular.json
 ```
 
 ---
 
-## ⚡ Core Subsystems
+## Control Planes
 
-### 1. Control Plane & Gateway (`src/server.ts`)
-The Node.js/Express gateway running on Vite middleware handles:
-- **Server-Side Rendering (SSR)** via Angular Node App Engine with trusted proxy validation (`trustProxyHeaders: true`, `allowedHosts: ['*']`).
-- **Google Gemini AI Inference** (`/api/ai/chat`) with automatic token estimation and cost insight telemetry (`_cost` in decimal cents).
-- **Polar Billing & Metering** (`/api/polar/*`) for usage-based billing events, checkout sessions, customer state hydration, and webhook signature verification.
-- **The Ξ (Xi) Economy** (`/api/xi/*`) for calculating dynamic floor costs ($Ξ_{Floor}$), burning tokens for CogniOps execution, executing Proof-of-Attribution ($R_{Xi}$), and managing Hybrid Pricing & Value Committee (HPVC) governance proposals.
+### Bun API (`bun run bun:api` → `:1991`)
+- `/api/ai/chat` — Gemini + Polar cost telemetry
+- `/api/polar/*` — metering, checkouts, customer state, webhooks
+- `/api/xi/*` — local stubs, or proxied to Go when `GO_API_URL` is set
 
-### 2. Desktop Operating System & Window Manager (`src/app/services/window-manager.service.ts`)
-- Manages multi-window desktop sessions with focus stacking, z-index elevation, snap positioning, minimization, and maximization.
-- Supports responsive layouts (mobile/desktop breakpoints) and haptic feedback triggers.
+### Go API (`go run ./cmd/server` → `:8080`)
+- Authoritative `/api/xi/*` (and Appwrite console routes)
 
-### 3. AgentFS & Virtual File System (`src/app/services/agentfs.service.ts`)
-- Sandboxed virtual inode hierarchy with Copy-on-Write (CoW) snapshot identifiers and append-only audit logging for monitored tool executions.
+### Angular host (`bun run dev` → `:3000`)
+- Proxies `/api` to Bun via `proxy.conf.json`
+- SSR entry: `ts/apps/host/server.ts` (Node `http` + `AngularNodeAppEngine`)
 
 ---
 
-## 🛠️ Development & Operations
-
-### Prerequisites & Runtime
-- **Node.js**: v22+ (Strict type checking & ESM support)
-- **Package Manager**: `npm` / `bun`
-
-### Essential Commands
+## Development
 
 ```bash
-# Install dependencies
-npm install
+bun install
 
-# Start development server on port 3000
-npm run start
+# Terminal A — Bun control plane
+bun run bun:api
 
-# Run all tests (unit + e2e) with Bun's test runner
+# Terminal B — Angular NF host (proxies /api → :1991)
+bun run dev
+
+# Tests
 bun test
-
-# Unit or e2e only
 bun run test:unit
 bun run test:e2e
 
-# Watch mode
-bun run test:watch
-
-# Compile and verify production build
+# Production Angular build
 bun run build
-```
 
+# Peel Xi to Go
+GO_API_URL=http://127.0.0.1:8080 bun run bun:api
+```
 
 ---
 
-## 📐 API & Contract Standards
+## KPI snapshot (Control-Plane Split)
 
-All API boundaries are formally defined in `contracts/openapi/webos.v1.yaml`. Neither the Go/Rust microservices nor the Angular host define ad-hoc endpoints; all payload contracts are strictly governed by the canonical specification.
+| KPI | Status |
+|---|---|
+| Express / cors deps | Removed |
+| Bun serves 10/10 former Express routes | Yes |
+| `bun test` | Gate |
+| `ng build` | Gate |
+| Host path | `ts/apps/host` |
+
+---
+
+## API & Contract Standards
+
+Boundaries are defined in `contracts/openapi/webos.v1.yaml`. Bun error bodies use `{ error: { code, message, details? } }`.
 
 ---
 

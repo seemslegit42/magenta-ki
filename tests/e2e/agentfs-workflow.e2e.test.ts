@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'bun:test';
-import { AgentFSService } from '../../src/app/services/agentfs.service';
+import { AgentFSService } from '../../ts/apps/host/app/services/agentfs.service';
 
 describe('E2E: AgentFS Sandboxed VFS & Tool Execution Flow', () => {
   it('should execute end-to-end agent file mutations inside an isolated sandbox with audit trails', async () => {
