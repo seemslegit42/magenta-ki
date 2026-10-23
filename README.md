@@ -52,7 +52,7 @@
   - Browser: `ts/apps/host/main.ts` — `initFederation` + `localStorageEntry`, `convertFlatSharedInfo`
   - Manifest: `public/federation.manifest.json` → remote `remoteEntry.json` URLs
   - SSR (Bun): `bun run serve:ssr:app` → `ts/apps/host/server.entry.mjs` → `initNodeFederation` then `dist/app/server/server.mjs`
-    - Bun-safe `setImportMapFn` / `loadModuleFn` (Node loader MessageChannel is unreliable under Bun)
+    - Bun-safe adapters + `Bun.plugin` `onLoad` rewrite (Bun skips Node loader resolve for bare `@angular/*` / `@nf-internal/*`)
 
 ---
 

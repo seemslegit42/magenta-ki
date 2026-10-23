@@ -98,7 +98,9 @@ const handler = createNodeRequestHandler(async (req, res, next) => {
  */
 export const reqHandler = handler;
 
-if (isMainModule(import.meta.url) || env('pm_id')) {
+// NF_SSR_ENTRY: set by ts/apps/host/server.entry.mjs (Bun orchestrator bootstrap)
+// so listen still runs when this module is dynamically imported rather than argv[1].
+if (isMainModule(import.meta.url) || env('pm_id') || env('NF_SSR_ENTRY')) {
   const port = Number(env('PORT') || 3000);
   createServer((req: IncomingMessage, res: ServerResponse) => {
     void handler(req, res, (err?: unknown) => {
