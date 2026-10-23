@@ -52,9 +52,6 @@
 						"allowedHosts": true
 					}
 				},
-				"test": {
-					"builder": "@angular/build:unit-test"
-				},
 				"lint": {
 					"builder": "@angular-eslint/builder:lint",
 					"options": {

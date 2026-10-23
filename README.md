@@ -69,15 +69,20 @@ npm install
 # Start development server on port 3000
 npm run start
 
-# Run unit and end-to-end test suites
+# Run all tests (unit + e2e) with Bun's test runner
 bun test
 
-# Run Vitest unit tests
-npm run test:unit
+# Unit or e2e only
+bun run test:unit
+bun run test:e2e
+
+# Watch mode
+bun run test:watch
 
 # Compile and verify production build
-npm run build
+bun run build
 ```
+
 
 ---
 

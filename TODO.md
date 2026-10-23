@@ -28,7 +28,7 @@
 - [x] Formulate Hybrid Pricing & Value Committee (HPVC) governance model and proposal voting
 - [x] Implement Sankey economic flow diagram data structure for CFO and telemetry visualization
 - [x] Integrate Ξ Economy Cockpit into `GatewayConsoleComponent` (zero new front-end files)
-- [x] Pass unit test suite for XiEconomyService (7/7 green, 68/68 bun unit tests, 14/14 vitest tests)
+- [x] Pass unit test suite for XiEconomyService (bun test runner only)
 - [x] Complete Phase 1: Establish Neutral `/contracts/` Subtree (Zero Schema Drift)
   - [x] Canonical SQLite / libSQL DDL (`contracts/sql/schema.sql`) covering System, Processes, Windows, RBAC, Appwrite, Polar & Xi Economy
   - [x] Canonical sqlc queries (`contracts/sql/queries/system.sql`)

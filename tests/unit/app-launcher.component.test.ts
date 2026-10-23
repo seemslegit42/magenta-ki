@@ -1,28 +1,32 @@
-import { TestBed, ComponentFixture } from '@angular/core/testing';
-import { AppLauncherComponent, AppLauncherItem } from './app-launcher.component';
-import { WindowManagerService } from '../../../services/window-manager.service';
-import { NativeFederationService } from '../../../services/native-federation.service';
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'bun:test';
+import { Injector, runInInjectionContext } from '@angular/core';
+import {
+  AppLauncherComponent,
+  type AppLauncherItem,
+} from '../../src/app/components/apps/app-launcher/app-launcher.component';
+import { WindowManagerService } from '../../src/app/services/window-manager.service';
+import { NativeFederationService } from '../../src/app/services/native-federation.service';
 
 describe('AppLauncherComponent', () => {
   let component: AppLauncherComponent;
-  let fixture: ComponentFixture<AppLauncherComponent>;
   let windowManager: WindowManagerService;
+  let injector: Injector;
 
-  beforeEach(async () => {
-    TestBed.resetTestingModule();
-    await TestBed.configureTestingModule({
-      imports: [AppLauncherComponent],
+  beforeEach(() => {
+    windowManager = new WindowManagerService();
+    const federation = new NativeFederationService();
+    injector = Injector.create({
       providers: [
-        WindowManagerService,
-        NativeFederationService
-      ]
-    }).compileComponents();
+        { provide: WindowManagerService, useValue: windowManager },
+        { provide: NativeFederationService, useValue: federation },
+      ],
+    });
+    component = runInInjectionContext(injector, () => new AppLauncherComponent());
+  });
 
-    fixture = TestBed.createComponent(AppLauncherComponent);
-    component = fixture.componentInstance;
-    windowManager = TestBed.inject(WindowManagerService);
-    fixture.detectChanges();
+  afterEach(() => {
+    component.searchControl.setValue('');
+    component.selectedCategory.set('all');
   });
 
   it('should create the AppLauncherComponent instance', () => {
@@ -37,7 +41,7 @@ describe('AppLauncherComponent', () => {
   it('should list all core applications and federated micro-frontends', () => {
     const apps = component.allApps();
     expect(apps.length).toBeGreaterThanOrEqual(9);
-    
+
     const appwrite = apps.find((a: AppLauncherItem) => a.id === 'appwrite-databases');
     expect(appwrite).toBeDefined();
     expect(appwrite?.name).toContain('Appwrite');
@@ -71,8 +75,8 @@ describe('AppLauncherComponent', () => {
 
     if (terminalApp) {
       component.launch(terminalApp);
-      const openProcs = windowManager.processes().filter(p => p.isOpen);
-      expect(openProcs.some(p => p.appId === 'terminal' || p.pid.includes('terminal'))).toBe(true);
+      const openProcs = windowManager.processes().filter((p) => p.isOpen);
+      expect(openProcs.some((p) => p.appId === 'terminal' || p.pid.includes('terminal'))).toBe(true);
     }
   });
 
@@ -81,17 +85,15 @@ describe('AppLauncherComponent', () => {
     expect(wopiApp).toBeDefined();
 
     if (wopiApp) {
-      // First launch
       component.launch(wopiApp);
       const procState = component.getProcessState(wopiApp.id);
       expect(procState).toBeDefined();
       expect(procState?.isOpen).toBe(true);
 
-      // Minimize and re-launch to restore
       if (procState) {
         windowManager.minimizeWindow(procState.pid);
         expect(component.isProcessMinimized(procState.pid)).toBe(true);
-        
+
         component.launch(wopiApp);
         expect(component.isProcessMinimized(procState.pid)).toBe(false);
       }
@@ -100,7 +102,7 @@ describe('AppLauncherComponent', () => {
 
   it('should launch core essentials suite', () => {
     component.launchAllEssentials();
-    const openProcs = windowManager.processes().filter(p => p.isOpen);
+    const openProcs = windowManager.processes().filter((p) => p.isOpen);
     expect(openProcs.length).toBeGreaterThanOrEqual(2);
   });
 });

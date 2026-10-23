@@ -6,9 +6,10 @@
     "start": "cross-env PORT=3000 ng serve",
     "dev": "cross-env PORT=3000 ng serve",
     "build": "ng build",
-    "test": "vitest",
-    "test:unit": "vitest run",
+    "test": "bun test",
+    "test:unit": "bun test tests/unit",
     "test:e2e": "bun test tests/e2e",
+    "test:watch": "bun test --watch",
     "lint": "ng lint",
     "serve:ssr:app": "node --import @angular-architects/native-federation/node-preload dist/app/server/server.mjs"
   },
@@ -37,24 +38,20 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@analogjs/vite-plugin-angular": "^2.8.0",
     "@angular/build": "^22.2.0",
     "@angular/cli": "^22.2.0",
     "@angular/compiler-cli": "^22.2.0",
+    "@softarc/native-federation-orchestrator": "4.6.0",
     "@tailwindcss/postcss": "^4.1.12",
-    "@testing-library/angular": "^19.5.0",
-    "@testing-library/jest-dom": "^7.0.1",
+    "@types/bun": "^1.4.4",
     "@types/express": "^5.0.1",
     "@types/node": "^20.17.19",
     "angular-eslint": "^22.6.0",
     "cross-env": "^10.1.0",
     "eslint": "^9.39.1",
-    "jsdom": "^27.0.0",
     "postcss": "^8.5.3",
     "tailwindcss": "^4.1.12",
     "typescript": "~6.0.3",
-    "typescript-eslint": "8.47.0",
-    "vitest": "^4.0.0",
-    "@softarc/native-federation-orchestrator": "4.6.0"
+    "typescript-eslint": "8.47.0"
   }
 }
