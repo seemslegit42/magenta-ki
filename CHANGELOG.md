@@ -8,6 +8,10 @@ All notable changes to the Verdigris Cloud OS workspace are documented in this f
 - **Control-Plane Split**: Removed Express/`cors`. Domain APIs live in `bun/cmd/server` (port 1991). Angular SSR is Express-free Node `http` + `AngularNodeAppEngine` in `ts/apps/host/server.ts`.
 - **Host Evacuation**: Moved Angular app from `src/` → `ts/apps/host/` (NF `entryPoints` + codegen paths updated).
 - **Xi Peel**: Bun `/api/xi/*` proxies to Go when `GO_API_URL` is set (`go/gateway/README.md`).
+- **Native Federation 22.2.3**: Adapter `^22.2.3` (Core `@softarc/native-federation` ~4.8, Orchestrator `^4.8.0`). `federation.config.mjs`: `keepAll` on core Angular packages (not `@angular/*` — CDK would match), plus `denseChunking` / `denseExternals`.
+- **Angular v22 host practices**: Explicit zoneless + `provideHttpClient(withFetch())`; signal `input()` / `input.required()`; OnPush everywhere; Signal Forms for structured forms; ngModel → signals; `host: {}` instead of `@HostListener`.
+- **Orchestrator 4.8 boot**: `main.ts` passes `localStorageEntry`, `overrideCachedRemotesIfURLMatches`, and `convertFlatSharedInfo` through the Angular adapter into `@softarc/native-federation-orchestrator`.
+- **SSR via orchestrator/node + Bun**: `serve:ssr:app` runs `ts/apps/host/server.entry.mjs` (`initNodeFederation` then server bundle). Custom import-map/load adapters avoid Bun’s broken Node loader handshake.
 
 ### Added
 - **Bun handlers**: `bun/internal/handlers/{ai,polar,xi}.ts` with consistent `{ error: { code, message } }` API errors.

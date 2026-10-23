@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TablerIconComponent } from '../common/tabler-icon.component';
 import { WindowManagerService } from '../../services/window-manager.service';
@@ -6,6 +6,7 @@ import { WindowManagerService } from '../../services/window-manager.service';
 @Component({
   selector: 'app-dock',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, TablerIconComponent],
   template: `
     <nav aria-label="Application Dock" class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-[#14161C]/85 backdrop-blur-2xl border border-[rgba(245,255,250,0.18)] p-2 rounded-2xl shadow-2xl flex items-center space-x-3 z-50">

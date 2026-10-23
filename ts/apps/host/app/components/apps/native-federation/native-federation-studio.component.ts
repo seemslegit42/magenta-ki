@@ -1,6 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
+import { form, FormField, pattern, required } from '@angular/forms/signals';
 import { MatIconModule } from '@angular/material/icon';
 import { NativeFederationService } from '../../../services/native-federation.service';
 import { WindowManagerService } from '../../../services/window-manager.service';
@@ -8,7 +7,8 @@ import { WindowManagerService } from '../../../services/window-manager.service';
 @Component({
   selector: 'app-native-federation-studio',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatIconModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [FormField, MatIconModule],
   template: `
     <div class="flex flex-col h-full space-y-6">
       <div class="flex items-center justify-between">
@@ -19,8 +19,7 @@ import { WindowManagerService } from '../../../services/window-manager.service';
         <span class="px-3 py-1 bg-[#115E59] text-[#79f6ed] text-xs font-mono rounded-lg border border-[#20B2AA]">W3C ACTIVE</span>
       </div>
 
-      <!-- Add Remote Form -->
-      <form [formGroup]="remoteForm" (ngSubmit)="onSubmit()" class="p-4 rounded-xl bg-[#1A1C23] border border-[rgba(245,255,250,0.12)] space-y-4">
+      <form (submit)="$event.preventDefault(); onSubmit()" class="p-4 rounded-xl bg-[#1A1C23] border border-[rgba(245,255,250,0.12)] space-y-4">
         <h3 class="font-display font-semibold text-sm text-[#F5FFFA] flex items-center space-x-2">
           <mat-icon class="text-xs text-[#E0218A]">add_circle</mat-icon>
           <span>Register New Remote Micro-Frontend</span>
@@ -32,7 +31,7 @@ import { WindowManagerService } from '../../../services/window-manager.service';
             <input
               id="nf-remote-name"
               type="text"
-              formControlName="remoteName"
+              [formField]="remoteForm.remoteName"
               placeholder="e.g. billing"
               class="w-full px-3 py-2 rounded-lg bg-[#0E1015] border border-white/10 text-sm text-[#F5FFFA] focus:outline-none focus:border-[#E0218A]"
             />
@@ -42,7 +41,7 @@ import { WindowManagerService } from '../../../services/window-manager.service';
             <input
               id="nf-remote-entry"
               type="text"
-              formControlName="remoteEntry"
+              [formField]="remoteForm.remoteEntry"
               placeholder="https://.../remoteEntry.json"
               class="w-full px-3 py-2 rounded-lg bg-[#0E1015] border border-white/10 text-sm text-[#F5FFFA] focus:outline-none focus:border-[#E0218A]"
             />
@@ -52,7 +51,7 @@ import { WindowManagerService } from '../../../services/window-manager.service';
             <input
               id="nf-exposed-module"
               type="text"
-              formControlName="exposedModule"
+              [formField]="remoteForm.exposedModule"
               placeholder="./Module"
               class="w-full px-3 py-2 rounded-lg bg-[#0E1015] border border-white/10 text-sm text-[#F5FFFA] focus:outline-none focus:border-[#E0218A]"
             />
@@ -62,7 +61,7 @@ import { WindowManagerService } from '../../../services/window-manager.service';
         <div class="flex justify-end">
           <button
             type="submit"
-            [disabled]="remoteForm.invalid"
+            [disabled]="!remoteForm().valid()"
             class="px-5 py-2 bg-[#E0218A] hover:bg-[#FF2A9D] disabled:opacity-50 text-white text-xs font-semibold rounded-lg shadow-lg transition-all flex items-center space-x-1.5"
           >
             <mat-icon class="text-xs">bolt</mat-icon>
@@ -71,10 +70,9 @@ import { WindowManagerService } from '../../../services/window-manager.service';
         </div>
       </form>
 
-      <!-- Remotes List -->
       <div class="flex-1 flex flex-col space-y-3 overflow-y-auto">
         <h3 class="font-display font-semibold text-sm text-[#F5FFFA]">Active Remote Registry</h3>
-        
+
         @for (remote of federationService.knownRemotes(); track (remote.remoteName || remote.name)) {
           <div class="p-4 rounded-xl bg-[#1A1C23] border border-white/10 flex items-center justify-between">
             <div class="flex items-center space-x-3">
@@ -114,35 +112,45 @@ import { WindowManagerService } from '../../../services/window-manager.service';
         }
       </div>
     </div>
-  `
+  `,
 })
 export class NativeFederationStudioComponent {
   readonly federationService = inject(NativeFederationService);
   readonly windowManager = inject(WindowManagerService);
-  private fb = inject(FormBuilder);
 
-  readonly remoteForm: FormGroup = this.fb.group({
-    remoteName: ['', Validators.required],
-    remoteEntry: ['', [Validators.required, Validators.pattern(/^https?:\/\/.+/)]],
-    exposedModule: ['./Module', Validators.required]
+  readonly remoteModel = signal({
+    remoteName: '',
+    remoteEntry: '',
+    exposedModule: './Module',
+  });
+
+  readonly remoteForm = form(this.remoteModel, (p) => {
+    required(p.remoteName, { message: 'Name is required' });
+    required(p.remoteEntry, { message: 'Entry URL is required' });
+    pattern(p.remoteEntry, /^https?:\/\/.+/, { message: 'Must be an http(s) URL' });
+    required(p.exposedModule, { message: 'Exposed module is required' });
   });
 
   async onSubmit() {
-    if (this.remoteForm.invalid) return;
-    const val = this.remoteForm.value;
-    
+    if (!this.remoteForm().valid()) return;
+    const val = this.remoteModel();
+
     const health = await this.federationService.testRemoteHealth(val.remoteEntry);
-    
+
     this.federationService.registerRemote({
       remoteName: val.remoteName,
       remoteEntry: val.remoteEntry,
       exposedModule: val.exposedModule,
       status: health.status,
       latencyMs: health.latencyMs,
-      version: '1.0.0'
+      version: '1.0.0',
     });
 
-    this.remoteForm.reset({ exposedModule: './Module' });
+    this.remoteModel.set({
+      remoteName: '',
+      remoteEntry: '',
+      exposedModule: './Module',
+    });
   }
 
   launchRemote(remote: { remoteName: string; remoteEntry: string; exposedModule: string }) {
@@ -151,7 +159,7 @@ export class NativeFederationStudioComponent {
       `Remote: ${remote.remoteName}`,
       'extension',
       'RemoteContainerComponent',
-      'ai'
+      'ai',
     );
   }
 }

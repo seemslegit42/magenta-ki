@@ -1,6 +1,5 @@
-import { Component, ChangeDetectionStrategy, inject, signal, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Component, ChangeDetectionStrategy, inject, signal, input } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 import { AvfService } from '../../../services/avf.service';
 import { TablerIconComponent } from '../../common/tabler-icon.component';
 import { AvfDomain } from '../../../models/avf.models';
@@ -8,7 +7,7 @@ import { AvfDomain } from '../../../models/avf.models';
 @Component({
   selector: 'app-agentic-value-framework',
   standalone: true,
-  imports: [CommonModule, FormsModule, TablerIconComponent],
+  imports: [DecimalPipe, TablerIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="flex flex-col h-full space-y-4 font-['Lexend'] text-[#F5FFFA] select-text">
@@ -184,8 +183,8 @@ import { AvfDomain } from '../../../models/avf.models';
                   min="10" 
                   max="5000" 
                   step="10"
-                  [ngModel]="avf.params().baseValueUav"
-                  (ngModelChange)="avf.updateParams({ baseValueUav: +$event })"
+                  [value]="avf.params().baseValueUav"
+                  (input)="avf.updateParams({ baseValueUav: +$any($event.target).value })"
                   class="w-full accent-[#20B2AA]"
                   aria-label="Base Value V_base"
                 />
@@ -204,8 +203,8 @@ import { AvfDomain } from '../../../models/avf.models';
                   min="5" 
                   max="1000" 
                   step="5"
-                  [ngModel]="avf.params().initialAgents"
-                  (ngModelChange)="avf.updateParams({ initialAgents: +$event })"
+                  [value]="avf.params().initialAgents"
+                  (input)="avf.updateParams({ initialAgents: +$any($event.target).value })"
                   class="w-full accent-[#E0218A]"
                   aria-label="Active Agents N_agents"
                 />
@@ -224,8 +223,8 @@ import { AvfDomain } from '../../../models/avf.models';
                   min="1.01" 
                   max="1.50" 
                   step="0.01"
-                  [ngModel]="avf.params().compoundingMultiplier"
-                  (ngModelChange)="avf.updateParams({ compoundingMultiplier: +$event })"
+                  [value]="avf.params().compoundingMultiplier"
+                  (input)="avf.updateParams({ compoundingMultiplier: +$any($event.target).value })"
                   class="w-full accent-[#dfb7ff]"
                   aria-label="Compounding Multiplier M_c"
                 />
@@ -244,8 +243,8 @@ import { AvfDomain } from '../../../models/avf.models';
                   min="10" 
                   max="200" 
                   step="5"
-                  [ngModel]="avf.params().annualAgentGrowthPct"
-                  (ngModelChange)="avf.updateParams({ annualAgentGrowthPct: +$event })"
+                  [value]="avf.params().annualAgentGrowthPct"
+                  (input)="avf.updateParams({ annualAgentGrowthPct: +$any($event.target).value })"
                   class="w-full accent-[#3EB991]"
                   aria-label="Annual Agent Growth"
                 />
@@ -264,8 +263,8 @@ import { AvfDomain } from '../../../models/avf.models';
                   min="0.01" 
                   max="0.50" 
                   step="0.01"
-                  [ngModel]="avf.params().initialAdoptionFactor"
-                  (ngModelChange)="avf.updateParams({ initialAdoptionFactor: +$event })"
+                  [value]="avf.params().initialAdoptionFactor"
+                  (input)="avf.updateParams({ initialAdoptionFactor: +$any($event.target).value })"
                   class="w-full accent-[#FBBF24]"
                   aria-label="Initial Adoption Factor F_adopt"
                 />
@@ -284,8 +283,8 @@ import { AvfDomain } from '../../../models/avf.models';
                   min="2" 
                   max="10" 
                   step="1"
-                  [ngModel]="avf.params().yearsToFullAdoption"
-                  (ngModelChange)="avf.updateParams({ yearsToFullAdoption: +$event })"
+                  [value]="avf.params().yearsToFullAdoption"
+                  (input)="avf.updateParams({ yearsToFullAdoption: +$any($event.target).value })"
                   class="w-full accent-white"
                   aria-label="Years to Full Adoption"
                 />
@@ -629,7 +628,7 @@ import { AvfDomain } from '../../../models/avf.models';
                   <label for="uav-name" class="text-[10px] text-[#8C94A8] uppercase block mb-1">Goal Name</label>
                   <input 
                     id="uav-name"
-                    [(ngModel)]="newUavName" 
+                    [value]="newUavName()" (input)="newUavName.set($any($event.target).value)" 
                     placeholder="e.g. Autonomous Invoice Reconciliation" 
                     class="w-full bg-[#171922] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white placeholder-white/30 focus:border-[#3EB991] outline-none"
                   />
@@ -638,7 +637,7 @@ import { AvfDomain } from '../../../models/avf.models';
                   <label for="uav-domain" class="text-[10px] text-[#8C94A8] uppercase block mb-1">Domain</label>
                   <select 
                     id="uav-domain"
-                    [(ngModel)]="newUavDomain" 
+                    [value]="newUavDomain()" (change)="newUavDomain.set($any($event.target).value)" 
                     class="w-full bg-[#171922] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white focus:border-[#3EB991] outline-none">
                     <option value="logistics">Logistics</option>
                     <option value="customer_support">Customer Support</option>
@@ -654,7 +653,7 @@ import { AvfDomain } from '../../../models/avf.models';
                   <input 
                     id="uav-value"
                     type="number" 
-                    [(ngModel)]="newUavValue" 
+                    [value]="newUavValue()" (input)="newUavValue.set(+$any($event.target).value)" 
                     placeholder="250" 
                     class="w-full bg-[#171922] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white placeholder-white/30 focus:border-[#3EB991] outline-none"
                   />
@@ -663,7 +662,7 @@ import { AvfDomain } from '../../../models/avf.models';
                   <label for="uav-proof" class="text-[10px] text-[#8C94A8] uppercase block mb-1">Verification Proof</label>
                   <input 
                     id="uav-proof"
-                    [(ngModel)]="newUavProof" 
+                    [value]="newUavProof()" (input)="newUavProof.set($any($event.target).value)" 
                     placeholder="e.g. ERP Ledger Hash Consensus" 
                     class="w-full bg-[#171922] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white placeholder-white/30 focus:border-[#3EB991] outline-none"
                   />
@@ -930,7 +929,7 @@ import { AvfDomain } from '../../../models/avf.models';
   `
 })
 export class AgenticValueFrameworkComponent {
-  @Input() pid!: string;
+  readonly pid = input<string>();
   readonly avf = inject(AvfService);
 
   readonly activeTab = signal<'calc' | 'flywheel' | 'uav' | 'governance' | 'benchmark' | 'roic'>('calc');
@@ -938,25 +937,25 @@ export class AgenticValueFrameworkComponent {
   readonly copyStatus = signal<string>('Copy Summary');
 
   // Form fields for new UAV
-  newUavName = '';
-  newUavDomain: AvfDomain = 'logistics';
-  newUavValue = 250;
-  newUavProof = '';
+  newUavName = signal('');
+  newUavDomain = signal<AvfDomain>('logistics');
+  newUavValue = signal(250);
+  newUavProof = signal('');
 
   handleCreateUav() {
-    if (!this.newUavName.trim()) return;
+    if (!this.newUavName().trim()) return;
     this.avf.addUavDefinition({
-      name: this.newUavName,
-      domain: this.newUavDomain,
-      description: `Autonomously verified ${this.newUavName} operations.`,
-      baseValue: this.newUavValue || 100,
+      name: this.newUavName(),
+      domain: this.newUavDomain(),
+      description: `Autonomously verified ${this.newUavName()} operations.`,
+      baseValue: this.newUavValue() || 100,
       measurementUnit: 'Per Verified Autonomous Cycle',
-      verificationProof: this.newUavProof || 'Cryptographic Consensus Attestation',
+      verificationProof: this.newUavProof() || 'Cryptographic Consensus Attestation',
       compoundingRate: 15.0,
-      humanAlternativeCost: (this.newUavValue || 100) * 2.5
+      humanAlternativeCost: (this.newUavValue() || 100) * 2.5
     });
-    this.newUavName = '';
-    this.newUavProof = '';
+    this.newUavName.set('');
+    this.newUavProof.set('');
   }
 
   downloadJson() {

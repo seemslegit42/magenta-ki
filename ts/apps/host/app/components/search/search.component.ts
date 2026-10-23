@@ -1,16 +1,18 @@
-import { Component, inject, HostListener } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Component, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
 import { SearchService } from '../../services/search.service';
 import { TablerIconComponent } from '../common/tabler-icon.component';
 
 @Component({
   selector: 'app-search',
   standalone: true,
-  imports: [CommonModule, FormsModule, TablerIconComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '(window:keydown.meta.space)': 'handleKeyboardEvent($event)',
+  },
+  imports: [TablerIconComponent],
   template: `
     @if (searchService.isVisible()) {
-      <div 
+      <div
         class="fixed inset-0 z-[1000] flex items-start justify-center pt-20 bg-black/60 backdrop-blur-md"
         (click)="onBackdropClick($event)"
         (keydown.escape)="searchService.toggle()"
@@ -18,22 +20,22 @@ import { TablerIconComponent } from '../common/tabler-icon.component';
         role="dialog"
         aria-label="Search overlay"
       >
-        <div 
+        <div
           class="w-full max-w-2xl bg-[#14161F]/90 backdrop-blur-2xl border border-white/20 rounded-2xl shadow-2xl p-4 overflow-hidden"
         >
           <div class="flex items-center px-2 border-b border-white/10 pb-2">
             <app-tabler-icon name="apps" size="20" class="text-[#3EB991] mr-3" />
-            <input 
-              type="text" 
+            <input
+              type="text"
               placeholder="Search apps, AVF calculus, terminal, commands... (Cmd+Space)"
               class="w-full bg-transparent p-2 text-white text-base font-light outline-none placeholder-white/40"
-              [(ngModel)]="query"
-              (input)="filterItems()"
+              [value]="query()"
+              (input)="query.set($any($event.target).value)"
             />
           </div>
           <div class="mt-2 max-h-[400px] overflow-y-auto space-y-1">
-            @for (item of filteredItems; track item.id) {
-              <button 
+            @for (item of filteredItems(); track item.id) {
+              <button
                 type="button"
                 class="w-full flex items-center gap-3.5 p-3 rounded-xl hover:bg-white/10 text-white transition-all text-left focus:outline-none focus:bg-white/10"
                 (click)="item.action(); searchService.toggle()"
@@ -53,18 +55,16 @@ import { TablerIconComponent } from '../common/tabler-icon.component';
         </div>
       </div>
     }
-  `
+  `,
 })
 export class SearchComponent {
-  searchService = inject(SearchService);
-  query = '';
-  filteredItems = this.searchService.items();
+  readonly searchService = inject(SearchService);
+  readonly query = signal('');
 
-  filterItems() {
-    this.filteredItems = this.searchService.items().filter(item => 
-      item.name.toLowerCase().includes(this.query.toLowerCase())
-    );
-  }
+  readonly filteredItems = computed(() => {
+    const q = this.query().toLowerCase();
+    return this.searchService.items().filter((item) => item.name.toLowerCase().includes(q));
+  });
 
   onBackdropClick(event: MouseEvent) {
     if (event.target === event.currentTarget) {
@@ -72,10 +72,9 @@ export class SearchComponent {
     }
   }
 
-  @HostListener('window:keydown.meta.space', ['$event'])
   handleKeyboardEvent(event: Event) {
     const kbEvent = event as KeyboardEvent;
-    kbEvent.preventDefault(); // Prevent browser default search/shortcut
+    kbEvent.preventDefault();
     this.searchService.toggle();
   }
 }

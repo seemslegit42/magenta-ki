@@ -1,15 +1,14 @@
-import { Component, Input, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, inject, signal } from '@angular/core';
 import { GatewayService } from '../../../services/gateway.service';
 import { PolarBillingService, LicenseValidationResult } from '../../../services/polar-billing.service';
 import { XiEconomyService } from '../../../services/xi-economy.service';
 import { PoAContributionParams, PoARewardResult } from '../../../models/webos.models';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-gateway-console',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [],
   template: `
     <div class="space-y-6">
       <div class="flex items-center justify-between border-b border-white/10 pb-4">
@@ -179,7 +178,7 @@ import { CommonModule } from '@angular/common';
                     <input
                       type="number"
                       class="w-full bg-[#0E1015] border border-white/10 rounded p-1.5 text-white"
-                      [(ngModel)]="poaInput.datasetWeightNk" />
+                      [value]="poaInput().datasetWeightNk" (input)="updatePoa({ datasetWeightNk: +$any($event.target).value })" />
                   </label>
                   <label class="block">
                     <span class="text-[10px] text-[#8C94A8] block mb-1">DPO Score (F_k [0-1])</span>
@@ -187,7 +186,7 @@ import { CommonModule } from '@angular/common';
                       type="number"
                       step="0.05"
                       class="w-full bg-[#0E1015] border border-white/10 rounded p-1.5 text-white"
-                      [(ngModel)]="poaInput.qualityFactorFk" />
+                      [value]="poaInput().qualityFactorFk" (input)="updatePoa({ qualityFactorFk: +$any($event.target).value })" />
                   </label>
                   <label class="block">
                     <span class="text-[10px] text-[#8C94A8] block mb-1">Model Lift (E_data)</span>
@@ -195,7 +194,7 @@ import { CommonModule } from '@angular/common';
                       type="number"
                       step="0.05"
                       class="w-full bg-[#0E1015] border border-white/10 rounded p-1.5 text-white"
-                      [(ngModel)]="poaInput.efficacyImpactEdata" />
+                      [value]="poaInput().efficacyImpactEdata" (input)="updatePoa({ efficacyImpactEdata: +$any($event.target).value })" />
                   </label>
                 </div>
 
@@ -442,7 +441,7 @@ import { CommonModule } from '@angular/common';
                   <div class="flex items-center space-x-2">
                     <input
                       class="flex-1 bg-[#0E1015] border border-white/10 rounded p-1.5 text-xs text-white"
-                      [(ngModel)]="licenseKeyToTest" />
+                      [value]="licenseKeyToTest()" (input)="licenseKeyToTest.set($any($event.target).value)" />
                     <button
                       class="px-3 py-1.5 rounded bg-[#20B2AA] hover:bg-[#20B2AA]/80 text-[#00201E] font-bold text-xs"
                       (click)="testLicenseKey()">
@@ -472,7 +471,7 @@ import { CommonModule } from '@angular/common';
 
             <textarea
               class="w-full h-32 bg-[#0E1015] border border-white/10 rounded-xl p-3 text-xs text-white font-mono focus:outline-none focus:border-[#3EB991]"
-              [(ngModel)]="sqlQuery"></textarea>
+              [value]="sqlQuery()" (input)="sqlQuery.set($any($event.target).value)"></textarea>
 
             <button
               class="px-4 py-2 rounded-lg bg-[#3EB991] hover:bg-[#3EB991]/80 text-[#002116] text-xs font-semibold transition-colors flex items-center space-x-1 shadow-md"
@@ -548,30 +547,30 @@ import { CommonModule } from '@angular/common';
   `
 })
 export class GatewayConsoleComponent {
-  @Input({ required: true }) pid!: string;
+  readonly pid = input.required<string>();
   protected gateway = inject(GatewayService);
   protected polar = inject(PolarBillingService);
   protected xi = inject(XiEconomyService);
 
   protected activeTab = signal<'xi' | 'polar' | 'turso' | 'logs'>('xi');
-  protected sqlQuery = 'SELECT config_key, config_val, updated_at FROM desktop_state WHERE user_id = "usr_operator_7842";';
+  protected sqlQuery = signal('SELECT config_key, config_val, updated_at FROM desktop_state WHERE user_id = "usr_operator_7842";');
   protected queryResult = signal<{ columns: string[]; rows: unknown[][] } | null>(null);
   protected gatewayLogs = this.gateway.logs;
 
   protected latestCheckoutUrl = signal<string | null>(null);
-  protected licenseKeyToTest = 'POLAR_9A8F-42E1-BC77-0912';
+  protected licenseKeyToTest = signal('POLAR_9A8F-42E1-BC77-0912');
   protected licenseResult = signal<LicenseValidationResult | null>(null);
 
-  protected poaInput: PoAContributionParams = {
+  protected poaInput = signal<PoAContributionParams>({
     contributorId: 'usr_operator_7842',
     datasetWeightNk: 150,
     qualityFactorFk: 0.95,
     efficacyImpactEdata: 1.35
-  };
+  });
   protected lastPoaResult = signal<PoARewardResult | null>(null);
 
   public runQuery(): void {
-    const res = this.gateway.queryEdgeDatabase(this.sqlQuery);
+    const res = this.gateway.queryEdgeDatabase(this.sqlQuery());
     this.queryResult.set(res);
   }
 
@@ -602,12 +601,12 @@ export class GatewayConsoleComponent {
   }
 
   public testLicenseKey(): void {
-    const res = this.polar.validateLicenseKey(this.licenseKeyToTest, 'inst_node_mac_01');
+    const res = this.polar.validateLicenseKey(this.licenseKeyToTest(), 'inst_node_mac_01');
     this.licenseResult.set(res);
   }
 
   public mintPoaReward(): void {
-    const res = this.xi.calculateAndMintPoaReward(this.poaInput);
+    const res = this.xi.calculateAndMintPoaReward(this.poaInput());
     this.lastPoaResult.set(res);
   }
 
@@ -622,5 +621,9 @@ export class GatewayConsoleComponent {
 
   public voteOnProposal(proposalId: string, vote: 'approve' | 'reject'): void {
     this.xi.castGovernanceVote(proposalId, 'usr_operator_7842', vote);
+  }
+
+  updatePoa(patch: Partial<PoAContributionParams>): void {
+    this.poaInput.update((v) => ({ ...v, ...patch }));
   }
 }

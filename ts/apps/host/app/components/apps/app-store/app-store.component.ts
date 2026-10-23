@@ -1,13 +1,19 @@
-import { Component, Input, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
+import { form, FormField, pattern, required } from '@angular/forms/signals';
 import { WindowManagerService } from '../../../services/window-manager.service';
-import { signal } from '@angular/core';
-import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { NativeFederationService, RemoteDefinition } from '../../../services/native-federation.service';
 
 @Component({
   selector: 'app-app-store',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [FormField],
   template: `
     <div class="space-y-6">
       <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-white/10 pb-4 gap-3">
@@ -234,51 +240,51 @@ import { NativeFederationService, RemoteDefinition } from '../../../services/nat
             <p class="text-xs text-[#8C94A8] mt-0.5">Dynamically add and resolve remote modules without rebuilding the host.</p>
           </div>
 
-          <form [formGroup]="remoteForm" (ngSubmit)="submitNewRemote()" class="space-y-4">
+          <form (submit)="$event.preventDefault(); submitNewRemote()" class="space-y-4">
             <div>
               <label for="remote-mfe-name" class="block text-xs font-mono text-[#8C94A8] mb-1">Remote Package Name</label>
-              <input 
+              <input
                 id="remote-mfe-name"
-                type="text" 
-                formControlName="name"
+                type="text"
+                [formField]="remoteForm.name"
                 placeholder="e.g. mfe-crm, billing-portal"
                 class="w-full bg-black/40 border border-white/15 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#20B2AA] font-mono" />
             </div>
 
             <div>
               <label for="remote-mfe-url" class="block text-xs font-mono text-[#8C94A8] mb-1">Remote Entry URL</label>
-              <input 
+              <input
                 id="remote-mfe-url"
-                type="text" 
-                formControlName="url"
+                type="text"
+                [formField]="remoteForm.url"
                 placeholder="e.g. http://localhost:3005/remoteEntry.json"
                 class="w-full bg-black/40 border border-white/15 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#20B2AA] font-mono" />
             </div>
 
             <div>
               <label for="remote-mfe-exposed" class="block text-xs font-mono text-[#8C94A8] mb-1">Exposed Module Key</label>
-              <input 
+              <input
                 id="remote-mfe-exposed"
-                type="text" 
-                formControlName="exposedModule"
+                type="text"
+                [formField]="remoteForm.exposedModule"
                 placeholder="./Component"
                 class="w-full bg-black/40 border border-white/15 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#20B2AA] font-mono" />
             </div>
 
             <div>
               <label for="remote-mfe-desc" class="block text-xs font-mono text-[#8C94A8] mb-1">Description</label>
-              <input 
+              <input
                 id="remote-mfe-desc"
-                type="text" 
-                formControlName="description"
+                type="text"
+                [formField]="remoteForm.description"
                 placeholder="Brief description of the remote application..."
                 class="w-full bg-black/40 border border-white/15 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#20B2AA]" />
             </div>
 
             <div class="pt-2 flex justify-end">
-              <button 
+              <button
                 type="submit"
-                [disabled]="remoteForm.invalid"
+                [disabled]="!remoteForm().valid()"
                 class="px-4 py-2 rounded-lg bg-[#6A0DAD] hover:bg-[#E0218A] disabled:opacity-40 disabled:hover:bg-[#6A0DAD] text-white text-xs font-semibold transition-colors flex items-center space-x-1.5 shadow-md">
                 <span class="material-icons text-sm">add_circle</span>
                 <span>Register Remote MFE</span>
@@ -291,20 +297,27 @@ import { NativeFederationService, RemoteDefinition } from '../../../services/nat
   `
 })
 export class AppStoreComponent {
-  @Input({ required: true }) pid!: string;
+  readonly pid = input.required<string>();
   private windowMgr = inject(WindowManagerService);
   protected federationService = inject(NativeFederationService);
 
-  public activeTab = signal<'catalog' | 'remotes' | 'manifest' | 'register'>('catalog');
+  readonly activeTab = signal<'catalog' | 'remotes' | 'manifest' | 'register'>('catalog');
 
-  public remoteForm = new FormGroup({
-    name: new FormControl('', [Validators.required, Validators.pattern(/^[a-zA-Z0-9_-]+$/)]),
-    url: new FormControl('', [Validators.required]),
-    exposedModule: new FormControl('./Component', [Validators.required]),
-    description: new FormControl('Dynamic Remote Micro-Frontend')
+  readonly remoteModel = signal({
+    name: '',
+    url: '',
+    exposedModule: './Component',
+    description: 'Dynamic Remote Micro-Frontend',
   });
 
-  public manifestJson = signal<string>(JSON.stringify({
+  readonly remoteForm = form(this.remoteModel, (p) => {
+    required(p.name, { message: 'Name is required' });
+    pattern(p.name, /^[a-zA-Z0-9_-]+$/, { message: 'Use letters, numbers, _ or -' });
+    required(p.url, { message: 'URL is required' });
+    required(p.exposedModule, { message: 'Exposed module is required' });
+  });
+
+  readonly manifestJson = signal<string>(JSON.stringify({
     "remote-analytics": "http://localhost:3001/remoteEntry.json",
     "remote-copilot": "http://localhost:3002/remoteEntry.json",
     "remote-wopi-editor": "http://localhost:3003/remoteEntry.json"
@@ -395,15 +408,23 @@ export class AppStoreComponent {
     await this.federationService.probeRemote(remote);
   }
 
-  public submitNewRemote(): void {
-    if (this.remoteForm.valid) {
-      const { name, url, exposedModule, description } = this.remoteForm.value;
-      if (name && url) {
-        this.federationService.registerDynamicRemote(name, url, exposedModule || './Component', description || '');
-        this.remoteForm.reset({ exposedModule: './Component', description: 'Dynamic Remote Micro-Frontend' });
-        this.activeTab.set('remotes');
-      }
-    }
+  submitNewRemote(): void {
+    if (!this.remoteForm().valid()) return;
+    const { name, url, exposedModule, description } = this.remoteModel();
+    if (!name || !url) return;
+    this.federationService.registerDynamicRemote(
+      name,
+      url,
+      exposedModule || './Component',
+      description || '',
+    );
+    this.remoteModel.set({
+      name: '',
+      url: '',
+      exposedModule: './Component',
+      description: 'Dynamic Remote Micro-Frontend',
+    });
+    this.activeTab.set('remotes');
   }
 }
 

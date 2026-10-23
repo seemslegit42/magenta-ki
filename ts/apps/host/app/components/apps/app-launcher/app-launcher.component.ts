@@ -1,6 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, input } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { WindowManagerService } from '../../../services/window-manager.service';
 import { NativeFederationService, RemoteDefinition } from '../../../services/native-federation.service';
@@ -21,7 +19,7 @@ export interface AppLauncherItem {
 @Component({
   selector: 'app-app-launcher',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatIconModule],
+  imports: [MatIconModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="flex flex-col h-full space-y-5 font-['Lexend'] text-[#F5FFFA]">
@@ -60,7 +58,8 @@ export interface AppLauncherItem {
           <mat-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-[#8C94A8] text-sm pointer-events-none">search</mat-icon>
           <input
             type="search"
-            [formControl]="searchControl"
+            [value]="searchQuery()"
+            (input)="searchQuery.set($any($event.target).value)"
             placeholder="Search applications, micro-frontends, or services..."
             class="w-full pl-9 pr-4 py-2 rounded-lg bg-[#0D0E12] border border-white/10 text-xs text-[#F5FFFA] placeholder-[#8C94A8]/60 focus:outline-none focus:border-[#3EB991] focus:ring-1 focus:ring-[#3EB991]/50 transition-all font-['Lexend']"
           />
@@ -202,20 +201,13 @@ export interface AppLauncherItem {
   `
 })
 export class AppLauncherComponent {
-  @Input() pid?: string;
+  readonly pid = input<string>();
 
   protected readonly windowManager = inject(WindowManagerService);
   protected readonly federationService = inject(NativeFederationService);
 
-  public readonly searchQuery = signal<string>('');
-  public readonly searchControl = new FormControl<string>('', { nonNullable: true });
-  public readonly selectedCategory = signal<string>('all');
-
-  constructor() {
-    this.searchControl.valueChanges.subscribe(val => {
-      this.searchQuery.set(val || '');
-    });
-  }
+  readonly searchQuery = signal('');
+  readonly selectedCategory = signal<string>('all');
 
   public readonly categories = [
     { id: 'all', label: 'All', icon: 'grid_view' },

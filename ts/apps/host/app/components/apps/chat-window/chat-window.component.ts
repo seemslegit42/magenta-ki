@@ -1,6 +1,6 @@
 import { 
   Component, 
-  Input, 
+  input, 
   signal, 
   inject, 
   ChangeDetectionStrategy, 
@@ -9,8 +9,7 @@ import {
   AfterViewChecked, 
   OnDestroy 
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { form, FormField } from '@angular/forms/signals';
 import { HttpClient } from '@angular/common/http';
 import { WindowManagerService } from '../../../services/window-manager.service';
 import { TablerIconComponent } from '../../common/tabler-icon.component';
@@ -30,7 +29,7 @@ export interface ChatMessage {
 @Component({
   selector: 'app-chat-window',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TablerIconComponent],
+  imports: [FormField, TablerIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="flex flex-col h-full space-y-3 font-['Lexend'] text-[#F5FFFA] select-text">
@@ -211,16 +210,15 @@ export interface ChatMessage {
         <div class="relative flex-1">
           <input
             type="text"
-            [formControl]="inputControl"
+            [formField]="inputForm.text"
             placeholder="Direct the Sovereign Copilot (e.g., 'Transmute system logs', 'Audit fleet', 'Calculate AVF Flywheel')..."
             class="w-full pl-4 pr-10 py-3 rounded-xl bg-[#11131A] border border-white/15 focus:border-[#20B2AA] focus:ring-1 focus:ring-[#20B2AA]/50 text-xs text-[#F5FFFA] placeholder-[#8C94A8]/60 outline-none transition-all font-['Lexend'] shadow-inner"
-            [disabled]="isGenerating()"
           />
         </div>
 
         <button
           type="submit"
-          [disabled]="isGenerating() || !inputControl.value.trim()"
+          [disabled]="isGenerating() || !inputModel().text.trim()"
           class="h-10 px-4 rounded-xl bg-gradient-to-r from-[#20B2AA] to-[#3EB991] hover:from-[#1E9F98] hover:to-[#37A783] active:scale-95 disabled:opacity-40 disabled:pointer-events-none text-[#0E1015] font-bold text-xs flex items-center space-x-1.5 shadow-lg shadow-[#20B2AA]/20 transition-all cursor-pointer"
           title="Transmit Prompt to Copilot">
           <app-tabler-icon name="send" size="14" />
@@ -231,7 +229,7 @@ export interface ChatMessage {
   `
 })
 export class ChatWindowComponent implements AfterViewChecked, OnDestroy {
-  @Input() pid?: string;
+  readonly pid = input<string>();
 
   @ViewChild('chatScrollContainer') private scrollContainer?: ElementRef<HTMLDivElement>;
 
@@ -239,8 +237,9 @@ export class ChatWindowComponent implements AfterViewChecked, OnDestroy {
   private readonly windowManager = inject(WindowManagerService);
   private readonly bladesService = inject(BladesService);
 
-  public readonly inputControl = new FormControl<string>('', { nonNullable: true });
-  public readonly isGenerating = signal<boolean>(false);
+  readonly inputModel = signal({ text: '' });
+  readonly inputForm = form(this.inputModel);
+  readonly isGenerating = signal<boolean>(false);
   public readonly typingSpeed = signal<number>(1); // 1 = Normal (15ms), 2 = Fast (6ms), 0 = Instant
   public readonly soundEnabled = signal<boolean>(false);
 
@@ -300,18 +299,18 @@ export class ChatWindowComponent implements AfterViewChecked, OnDestroy {
     this.windowManager.triggerHaptic(10);
   }
 
-  public selectSuggestion(promptText: string): void {
-    this.inputControl.setValue(promptText);
+  selectSuggestion(promptText: string): void {
+    this.inputModel.set({ text: promptText });
   }
 
-  public async sendMessage(event?: Event): Promise<void> {
+  async sendMessage(event?: Event): Promise<void> {
     if (event) {
       event.preventDefault();
     }
-    const text = this.inputControl.value.trim();
+    const text = this.inputModel().text.trim();
     if (!text || this.isGenerating()) return;
 
-    this.inputControl.setValue('');
+    this.inputModel.set({ text: '' });
     const userMsgId = `usr_${Date.now()}`;
     const userMessage: ChatMessage = {
       id: userMsgId,
@@ -333,7 +332,7 @@ export class ChatWindowComponent implements AfterViewChecked, OnDestroy {
         { 
           prompt: text, 
           context: { 
-            pid: this.pid || 'proc_chat',
+            pid: this.pid() || 'proc_chat',
             framework: 'blades-copilot-runtime',
             cadence: 'syncopated_magenta'
           } 

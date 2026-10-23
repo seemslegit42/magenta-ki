@@ -1,6 +1,5 @@
-import { Component, Input, inject, signal, computed } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Component, ChangeDetectionStrategy, input, inject, signal, computed } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { AuditService } from '../../../services/audit.service';
 import { AuthRbacService } from '../../../services/auth-rbac.service';
 import { NotificationService } from '../../../services/notification.service';
@@ -9,7 +8,8 @@ import { AuditCategory, AuditSeverity, UserRole } from '../../../models/webos.mo
 @Component({
   selector: 'app-security-audit',
   standalone: true,
-  imports: [CommonModule, DatePipe, FormsModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [DatePipe],
   template: `
     <div class="space-y-6">
       <!-- Header -->
@@ -103,13 +103,13 @@ import { AuditCategory, AuditSeverity, UserRole } from '../../../models/webos.mo
                 type="text"
                 class="bg-transparent border-none text-xs text-white focus:outline-none w-full"
                 placeholder="Search by action, details, user ID or target..."
-                [(ngModel)]="searchQuery" />
+                [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)" />
             </div>
 
             <!-- Severity Filter -->
             <select
               class="bg-[#0E1015] text-xs text-white px-2 py-1.5 rounded-lg border border-white/10 focus:outline-none"
-              [(ngModel)]="selectedSeverity">
+              [value]="selectedSeverity()" (change)="selectedSeverity.set($any($event.target).value)">
               <option value="ALL">All Severities</option>
               <option value="info">Info</option>
               <option value="warning">Warning</option>
@@ -120,7 +120,7 @@ import { AuditCategory, AuditSeverity, UserRole } from '../../../models/webos.mo
             <!-- Category Filter -->
             <select
               class="bg-[#0E1015] text-xs text-white px-2 py-1.5 rounded-lg border border-white/10 focus:outline-none"
-              [(ngModel)]="selectedCategory">
+              [value]="selectedCategory()" (change)="selectedCategory.set($any($event.target).value)">
               <option value="ALL">All Categories</option>
               <option value="auth">Auth & IAM</option>
               <option value="filesystem">Filesystem (AgentFS)</option>
@@ -380,16 +380,16 @@ import { AuditCategory, AuditSeverity, UserRole } from '../../../models/webos.mo
   `
 })
 export class SecurityAuditComponent {
-  @Input({ required: true }) pid!: string;
+  readonly pid = input.required<string>();
 
   protected auditService = inject(AuditService);
   protected authRbac = inject(AuthRbacService);
   protected notificationService = inject(NotificationService);
 
   protected activeTab = signal<'audit' | 'rbac' | 'compliance'>('audit');
-  protected searchQuery = '';
-  protected selectedSeverity = 'ALL';
-  protected selectedCategory = 'ALL';
+  protected searchQuery = signal('');
+  protected selectedSeverity = signal('ALL');
+  protected selectedCategory = signal('ALL');
   protected auditCategories: AuditCategory[] = ['auth', 'filesystem', 'process', 'system', 'rbac', 'wopi'];
   protected auditSeverities: AuditSeverity[] = ['info', 'warning', 'critical', 'security'];
   protected supportedRoles: UserRole[] = ['administrator', 'content_creator', 'general_user'];
@@ -415,16 +415,16 @@ export class SecurityAuditComponent {
   protected filteredLogs = computed(() => {
     let logs = this.auditService.allLogs();
 
-    if (this.selectedSeverity !== 'ALL') {
-      logs = logs.filter(l => l.severity === this.selectedSeverity);
+    if (this.selectedSeverity() !== 'ALL') {
+      logs = logs.filter(l => l.severity === this.selectedSeverity());
     }
 
-    if (this.selectedCategory !== 'ALL') {
-      logs = logs.filter(l => l.category === this.selectedCategory);
+    if (this.selectedCategory() !== 'ALL') {
+      logs = logs.filter(l => l.category === this.selectedCategory());
     }
 
-    if (this.searchQuery.trim()) {
-      const q = this.searchQuery.toLowerCase();
+    if (this.searchQuery().trim()) {
+      const q = this.searchQuery().toLowerCase();
       logs = logs.filter(
         l =>
           l.action.toLowerCase().includes(q) ||

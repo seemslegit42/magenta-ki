@@ -1,4 +1,4 @@
-import { Component, signal, inject, afterNextRender } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, inject, afterNextRender } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TablerIconComponent } from '../common/tabler-icon.component';
 import { WindowManagerService } from '../../services/window-manager.service';
@@ -6,6 +6,7 @@ import { WindowManagerService } from '../../services/window-manager.service';
 @Component({
   selector: 'app-statusbar',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, TablerIconComponent],
   template: `
     <header class="h-12 bg-[#08090C]/95 backdrop-blur-2xl border-b border-[rgba(245,255,250,0.18)] px-4 flex items-center justify-between select-none z-50 shadow-lg">

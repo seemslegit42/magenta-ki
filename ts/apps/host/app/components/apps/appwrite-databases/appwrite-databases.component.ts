@@ -1,4 +1,4 @@
-import { Component, Input, inject, signal, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, inject, signal, computed } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { AppwriteDatabaseService, SdkCodeConfig, SdkExecutionResult } from '../../../services/appwrite-database.service';
 import { AuthRbacService } from '../../../services/auth-rbac.service';
@@ -8,6 +8,7 @@ import { AppwriteDatabase, AppwriteTable, AppwriteColumn } from '../../../models
 @Component({
   selector: 'app-appwrite-databases',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, DatePipe],
   template: `
     <div class="space-y-6 select-none font-['Lexend'] text-white">
@@ -1008,7 +1009,7 @@ import { AppwriteDatabase, AppwriteTable, AppwriteColumn } from '../../../models
   `
 })
 export class AppwriteDatabasesComponent {
-  @Input({ required: true }) pid!: string;
+  readonly pid = input.required<string>();
 
   protected dbService = inject(AppwriteDatabaseService);
   protected authRbac = inject(AuthRbacService);

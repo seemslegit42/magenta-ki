@@ -25,7 +25,7 @@ describe('AppLauncherComponent', () => {
   });
 
   afterEach(() => {
-    component.searchControl.setValue('');
+    component.searchQuery.set('');
     component.selectedCategory.set('all');
   });
 
@@ -63,7 +63,7 @@ describe('AppLauncherComponent', () => {
   });
 
   it('should filter applications by search query', () => {
-    component.searchControl.setValue('terminal');
+    component.searchQuery.set('terminal');
     const results = component.filteredApps();
     expect(results.some((a: AppLauncherItem) => a.id === 'terminal')).toBe(true);
     expect(results.length).toBeLessThan(component.allApps().length);

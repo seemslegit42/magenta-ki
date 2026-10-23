@@ -13,11 +13,11 @@
     "bun:api": "bun run bun/cmd/server/index.ts",
     "dev:stack": "bun run bun:api & cross-env PORT=3000 ng serve",
     "lint": "ng lint",
-    "serve:ssr:app": "bun --import @angular-architects/native-federation/node-preload dist/app/server/server.mjs"
+    "serve:ssr:app": "bun ts/apps/host/server.entry.mjs"
   },
   "private": true,
   "dependencies": {
-    "@angular-architects/native-federation": "^22.2.2",
+    "@angular-architects/native-federation": "^22.2.3",
     "@angular/cdk": "^22.2.0",
     "@angular/common": "^22.2.0",
     "@angular/compiler": "^22.2.0",
@@ -41,7 +41,7 @@
     "@angular/build": "^22.2.0",
     "@angular/cli": "^22.2.0",
     "@angular/compiler-cli": "^22.2.0",
-    "@softarc/native-federation-orchestrator": "4.6.0",
+    "@softarc/native-federation-orchestrator": "^4.8.0",
     "@tailwindcss/postcss": "^4.1.12",
     "@types/bun": "^1.4.4",
     "@types/node": "^20.17.19",

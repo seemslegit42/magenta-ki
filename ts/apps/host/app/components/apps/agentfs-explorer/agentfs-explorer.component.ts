@@ -1,4 +1,4 @@
-import { Component, Input, inject, signal, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, inject, signal, computed } from '@angular/core';
 import { AgentFSService } from '../../../services/agentfs.service';
 import { DatePipe } from '@angular/common';
 import { VfsInode } from '../../../models/webos.models';
@@ -6,6 +6,7 @@ import { VfsInode } from '../../../models/webos.models';
 @Component({
   selector: 'app-agentfs-explorer',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [DatePipe],
   template: `
     <div class="space-y-6">
@@ -93,7 +94,7 @@ import { VfsInode } from '../../../models/webos.models';
   `
 })
 export class AgentFsExplorerComponent {
-  @Input({ required: true }) pid!: string;
+  readonly pid = input.required<string>();
   private agentFs = inject(AgentFSService);
 
   protected inodesList = computed(() => Array.from(this.agentFs.allInodes()().entries()));

@@ -1,4 +1,4 @@
-import { Component, signal, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { GatewayService } from '../../services/gateway.service';
 import { NotificationService } from '../../services/notification.service';
@@ -10,6 +10,7 @@ import { UserRole, AuditCategory, AuditSeverity } from '../../models/webos.model
 @Component({
   selector: 'app-status-bar',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, DatePipe],
   template: `
     <header class="h-10 bg-[#0E1015]/95 backdrop-blur-md border-b border-white/10 px-4 flex items-center justify-between text-xs text-[#8C94A8] z-40 select-none relative">

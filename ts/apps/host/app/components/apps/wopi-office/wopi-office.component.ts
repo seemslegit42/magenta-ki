@@ -1,16 +1,15 @@
-import { Component, Input, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, inject, signal } from '@angular/core';
 import { WopiService } from '../../../services/wopi.service';
 import { AuthRbacService } from '../../../services/auth-rbac.service';
 import { AuditService } from '../../../services/audit.service';
 import { NotificationService } from '../../../services/notification.service';
 import { WopiDocument, AuditCategory, AuditSeverity } from '../../../models/webos.models';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-wopi-office',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [],
   template: `
     <div class="space-y-6">
       <div class="flex items-center justify-between border-b border-white/10 pb-4">
@@ -98,7 +97,7 @@ import { CommonModule } from '@angular/common';
 
             <textarea
               class="w-full h-80 bg-[#0E1015] border border-white/10 rounded-xl p-4 text-sm text-white font-mono focus:outline-none focus:border-[#E0218A] leading-relaxed"
-              [(ngModel)]="editableContent"
+              [value]="editableContent()" (input)="editableContent.set($any($event.target).value)"
               [disabled]="!canEdit() || (isLocked() && !myLockToken)"></textarea>
 
             @if (saveMessage()) {
@@ -113,7 +112,7 @@ import { CommonModule } from '@angular/common';
   `
 })
 export class WopiOfficeComponent {
-  @Input({ required: true }) pid!: string;
+  readonly pid = input.required<string>();
   private wopi = inject(WopiService);
   protected authRbac = inject(AuthRbacService);
   protected auditService = inject(AuditService);
@@ -121,13 +120,13 @@ export class WopiOfficeComponent {
 
   protected documents: WopiDocument[] = this.wopi.getDocuments();
   protected selectedDoc = signal<WopiDocument | null>(this.documents[0] || null);
-  protected editableContent = '';
+  protected editableContent = signal('');
   protected myLockToken: string | null = null;
   protected saveMessage = signal('');
 
   constructor() {
     if (this.selectedDoc()) {
-      this.editableContent = this.selectedDoc()?.content || '';
+      this.editableContent.set(this.selectedDoc()?.content || '');
     }
   }
 
@@ -141,7 +140,7 @@ export class WopiOfficeComponent {
 
   public selectDocument(doc: WopiDocument): void {
     this.selectedDoc.set(doc);
-    this.editableContent = doc.content || '';
+    this.editableContent.set(doc.content || '');
     this.saveMessage.set('');
     this.auditService.logEvent({
       action: 'WOPI_DOCUMENT_INSPECTED',
@@ -224,13 +223,13 @@ export class WopiOfficeComponent {
     }
 
     try {
-      this.wopi.putFile(fileId, this.editableContent, this.myLockToken || undefined);
+      this.wopi.putFile(fileId, this.editableContent(), this.myLockToken || undefined);
       this.saveMessage.set(`PutFile synchronized successfully at ${new Date().toLocaleTimeString()}`);
       this.auditService.logEvent({
         action: 'WOPI_PUT_FILE_COMMITTED',
         category: AuditCategory.WOPI,
         targetEntity: fileId,
-        details: `Updated ${fileId} (${this.editableContent.length} bytes) via PutFile.`,
+        details: `Updated ${fileId} (${this.editableContent().length} bytes) via PutFile.`,
       });
       this.notificationService.notify({
         title: 'Document Saved',

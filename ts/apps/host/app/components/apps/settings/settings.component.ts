@@ -1,6 +1,4 @@
-import { Component, Input, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Component, ChangeDetectionStrategy, input, inject } from '@angular/core';
 import { NotificationService } from '../../../services/notification.service';
 import { AuthRbacService } from '../../../services/auth-rbac.service';
 import { AuditService } from '../../../services/audit.service';
@@ -9,7 +7,8 @@ import { UserRole, AuditCategory, AuditSeverity } from '../../../models/webos.mo
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [],
   template: `
     <div class="space-y-6">
       <div class="border-b border-white/10 pb-4 flex items-center justify-between">
@@ -223,7 +222,7 @@ import { UserRole, AuditCategory, AuditSeverity } from '../../../models/webos.mo
   `
 })
 export class SettingsComponent {
-  @Input({ required: true }) pid!: string;
+  readonly pid = input.required<string>();
 
   protected notificationService = inject(NotificationService);
   protected authRbac = inject(AuthRbacService);

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { WindowManagerService } from '../../services/window-manager.service';
 import { NotificationService } from '../../services/notification.service';
@@ -9,6 +9,7 @@ import { DockComponent } from '../dock/dock.component';
 @Component({
   selector: 'app-desktop',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, DatePipe, StatusBarComponent, WindowComponent, DockComponent],
   template: `
     <div class="syncopated-desktop-stage w-screen h-[100dvh] max-h-[100dvh] overflow-hidden relative flex flex-col justify-between select-none pt-[env(safe-area-inset-top,0px)] pb-[env(safe-area-inset-bottom,0px)]">

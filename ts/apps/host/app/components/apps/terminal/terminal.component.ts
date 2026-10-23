@@ -1,7 +1,5 @@
-import { Component, Input, signal, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, ChangeDetectionStrategy, input, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { CommonModule } from '@angular/common';
 
 interface TerminalLog {
   time: string;
@@ -13,7 +11,8 @@ interface TerminalLog {
 @Component({
   selector: 'app-terminal',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [],
   template: `
     <div class="space-y-4 h-full flex flex-col">
       <div class="flex items-center justify-between border-b border-white/10 pb-3">
@@ -55,7 +54,8 @@ interface TerminalLog {
           type="text"
           class="flex-1 bg-[#151922] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-[#E0218A]"
           placeholder="Type command (e.g., 'help', 'status', 'ai refactor workspace', 'turso sync')..."
-          [(ngModel)]="commandInput"
+          [value]="commandInput()"
+          (input)="commandInput.set($any($event.target).value)"
           (keydown.enter)="executeCommand()" />
         <button
           class="px-4 py-2.5 rounded-xl bg-[#E0218A] hover:bg-[#FF2A9D] text-white text-xs font-semibold transition-colors shadow-lg flex items-center space-x-1"
@@ -68,10 +68,10 @@ interface TerminalLog {
   `
 })
 export class TerminalComponent {
-  @Input({ required: true }) pid!: string;
+  readonly pid = input.required<string>();
   private http = inject(HttpClient);
 
-  protected commandInput = '';
+  protected commandInput = signal('');
   protected isLoading = signal(false);
 
   protected logs = signal<TerminalLog[]>([
@@ -84,12 +84,12 @@ export class TerminalComponent {
   }
 
   public async executeCommand(): Promise<void> {
-    const cmd = this.commandInput.trim();
+    const cmd = this.commandInput().trim();
     if (!cmd) return;
 
     const time = new Date().toLocaleTimeString();
     this.logs.update(list => [...list, { time, prefix: 'usr>', text: cmd, type: 'user' }]);
-    this.commandInput = '';
+    this.commandInput.set('');
 
     if (cmd === 'help') {
       this.logs.update(list => [...list, {
@@ -115,7 +115,7 @@ export class TerminalComponent {
       const prompt = cmd.slice(3).trim();
       this.isLoading.set(true);
       try {
-        const res = await this.http.post<{ reply: string }>('/api/ai/chat', { prompt, context: { pid: this.pid } }).toPromise();
+        const res = await this.http.post<{ reply: string }>('/api/ai/chat', { prompt, context: { pid: this.pid() } }).toPromise();
         const fullReply = res?.reply || 'Task completed successfully.';
         this.isLoading.set(false);
 

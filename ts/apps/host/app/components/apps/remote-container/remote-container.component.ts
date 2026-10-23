@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject, signal, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, OnInit, inject, signal, ViewChild, ViewContainerRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProcessDescriptor, RemoteDefinition } from '../../../models/webos.models';
 import { NativeFederationService } from '../../../services/native-federation.service';
@@ -6,6 +6,7 @@ import { NativeFederationService } from '../../../services/native-federation.ser
 @Component({
   selector: 'app-remote-container',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   template: `
     <div class="space-y-4 p-2 font-['Lexend'] text-[#F5FFFA]">
@@ -96,7 +97,7 @@ import { NativeFederationService } from '../../../services/native-federation.ser
             <span class="material-icons text-sm text-[#20B2AA]">memory</span>
             <span>Remote Micro-Frontend Host</span>
           </h4>
-          <span class="text-[10px] font-mono text-[#8C94A8]">PID: {{ pid }}</span>
+          <span class="text-[10px] font-mono text-[#8C94A8]">PID: {{ pid() }}</span>
         </div>
 
         <!-- Dynamic Component ViewContainer Host -->
@@ -167,8 +168,8 @@ import { NativeFederationService } from '../../../services/native-federation.ser
   `
 })
 export class RemoteContainerComponent implements OnInit {
-  @Input({ required: true }) pid!: string;
-  @Input() descriptor?: ProcessDescriptor;
+  readonly pid = input.required<string>();
+  readonly descriptor = input<ProcessDescriptor>();
 
   @ViewChild('dynamicMountContainer', { read: ViewContainerRef }) 
   private dynamicMountContainer?: ViewContainerRef;
@@ -184,9 +185,10 @@ export class RemoteContainerComponent implements OnInit {
   public readonly isTesting = signal<boolean>(false);
 
   ngOnInit(): void {
-    if (this.descriptor) {
-      this.remoteTitle.set(this.descriptor.title);
-      const name = this.descriptor.appId.replace('remote-', '');
+    const descriptor = this.descriptor();
+    if (descriptor) {
+      this.remoteTitle.set(descriptor.title);
+      const name = descriptor.appId.replace('remote-', '');
       this.remoteName.set(name);
       
       const found = this.federationService.remotes().find(r => r.name === name);

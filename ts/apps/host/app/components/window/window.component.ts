@@ -1,4 +1,4 @@
-import { Component, Input, computed, signal, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, computed, signal, inject } from '@angular/core';
 import { WindowBounds, ProcessDescriptor } from '../../models/webos.models';
 import { WindowManagerService } from '../../services/window-manager.service';
 import { AgentFsExplorerComponent } from '../apps/agentfs-explorer/agentfs-explorer.component';
@@ -17,6 +17,7 @@ import { ChatWindowComponent } from '../apps/chat-window/chat-window.component';
 @Component({
   selector: 'app-window',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AgentFsExplorerComponent,
     AppStoreComponent,
@@ -36,16 +37,16 @@ import { ChatWindowComponent } from '../apps/chat-window/chat-window.component';
       class="syncopated-window absolute flex flex-col overflow-hidden transition-all duration-200 bg-[#10131A]/98 backdrop-blur-2xl border border-white/20 rounded-2xl shadow-2xl"
       [class.is-focused]="isFocused()"
       [class.is-background]="!isFocused()"
-      [class.hidden]="bounds.isMinimized"
+      [class.hidden]="bounds().isMinimized"
       [class.is-mobile-maximized]="isMobileMaximized()"
       [class.window-gesture-dragging]="isDragging() || isPulling()"
       [class.window-spring-back]="isSpringBack()"
       [class.window-dismiss-anim]="isDismissing()"
       [style.transform]="windowTransform()"
       [style.opacity]="windowOpacity()"
-      [style.width.px]="isMobileMaximized() ? null : (bounds.isMaximized ? window.innerWidth : bounds.width)"
-      [style.height.px]="isMobileMaximized() ? null : (bounds.isMaximized ? (window.innerHeight - 80) : bounds.height)"
-      [style.z-index]="bounds.zIndex"
+      [style.width.px]="isMobileMaximized() ? null : (bounds().isMaximized ? window.innerWidth : bounds().width)"
+      [style.height.px]="isMobileMaximized() ? null : (bounds().isMaximized ? (window.innerHeight - 80) : bounds().height)"
+      [style.z-index]="bounds().zIndex"
       (mousedown)="onFocus()">
       
       <!-- Window Chrome (Touch & Desktop Drag Zone) -->
@@ -65,8 +66,8 @@ import { ChatWindowComponent } from '../apps/chat-window/chat-window.component';
               <path d="M4 10h16"></path>
               <path d="M10 4v16"></path>
             </svg>
-            <span class="font-display font-semibold text-xs tracking-wide text-[#F5FFFA] truncate">{{ descriptor.title }}</span>
-            <span class="hidden sm:inline-block text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/5 text-[#8C94A8] border border-white/10">{{ descriptor.pid }}</span>
+            <span class="font-display font-semibold text-xs tracking-wide text-[#F5FFFA] truncate">{{ descriptor().title }}</span>
+            <span class="hidden sm:inline-block text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/5 text-[#8C94A8] border border-white/10">{{ descriptor().pid }}</span>
           </div>
           
           <!-- Desktop & Mobile Window Control Buttons (Tabler Sigils) -->
@@ -83,7 +84,7 @@ import { ChatWindowComponent } from '../apps/chat-window/chat-window.component';
               class="w-7 h-7 rounded-lg hover:bg-white/10 active:bg-white/20 flex items-center justify-center text-[#8C94A8] hover:text-white transition-colors border border-transparent hover:border-white/10"
               (click)="onMaximize()"
               title="Toggle Fullscreen">
-              @if (bounds.isMaximized) {
+              @if (bounds().isMaximized) {
                 <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M15 19v-2a2 2 0 0 1 2 -2h2"></path>
                   <path d="M15 5v2a2 2 0 0 0 2 2h2"></path>
@@ -124,50 +125,50 @@ import { ChatWindowComponent } from '../apps/chat-window/chat-window.component';
 
       <!-- Window Body -->
       <div class="window-body flex-1 overflow-auto bg-[#0E1015]/95 p-3 md:p-4 relative">
-        @switch (descriptor.entryComponent) {
+        @switch (descriptor().entryComponent) {
           @case ('AppStoreComponent') {
-            <app-app-store [pid]="descriptor.pid" />
+            <app-app-store [pid]="descriptor().pid" />
           }
           @case ('AgentFsExplorerComponent') {
-            <app-agentfs-explorer [pid]="descriptor.pid" />
+            <app-agentfs-explorer [pid]="descriptor().pid" />
           }
           @case ('WopiOfficeComponent') {
-            <app-wopi-office [pid]="descriptor.pid" />
+            <app-wopi-office [pid]="descriptor().pid" />
           }
           @case ('GatewayConsoleComponent') {
-            <app-gateway-console [pid]="descriptor.pid" />
+            <app-gateway-console [pid]="descriptor().pid" />
           }
           @case ('TerminalComponent') {
-            <app-terminal [pid]="descriptor.pid" />
+            <app-terminal [pid]="descriptor().pid" />
           }
           @case ('SettingsComponent') {
-            <app-settings [pid]="descriptor.pid" />
+            <app-settings [pid]="descriptor().pid" />
           }
           @case ('SecurityAuditComponent') {
-            <app-security-audit [pid]="descriptor.pid" />
+            <app-security-audit [pid]="descriptor().pid" />
           }
           @case ('AppwriteDatabasesComponent') {
-            <app-appwrite-databases [pid]="descriptor.pid" />
+            <app-appwrite-databases [pid]="descriptor().pid" />
           }
           @case ('AppLauncherComponent') {
-            <app-app-launcher [pid]="descriptor.pid" />
+            <app-app-launcher [pid]="descriptor().pid" />
           }
           @case ('AgenticValueFrameworkComponent') {
-            <app-agentic-value-framework [pid]="descriptor.pid" />
+            <app-agentic-value-framework [pid]="descriptor().pid" />
           }
           @case ('ChatWindowComponent') {
-            <app-chat-window [pid]="descriptor.pid" />
+            <app-chat-window [pid]="descriptor().pid" />
           }
           @case ('RemoteContainerComponent') {
-            <app-remote-container [pid]="descriptor.pid" [descriptor]="descriptor" />
+            <app-remote-container [pid]="descriptor().pid" [descriptor]="descriptor()" />
           }
           @default {
-            <app-remote-container [pid]="descriptor.pid" [descriptor]="descriptor" />
+            <app-remote-container [pid]="descriptor().pid" [descriptor]="descriptor()" />
           }
         }
         
         <!-- Large Touch-Accessible Resize Handles (Desktop & Touch) -->
-        @if (!bounds.isMaximized) {
+        @if (!bounds().isMaximized) {
           <div class="absolute right-0 top-0 bottom-0 w-4 cursor-col-resize touch-none" (mousedown)="startResize($event, 'right')" (touchstart)="startResize($event, 'right')"></div>
           <div class="absolute left-0 right-0 bottom-0 h-4 cursor-row-resize touch-none" (mousedown)="startResize($event, 'bottom')" (touchstart)="startResize($event, 'bottom')"></div>
           <div class="absolute right-0 bottom-0 w-8 h-8 cursor-nwse-resize touch-none flex items-end justify-end p-1" (mousedown)="startResize($event, 'bottom-right')" (touchstart)="startResize($event, 'bottom-right')">
@@ -219,7 +220,7 @@ import { ChatWindowComponent } from '../apps/chat-window/chat-window.component';
               class="w-8 h-8 rounded-lg bg-white/5 active:bg-white/20 flex items-center justify-center text-[#8C94A8] active:text-white transition-colors"
               (click)="onMaximize()"
               title="Toggle Window Size">
-              <span class="material-icons text-base">{{ bounds.isMaximized ? 'fullscreen_exit' : 'fullscreen' }}</span>
+              <span class="material-icons text-base">{{ bounds().isMaximized ? 'fullscreen_exit' : 'fullscreen' }}</span>
             </button>
             <button 
               class="w-8 h-8 rounded-lg bg-[#FF4D6D]/15 active:bg-[#FF4D6D]/35 flex items-center justify-center text-[#FF4D6D] transition-colors"
@@ -234,14 +235,14 @@ import { ChatWindowComponent } from '../apps/chat-window/chat-window.component';
   `
 })
 export class WindowComponent {
-  @Input({ required: true }) descriptor!: ProcessDescriptor;
-  @Input({ required: true }) bounds!: WindowBounds;
+  readonly descriptor = input.required<ProcessDescriptor>();
+  readonly bounds = input.required<WindowBounds>();
 
   protected windowMgr = inject(WindowManagerService);
 
-  public isFocused = computed(() => this.bounds.zIndex === this.windowMgr.topZIndex());
-  public isMobileMaximized = computed(() => this.bounds.isMaximized && this.windowMgr.isMobile());
-  public windowPosition = computed(() => this.windowMgr.getWindowPositionInfo(this.descriptor.pid));
+  public isFocused = computed(() => this.bounds().zIndex === this.windowMgr.topZIndex());
+  public isMobileMaximized = computed(() => this.bounds().isMaximized && this.windowMgr.isMobile());
+  public windowPosition = computed(() => this.windowMgr.getWindowPositionInfo(this.descriptor().pid));
 
   public isDragging = signal<boolean>(false);
   public isPulling = signal<boolean>(false);
@@ -261,10 +262,10 @@ export class WindowComponent {
       const scale = Math.max(0.88, 1 - (pull / 1200));
       return `translate3d(0, ${pull}px, 0) scale(${scale})`;
     }
-    if (this.bounds.isMaximized) {
+    if (this.bounds().isMaximized) {
       return 'translate3d(0px, 0px, 0px)';
     }
-    return `translate3d(${this.bounds.x}px, ${this.bounds.y}px, 0)`;
+    return `translate3d(${this.bounds().x}px, ${this.bounds().y}px, 0)`;
   });
 
   public windowOpacity = computed(() => {
@@ -278,29 +279,29 @@ export class WindowComponent {
   protected readonly window = window;
 
   public onFocus(): void {
-    this.windowMgr.focusWindow(this.descriptor.pid);
+    this.windowMgr.focusWindow(this.descriptor().pid);
   }
 
   public onMinimize(): void {
-    this.windowMgr.minimizeWindow(this.descriptor.pid);
+    this.windowMgr.minimizeWindow(this.descriptor().pid);
   }
 
   public onMaximize(): void {
-    this.windowMgr.maximizeWindow(this.descriptor.pid);
+    this.windowMgr.maximizeWindow(this.descriptor().pid);
   }
 
   public onClose(): void {
-    this.windowMgr.terminateProcess(this.descriptor.pid);
+    this.windowMgr.terminateProcess(this.descriptor().pid);
   }
 
   public onPrevWindow(event: Event): void {
     event.stopPropagation();
-    this.windowMgr.prevWindow(this.descriptor.pid);
+    this.windowMgr.prevWindow(this.descriptor().pid);
   }
 
   public onNextWindow(event: Event): void {
     event.stopPropagation();
-    this.windowMgr.nextWindow(this.descriptor.pid);
+    this.windowMgr.nextWindow(this.descriptor().pid);
   }
 
   public startDrag(event: MouseEvent | TouchEvent): void {
@@ -328,12 +329,12 @@ export class WindowComponent {
     const clientY = isTouch ? event.touches[0].clientY : event.clientY;
     const startX = clientX;
     const startY = clientY;
-    const initialX = this.bounds.x;
-    const initialY = this.bounds.y;
+    const initialX = this.bounds().x;
+    const initialY = this.bounds().y;
     this.hapticTriggeredThreshold = false;
 
     // If maximized or on mobile, handle Pull-Down to Dismiss and Horizontal Swiping
-    const isLockedFullScreen = this.bounds.isMaximized || this.windowMgr.isMobile();
+    const isLockedFullScreen = this.bounds().isMaximized || this.windowMgr.isMobile();
 
     this.isDragging.set(!isLockedFullScreen);
     this.isPulling.set(isLockedFullScreen);
@@ -359,7 +360,7 @@ export class WindowComponent {
         }
       } else {
         // Desktop window repositioning
-        this.windowMgr.updateBounds(this.descriptor.pid, {
+        this.windowMgr.updateBounds(this.descriptor().pid, {
           x: Math.max(0, initialX + dx),
           y: Math.max(40, initialY + dy)
         });
@@ -391,9 +392,9 @@ export class WindowComponent {
           const dx = cx - startX;
           if (Math.abs(dx) > 75 && pull < 30) {
             if (dx < 0) {
-              this.windowMgr.nextWindow(this.descriptor.pid);
+              this.windowMgr.nextWindow(this.descriptor().pid);
             } else {
-              this.windowMgr.prevWindow(this.descriptor.pid);
+              this.windowMgr.prevWindow(this.descriptor().pid);
             }
           }
 
@@ -449,9 +450,9 @@ export class WindowComponent {
         this.windowMgr.toggleDock();
       } else if (Math.abs(dx) > 60) {
         if (dx < 0) {
-          this.windowMgr.nextWindow(this.descriptor.pid);
+          this.windowMgr.nextWindow(this.descriptor().pid);
         } else {
-          this.windowMgr.prevWindow(this.descriptor.pid);
+          this.windowMgr.prevWindow(this.descriptor().pid);
         }
       }
 
@@ -471,8 +472,8 @@ export class WindowComponent {
       event.touches[0].clientX - event.touches[1].clientX,
       event.touches[0].clientY - event.touches[1].clientY
     );
-    const initialWidth = this.bounds.width;
-    const initialHeight = this.bounds.height;
+    const initialWidth = this.bounds().width;
+    const initialHeight = this.bounds().height;
 
     const onPinchMove = (e: TouchEvent) => {
       if (e.touches.length < 2) return;
@@ -482,12 +483,12 @@ export class WindowComponent {
       );
       const ratio = dist / initialDist;
 
-      if (ratio > 1.45 && !this.bounds.isMaximized) {
+      if (ratio > 1.45 && !this.bounds().isMaximized) {
         this.onMaximize();
-      } else if (ratio < 0.75 && this.bounds.isMaximized) {
+      } else if (ratio < 0.75 && this.bounds().isMaximized) {
         this.onMaximize();
-      } else if (!this.bounds.isMaximized) {
-        this.windowMgr.updateBounds(this.descriptor.pid, {
+      } else if (!this.bounds().isMaximized) {
+        this.windowMgr.updateBounds(this.descriptor().pid, {
           width: Math.max(260, Math.min(window.innerWidth, initialWidth * ratio)),
           height: Math.max(200, Math.min(window.innerHeight - 80, initialHeight * ratio))
         });
@@ -504,14 +505,14 @@ export class WindowComponent {
   }
 
   public startResize(event: MouseEvent | TouchEvent, direction: 'right' | 'bottom' | 'bottom-right'): void {
-    if (this.bounds.isMaximized) return;
+    if (this.bounds().isMaximized) return;
     this.onFocus();
     const clientX = 'touches' in event ? event.touches[0].clientX : event.clientX;
     const clientY = 'touches' in event ? event.touches[0].clientY : event.clientY;
     const startX = clientX;
     const startY = clientY;
-    const initialWidth = this.bounds.width;
-    const initialHeight = this.bounds.height;
+    const initialWidth = this.bounds().width;
+    const initialHeight = this.bounds().height;
 
     const onMove = (e: MouseEvent | TouchEvent) => {
       const cx = 'touches' in e ? e.touches[0].clientX : e.clientX;
@@ -521,7 +522,7 @@ export class WindowComponent {
       const updates: Partial<WindowBounds> = {};
       if (direction === 'right' || direction === 'bottom-right') updates.width = Math.max(260, initialWidth + dx);
       if (direction === 'bottom' || direction === 'bottom-right') updates.height = Math.max(180, initialHeight + dy);
-      this.windowMgr.updateBounds(this.descriptor.pid, updates);
+      this.windowMgr.updateBounds(this.descriptor().pid, updates);
     };
 
     const onEnd = () => {

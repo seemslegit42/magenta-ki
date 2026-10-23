@@ -48,6 +48,11 @@
 ### Angular host (`bun run dev` → `:3000`)
 - Proxies `/api` to Bun via `proxy.conf.json`
 - SSR entry: `ts/apps/host/server.ts` (Node `http` + `AngularNodeAppEngine`)
+- Native Federation: Angular adapter → [`@softarc/native-federation-orchestrator`](https://github.com/native-federation/orchestrator)
+  - Browser: `ts/apps/host/main.ts` — `initFederation` + `localStorageEntry`, `convertFlatSharedInfo`
+  - Manifest: `public/federation.manifest.json` → remote `remoteEntry.json` URLs
+  - SSR (Bun): `bun run serve:ssr:app` → `ts/apps/host/server.entry.mjs` → `initNodeFederation` then `dist/app/server/server.mjs`
+    - Bun-safe `setImportMapFn` / `loadModuleFn` (Node loader MessageChannel is unreliable under Bun)
 
 ---
 
