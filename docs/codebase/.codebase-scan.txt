@@ -1,0 +1,312 @@
+
+=== DIRECTORY TREE (max depth 3, source files only) ===
+.ai
+.ai/chronicle.log
+.aistudio
+.aistudio/artifacts
+.aistudio/artifacts/brain
+.aistudio/artifacts/brain/0b6d9c30-15a3-48c2-8dfb-364e62f94941
+.angular
+.angular/cache
+.angular/cache/22.2.3
+.angular/cache/22.2.3/app
+.env.example
+.gitignore
+.postcssrc.json
+CHANGELOG.md
+Dockerfile
+README.md
+TODO.md
+angular.json
+appwrite
+appwrite/clickhouse-config.xml
+appwrite/clickhouse-init.sh
+appwrite/docker-compose.yml
+appwrite/mongo-init.js
+appwrite.env
+bun
+bun/.env.example
+bun/cmd
+bun/cmd/server
+bun/cmd/server/index.ts
+bun/internal
+bun/internal/config.ts
+bun/internal/handlers
+bun/internal/handlers/ai.ts
+bun/internal/handlers/index.ts
+bun/internal/handlers/polar.ts
+bun/internal/handlers/xi.ts
+bun/internal/http
+bun/internal/http/errors.ts
+bun/internal/middleware
+bun/internal/middleware/cors.ts
+bun/internal/storage
+bun/internal/storage/appwrite.ts
+bun/tsconfig.json
+bun.lock
+bunfig.toml
+contracts
+contracts/openapi
+contracts/openapi/webos.v1.yaml
+contracts/scripts
+contracts/scripts/codegen-go.sh
+contracts/scripts/codegen-ts.sh
+contracts/sql
+contracts/sql/queries
+contracts/sql/queries/system.sql
+contracts/sql/schema.sql
+docker-compose.yml
+docs
+docs/appwrite-self-hosted.md
+docs/codebase
+docs/codebase/.codebase-scan.txt
+docs/developer-guide.md
+docs/setup.md
+docs/user-guide.md
+eslint.config.js
+federation.config.mjs
+go
+go/.env.example
+go/Dockerfile
+go/app.go
+go/cmd
+go/cmd/server
+go/cmd/server/main.go
+go/gateway
+go/gateway/README.md
+go/go.mod
+go/internal
+go/internal/appwrite
+go/internal/appwrite/client.go
+go/internal/appwrite/db.go
+go/internal/handlers
+go/internal/handlers/console.go
+go/internal/handlers/items.go
+go/internal/handlers/xi_economy.go
+go/internal/middleware
+go/internal/middleware/auth.go
+go/internal/patterns
+go/internal/patterns/facade
+go/internal/patterns/observer
+go/internal/patterns/strategy
+go/internal/services
+go/internal/services/console.go
+go/internal/services/xi_economy.go
+go/internal/storage
+go/internal/storage/storage.go
+go/patterns
+go/patterns/README.md
+launch-appwrite.sh
+manifest.acp.md
+metadata.json
+package.json
+proxy.conf.json
+public
+public/assets
+public/assets/aistudio
+public/assets/aistudio/Paste_October_20__2026_-_6_21AM_5ecd4d17
+public/favicon.ico
+public/federation.manifest.json
+tests
+tests/e2e
+tests/e2e/agentfs-workflow.e2e.test.ts
+tests/e2e/ai-copilot-workflow.e2e.test.ts
+tests/e2e/appwrite-database-workflow.e2e.test.ts
+tests/e2e/audit-rbac-notification.e2e.test.ts
+tests/e2e/gateway-turso-mesh.e2e.test.ts
+tests/e2e/window-management.e2e.test.ts
+tests/e2e/wopi-collaboration.e2e.test.ts
+tests/setup.ts
+tests/unit
+tests/unit/agentfs.service.test.ts
+tests/unit/app-launcher.component.test.ts
+tests/unit/appwrite-database.service.test.ts
+tests/unit/audit.service.test.ts
+tests/unit/auth-rbac.service.test.ts
+tests/unit/avf.service.test.ts
+tests/unit/gateway.service.test.ts
+tests/unit/notification.service.test.ts
+tests/unit/polar-billing.service.test.ts
+tests/unit/window-manager.service.test.ts
+tests/unit/wopi.service.test.ts
+tests/unit/xi-economy.service.test.ts
+ts
+ts/apps
+ts/apps/host
+ts/apps/host/api-docs
+ts/apps/host/app
+ts/apps/host/bootstrap.ts
+ts/apps/host/components
+ts/apps/host/globals.d.ts
+ts/apps/host/index.html
+ts/apps/host/main.server.ts
+ts/apps/host/main.ts
+ts/apps/host/server.entry.mjs
+ts/apps/host/server.ts
+ts/apps/host/services
+ts/apps/host/styles.css
+tsconfig.app.json
+tsconfig.federation.json
+tsconfig.json
+tsconfig.spec.json
+
+=== STACK DETECTION (manifest files) ===
+
+--- package.json ---
+{
+  "name": "ai-studio-angular-app",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "cross-env PORT=3000 ng serve",
+    "dev": "cross-env PORT=3000 ng serve",
+    "build": "ng build",
+    "test": "bun test",
+    "test:unit": "bun test tests/unit",
+    "test:e2e": "bun test tests/e2e",
+    "test:watch": "bun test --watch",
+    "bun:api": "bun run bun/cmd/server/index.ts",
+    "dev:stack": "bun run bun:api & cross-env PORT=3000 ng serve",
+    "lint": "ng lint",
+    "serve:ssr:app": "bun ts/apps/host/server.entry.mjs"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular-architects/native-federation": "^22.2.3",
+    "@angular/cdk": "^22.2.0",
+    "@angular/common": "^22.2.0",
+    "@angular/compiler": "^22.2.0",
+    "@angular/core": "^22.2.0",
+    "@angular/forms": "^22.2.0",
+    "@angular/material": "^22.2.0",
+    "@angular/platform-browser": "^22.2.0",
+    "@angular/platform-browser-dynamic": "^22.2.2",
+    "@angular/platform-server": "^22.2.0",
+    "@angular/router": "^22.2.0",
+    "@angular/ssr": "^22.2.0",
+    "@google/genai": "^2.4.0",
+    "@tabler/icons": "^3.49.0",
+    "es-module-shims": "^2.8.0",
+    "motion": "^12.23.24",
+    "rxjs": "~7.8.0",
+    "tabler-icons-react": "^1.56.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^22.2.0",
+    "@angular/cli": "^22.2.0",
+    "@angular/compiler-cli": "^22.2.0",
+    "@softarc/native-federation-orchestrator": "^4.8.0",
+    "@tailwindcss/postcss": "^4.1.12",
+    "@types/bun": "^1.4.4",
+    "@types/node": "^20.17.19",
+    "angular-eslint": "^22.6.0",
+    "cross-env": "^10.1.0",
+    "eslint": "^9.39.1",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.1.12",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "8.47.0"
+  }
+}
+
+=== ENTRY POINTS ===
+No common entry points found. Check 'main' or 'scripts.start' in manifest files above.
+
+=== LINTING AND FORMATTING CONFIG ===
+Found: eslint.config.js
+Found: tsconfig.json
+
+=== ENVIRONMENT VARIABLE TEMPLATES ===
+--- .env.example ---
+# GEMINI_API_KEY: Required for Gemini AI API calls.
+# AI Studio automatically injects this at runtime from user secrets.
+# Users configure this via the Secrets panel in the AI Studio UI.
+GEMINI_API_KEY="MY_GEMINI_API_KEY"
+
+# APP_URL: The URL where this applet is hosted.
+# AI Studio automatically injects this at runtime with the Cloud Run service URL.
+# Used for self-referential links, OAuth callbacks, and API endpoints.
+APP_URL="MY_APP_URL"
+
+
+=== TODO / FIXME / HACK (production code only, test dirs excluded) ===
+go/app.go:360: Type:      "TODO_CREATED",
+go/app.go:414: Type:      "TODO_UPDATED",
+go/app.go:443: Type:      "TODO_DELETED",
+
+=== GIT RECENT COMMITS (last 20) ===
+8a75278 fix: enhance Bun SSR support and improve import handling
+c941369 chore: update dependencies and enhance Angular configuration
+de1a389 refactor: migrate Angular app structure and remove Express dependencies
+7b1833e refactor: migrate testing framework to Bun and clean up Angular configuration
+0ac6cb4 fuck off analytics
+a360d32 refactor: enforce model agnosticism and upgrade Go gateway
+7fdfa4c chore: rebrand to Λ Ξ V O S and update infrastructure
+f0ea6f6 feat: implement Agentic Value Framework and Aetheric Sigils
+55a6fb1 feat(contracts): establish neutral data contract layer
+51b2db0 feat: implement Polar billing and Ξ economy integration
+853accc feat: initialize Verdigris WebOS project
+872017c Initial commit
+
+=== HIGH-CHURN FILES (last 90 days, top 20) ===
+   7 CHANGELOG.md
+   7 README.md
+   6 package.json
+   6 TODO.md
+   6 manifest.acp.md
+   6 .ai/chronicle.log
+   5 bun.lock
+   5 angular.json
+   4 src/server.ts
+   4 tsconfig.app.json
+   4 src/app/services/window-manager.service.ts
+   3 tests/unit/app-launcher.component.test.ts
+   3 tests/unit/window-manager.service.test.ts
+   3 tsconfig.spec.json
+   3 .aistudio/artifacts/brain/0b6d9c30-15a3-48c2-8dfb-364e62f94941/implementation_plan.md
+   3 .aistudio/artifacts/brain/0b6d9c30-15a3-48c2-8dfb-364e62f94941/implementation_plan.md.metadata.json
+   3 src/app/components/apps/app-launcher/app-launcher.component.ts
+   3 src/app/components/dock/dock.component.ts
+   3 src/app/components/window/window.component.ts
+   3 docker-compose.yml
+
+=== MONOREPO SIGNALS ===
+No monorepo signals detected.
+
+=== CODE METRICS ===
+Total files scanned: 148
+Total lines of code: 17334
+
+Files by language:
+  TypeScript: 79
+  Other: 53
+  Go: 14
+  JavaScript: 2
+
+Top 10 largest files:
+.angular/cache/22.2.3/app/angular-compiler.db: 1136.0KB
+bun.lock: 165.1KB
+ts/apps/host/app/components/apps/appwrite-databases/appwrite-databases.component.ts: 67.1KB
+ts/apps/host/app/components/apps/agentic-value-framework/agentic-value-framework.component.ts: 58.3KB
+ts/apps/host/app/components/apps/gateway-console/gateway-console.component.ts: 34.3KB
+ts/apps/host/app/services/appwrite-database.service.ts: 31.4KB
+appwrite/docker-compose.yml: 28.8KB
+ts/apps/host/app/components/apps/security-audit/security-audit.component.ts: 24.7KB
+ts/apps/host/app/components/window/window.component.ts: 23.4KB
+ts/apps/host/app/components/apps/app-store/app-store.component.ts: 19.9KB
+
+=== CI/CD PIPELINES ===
+No CI/CD pipelines detected.
+
+=== CONTAINERS & ORCHESTRATION ===
+Container: Docker found
+Orchestration: Docker Compose found
+
+=== SECURITY & COMPLIANCE ===
+No security configs detected.
+
+=== PERFORMANCE & TESTING ===
+No performance testing configs detected.
+
+=== SCAN COMPLETE ===
