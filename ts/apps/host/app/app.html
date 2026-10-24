@@ -2,9 +2,7 @@
   <app-statusbar />
 
   <div class="relative flex-1 overflow-hidden">
-    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary-container/30 via-surface to-surface-lowest pointer-events-none"></div>
-    <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/15 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-magenta/10 rounded-full blur-3xl pointer-events-none"></div>
+    <app-desktop-backdrop />
 
     @for (proc of windowManager.activeProcesses(); track proc.pid) {
       @if (proc.isOpen && !proc.isMinimized) {

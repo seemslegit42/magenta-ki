@@ -1,8 +1,10 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed, input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, input, effect } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { WindowManagerService } from '../../../services/window-manager.service';
 import { NativeFederationService, RemoteDefinition } from '../../../services/native-federation.service';
 import { ProcessDescriptor } from '../../../models/webos.models';
+import { AppHubService, AppHubPanel } from '../../../services/app-hub.service';
+import { AppStoreComponent } from '../app-store/app-store.component';
 
 export interface AppLauncherItem {
   id: string;
@@ -19,7 +21,7 @@ export interface AppLauncherItem {
 @Component({
   selector: 'app-app-launcher',
   standalone: true,
-  imports: [MatIconModule],
+  imports: [MatIconModule, AppStoreComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="flex flex-col h-full space-y-5 font-body text-on-surface">
@@ -28,10 +30,10 @@ export interface AppLauncherItem {
         <div>
           <h2 class="font-display text-2xl font-bold text-on-surface flex items-center space-x-2.5">
             <mat-icon class="text-tertiary text-2xl">apps</mat-icon>
-            <span>Application Matrix</span>
+            <span>Applications</span>
           </h2>
           <p class="text-xs text-on-surface-variant mt-1 font-light">
-            Launch apps and federated remotes.
+            Launch installed apps or manage the catalog and federation remotes.
           </p>
         </div>
 
@@ -45,12 +47,46 @@ export interface AppLauncherItem {
             <mat-icon class="text-sm text-tertiary">hub</mat-icon>
             <span>{{ federationService.remotes().length }} Remotes</span>
           </div>
-          <div class="px-3 py-1.5 rounded-full bg-primary/25 border border-primary-muted/30 text-primary-muted flex items-center space-x-1 font-mono">
-            
-          </div>
         </div>
       </header>
 
+      <nav aria-label="Applications views" class="flex flex-wrap gap-1.5 text-xs border-b border-outline/12 pb-2" role="tablist">
+        <button
+          type="button"
+          role="tab"
+          id="apps-tab-launch"
+          aria-controls="apps-panel-launch"
+          [attr.aria-selected]="hubPanel() === 'launch'"
+          class="px-3 py-1.5 rounded-lg font-medium transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-tertiary/50"
+          [class.bg-tertiary]="hubPanel() === 'launch'"
+          [class.text-surface-lowest]="hubPanel() === 'launch'"
+          [class.bg-surface-container]="hubPanel() !== 'launch'"
+          [class.text-on-surface-variant]="hubPanel() !== 'launch'"
+          (click)="setHubPanel('launch')">
+          Launch
+        </button>
+        <button
+          type="button"
+          role="tab"
+          id="apps-tab-catalog"
+          aria-controls="apps-panel-catalog"
+          [attr.aria-selected]="hubPanel() === 'catalog'"
+          class="px-3 py-1.5 rounded-lg font-medium transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-secondary/50"
+          [class.bg-secondary]="hubPanel() === 'catalog'"
+          [class.text-surface-lowest]="hubPanel() === 'catalog'"
+          [class.bg-surface-container]="hubPanel() !== 'catalog'"
+          [class.text-on-surface-variant]="hubPanel() !== 'catalog'"
+          (click)="setHubPanel('catalog')">
+          Catalog &amp; extensions
+        </button>
+      </nav>
+
+      @if (hubPanel() === 'catalog') {
+        <div id="apps-panel-catalog" role="tabpanel" aria-labelledby="apps-tab-catalog" class="flex-1 min-h-0 overflow-y-auto">
+          <app-app-store [pid]="pid() ?? 'app-launcher'" [embedded]="true" />
+        </div>
+      } @else {
+      <div id="apps-panel-launch" role="tabpanel" aria-labelledby="apps-tab-launch" class="flex flex-col flex-1 min-h-0 gap-5">
       <!-- Filter Bar: Search + Category Pills -->
       <section aria-label="App Filters" class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-surface-deep/80 border border-white/10 rounded-xl p-3">
         <!-- Search Input -->
@@ -197,6 +233,8 @@ export interface AppLauncherItem {
           </button>
         </div>
       </footer>
+      </div>
+      }
     </div>
   `
 })
@@ -205,9 +243,22 @@ export class AppLauncherComponent {
 
   protected readonly windowManager = inject(WindowManagerService);
   protected readonly federationService = inject(NativeFederationService);
+  private readonly appHub = inject(AppHubService);
 
+  readonly hubPanel = signal<AppHubPanel>('launch');
   readonly searchQuery = signal('');
   readonly selectedCategory = signal<string>('all');
+
+  constructor() {
+    effect(() => {
+      this.hubPanel.set(this.appHub.requestedPanel());
+    });
+  }
+
+  setHubPanel(panel: AppHubPanel): void {
+    this.hubPanel.set(panel);
+    this.appHub.requestedPanel.set(panel);
+  }
 
   public readonly categories = [
     { id: 'all', label: 'All', icon: 'grid_view' },
@@ -292,24 +343,6 @@ export class AppLauncherComponent {
       description: 'Interactive CLI shell and Gemini AI assistant for running automated enterprise operations.',
       version: 'v3.0.1',
       componentName: 'TerminalComponent'
-    },
-    {
-      id: 'app-store',
-      name: 'App Store',
-      category: 'system',
-      icon: 'storefront',
-      description: 'Dynamic micro-frontend marketplace, W3C import map manager, and remote component registration.',
-      version: 'v2.4.0',
-      componentName: 'AppStoreComponent'
-    },
-    {
-      id: 'native-federation',
-      name: 'Native Federation Studio',
-      category: 'developer',
-      icon: 'hub',
-      description: 'Manage remote micro-frontends, probe endpoints, and inspect Angular ApplicationBuilder federation chunks.',
-      version: 'v22.2.0',
-      componentName: 'RemoteContainerComponent'
     },
     {
       id: 'settings',

@@ -1,5 +1,7 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { WindowManagerService } from './window-manager.service';
+import { AppHubService } from './app-hub.service';
+import { BeepLaunchService } from './beep-launch.service';
 
 export interface SearchItem {
   id: string;
@@ -12,11 +14,20 @@ export interface SearchItem {
 @Injectable({ providedIn: 'root' })
 export class SearchService {
   private readonly wm = inject(WindowManagerService);
+  private readonly appHub = inject(AppHubService);
+  private readonly beepLaunch = inject(BeepLaunchService);
   readonly isVisible = signal(false);
   readonly items = signal<SearchItem[]>([]);
 
   constructor() {
     this.items.set([
+      {
+        id: 'beep-erp',
+        name: 'B.E.E.P — Syndicate Resource Planning',
+        type: 'app',
+        icon: 'beep',
+        action: () => this.beepLaunch.open(),
+      },
       { 
         id: 'chat-window', 
         name: 'AI Copilot', 
@@ -33,10 +44,17 @@ export class SearchService {
       },
       { 
         id: 'app-launcher', 
-        name: 'Application Matrix', 
+        name: 'Applications — Launch', 
         type: 'app', 
         icon: 'apps', 
-        action: () => this.wm.openApp({ id: 'app-launcher', name: 'Application Matrix', icon: 'apps' }) 
+        action: () => this.appHub.open('launch') 
+      },
+      { 
+        id: 'app-catalog', 
+        name: 'Applications — Catalog & extensions', 
+        type: 'app', 
+        icon: 'store', 
+        action: () => this.appHub.open('catalog') 
       },
       { 
         id: 'terminal', 

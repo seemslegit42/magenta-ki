@@ -3,6 +3,8 @@ import { NotificationService } from '../../../services/notification.service';
 import { AuthRbacService } from '../../../services/auth-rbac.service';
 import { AuditService } from '../../../services/audit.service';
 import { UserRole, AuditCategory, AuditSeverity } from '../../../models/webos.models';
+import { ShellThemeService, ShellThemePreference } from '../../../services/shell-theme.service';
+import { ShellChromeService, AmbientBrandMode } from '../../../services/shell-chrome.service';
 
 @Component({
   selector: 'app-settings',
@@ -25,6 +27,42 @@ import { UserRole, AuditCategory, AuditSeverity } from '../../../models/webos.mo
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Appearance -->
+        <div class="bg-surface-panel border border-white/10 rounded-xl p-5 space-y-4 md:col-span-2">
+          <div class="flex items-center space-x-2 border-b border-white/5 pb-2">
+            <span class="material-icons text-sm text-primary">palette</span>
+            <h3 class="font-display text-sm font-semibold text-white">Appearance & Desktop</h3>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="space-y-2">
+              <label for="theme-select" class="text-xs text-on-surface-variant block uppercase tracking-widest font-semibold">Theme</label>
+              <select
+                id="theme-select"
+                class="w-full bg-surface border border-white/10 rounded-lg p-2.5 text-xs text-white"
+                [value]="shellTheme.themePreference()"
+                (change)="onThemeChange($event)">
+                <option value="system">System</option>
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+              </select>
+              <p class="text-[10px] text-on-surface-variant">Verdigris aurora and chrome follow light or dark resolution.</p>
+            </div>
+            <div class="space-y-2">
+              <label for="ambient-select" class="text-xs text-on-surface-variant block uppercase tracking-widest font-semibold">Ambient brand</label>
+              <select
+                id="ambient-select"
+                class="w-full bg-surface border border-white/10 rounded-lg p-2.5 text-xs text-white"
+                [value]="shellChrome.ambientBrandMode()"
+                (change)="onAmbientChange($event)">
+                <option value="adaptive">Adaptive (empty desktop)</option>
+                <option value="always-on">Always on</option>
+                <option value="always-off">Always off</option>
+              </select>
+              <p class="text-[10px] text-on-surface-variant">Stage watermark vs header wordmark (adaptive mode C).</p>
+            </div>
+          </div>
+        </div>
+
         <!-- 1. Notification Preferences -->
         <div class="bg-surface-panel border border-white/10 rounded-xl p-5 space-y-4">
           <div class="flex items-center justify-between border-b border-white/5 pb-2">
@@ -227,6 +265,28 @@ export class SettingsComponent {
   protected notificationService = inject(NotificationService);
   protected authRbac = inject(AuthRbacService);
   protected auditService = inject(AuditService);
+  protected shellTheme = inject(ShellThemeService);
+  protected shellChrome = inject(ShellChromeService);
+
+  public onThemeChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value as ShellThemePreference;
+    this.shellTheme.setThemePreference(value);
+    this.auditService.logEvent({
+      action: 'SHELL_THEME_CHANGED',
+      category: AuditCategory.SYSTEM,
+      details: `Shell theme preference set to ${value}.`,
+    });
+  }
+
+  public onAmbientChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value as AmbientBrandMode;
+    this.shellChrome.setAmbientBrandMode(value);
+    this.auditService.logEvent({
+      action: 'SHELL_AMBIENT_BRAND_CHANGED',
+      category: AuditCategory.SYSTEM,
+      details: `Ambient brand mode set to ${value}.`,
+    });
+  }
 
   public toggleDesktopToasts(event: Event): void {
     const checked = (event.target as HTMLInputElement).checked;

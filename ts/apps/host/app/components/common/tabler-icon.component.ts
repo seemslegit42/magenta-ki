@@ -43,6 +43,16 @@ import { CommonModule } from '@angular/common';
           <path d="M6 13v-1a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v1" />
           <path d="M12 11v2" />
         }
+        @case ('beep') {
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+          <!-- Verdigris syndicate mark: hex frame + telemetry B + patina node -->
+          <path d="M12 2.8l6.9 4v8.4L12 19.6l-6.9-4V6.8L12 2.8z" />
+          <path d="M9.25 8.25h2.35c1.05 0 1.65.55 1.65 1.35s-.6 1.35-1.65 1.35H9.25v-2.7z" />
+          <path d="M9.25 11.85h2.55c1.15 0 1.85.65 1.85 1.55s-.7 1.55-1.85 1.55H9.25v-3.1z" />
+          <path d="M9.25 8.25v7.15" />
+          <circle cx="16.2" cy="16.4" r="1.05" fill="currentColor" stroke="none" />
+          <path d="M14.8 14.9l1.9 1.9" stroke-width="1.35" />
+        }
         @case ('hexagon') {
           <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
           <path d="M19.875 6.270c.715 .413 1.125 1.185 1.125 2.032v7.396c0 .847 -.41 1.62 -1.125 2.033l-6.875 3.964c-.715 .413 -1.595 .413 -2.31 0l-6.875 -3.964c-.715 -.413 -1.125 -1.186 -1.125 -2.033v-7.396c0 -.847 .41 -1.62 1.125 -2.033l6.875 -3.964c.715 -.413 1.595 -.413 2.31 0l6.875 3.964z" />

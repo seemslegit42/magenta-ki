@@ -2,6 +2,8 @@ import { Component, ChangeDetectionStrategy, signal, inject, afterNextRender } f
 import { CommonModule } from '@angular/common';
 import { TablerIconComponent } from '../common/tabler-icon.component';
 import { WindowManagerService } from '../../services/window-manager.service';
+import { AppHubService } from '../../services/app-hub.service';
+import { BeepLaunchService } from '../../services/beep-launch.service';
 
 @Component({
   selector: 'app-statusbar',
@@ -10,24 +12,41 @@ import { WindowManagerService } from '../../services/window-manager.service';
   imports: [CommonModule, TablerIconComponent],
   template: `
     <header class="h-12 bg-surface-lowest border-b border-outline/12 px-4 flex items-center justify-between select-none z-50">
-      <div class="flex items-center space-x-4">
-        <div class="flex items-center space-x-2">
-          <div class="w-7 h-7 rounded-lg bg-linear-to-tr from-primary to-magenta flex items-center justify-center text-white" aria-hidden="true">
-            <app-tabler-icon name="hexagon" size="16" />
-          </div>
-          <span class="font-display font-bold text-sm text-on-surface tracking-[0.2em]">Λ Ξ V <span class="text-magenta">O S</span></span>
-        </div>
+      <div class="flex items-center gap-3 min-w-0 flex-1">
+        <span class="font-display font-bold text-sm text-on-surface tracking-[0.15em] sm:tracking-[0.2em] truncate shrink-0 max-w-[9rem] sm:max-w-none">
+          Λ Ξ V <span class="text-magenta">O S</span>
+        </span>
 
-        <nav aria-label="System Menu" class="hidden md:flex items-center space-x-1 text-xs text-on-surface-variant">
-          <button type="button" class="px-3 py-1.5 rounded-lg hover:bg-white/8 hover:text-tertiary cursor-pointer transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-tertiary/50 flex items-center space-x-1.5" (click)="openLauncher()">
-            <app-tabler-icon name="apps" size="16" class="text-tertiary" />
-            <span class="font-medium text-on-surface">Applications</span>
+        <nav aria-label="System Menu" class="flex items-center gap-0.5 text-xs text-on-surface-variant min-w-0">
+          <button
+            type="button"
+            class="px-2 sm:px-2.5 py-1.5 rounded-lg bg-primary-container/25 border border-tertiary/35 hover:border-tertiary cursor-pointer transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-tertiary/50 flex items-center gap-1.5"
+            (click)="openBeep()"
+            title="B.E.E.P — Syndicate Resource Planning"
+            aria-label="Open B.E.E.P ERP">
+            <app-tabler-icon name="beep" size="18" class="text-tertiary shrink-0" />
+            <span class="font-display font-semibold text-on-surface hidden sm:inline text-[11px] tracking-wide">B.E.E.P</span>
           </button>
-          <button type="button" class="px-3 py-1.5 rounded-lg hover:bg-white/8 hover:text-secondary cursor-pointer transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-secondary/50 font-medium text-on-surface" (click)="openStore()">App Store</button>
+          <button
+            type="button"
+            class="px-2 sm:px-3 py-1.5 rounded-lg hover:bg-white/8 hover:text-tertiary cursor-pointer transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-tertiary/50 flex items-center gap-1.5"
+            (click)="openLaunch()"
+            title="Launch installed applications">
+            <app-tabler-icon name="apps" size="16" class="text-tertiary shrink-0" />
+            <span class="font-medium text-on-surface hidden sm:inline">Launch</span>
+          </button>
+          <button
+            type="button"
+            class="px-2 sm:px-3 py-1.5 rounded-lg hover:bg-white/8 hover:text-secondary cursor-pointer transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-secondary/50 flex items-center gap-1.5"
+            (click)="openCatalog()"
+            title="Catalog, remotes, and extensions">
+            <app-tabler-icon name="store" size="16" class="text-secondary shrink-0" />
+            <span class="font-medium text-on-surface hidden sm:inline">Catalog</span>
+          </button>
         </nav>
       </div>
 
-      <div class="flex items-center space-x-3 text-xs text-on-surface-variant">
+      <div class="flex items-center space-x-3 text-xs text-on-surface-variant shrink-0">
         <div class="flex items-center space-x-1.5 text-on-surface font-mono px-2.5 py-1 rounded-lg">
           <app-tabler-icon name="clock" size="16" class="text-secondary" />
           <span class="font-semibold tabular-nums">{{ currentTime() }}</span>
@@ -38,6 +57,8 @@ import { WindowManagerService } from '../../services/window-manager.service';
 })
 export class StatusbarComponent {
   readonly windowManager = inject(WindowManagerService);
+  private readonly appHub = inject(AppHubService);
+  private readonly beepLaunch = inject(BeepLaunchService);
   readonly currentTime = signal<string>('');
 
   constructor() {
@@ -52,27 +73,15 @@ export class StatusbarComponent {
     this.currentTime.set(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
   }
 
-  openLauncher() {
-    this.windowManager.openApp({
-      id: 'app-launcher',
-      name: 'Application Matrix',
-      icon: 'apps'
-    });
+  openBeep(): void {
+    this.beepLaunch.open();
   }
 
-  openStore() {
-    this.windowManager.openApp({
-      id: 'app-store',
-      name: 'App Store',
-      icon: 'storefront'
-    });
+  openLaunch(): void {
+    this.appHub.open('launch');
   }
 
-  openStudio() {
-    this.windowManager.openApp({
-      id: 'native-federation',
-      name: 'Native Federation Studio',
-      icon: 'hub'
-    });
+  openCatalog(): void {
+    this.appHub.open('catalog');
   }
 }

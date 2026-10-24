@@ -1,0 +1,14 @@
+<div
+  class="backdrop-root"
+  [class.backdrop-root--calm]="chrome.auroraCalm()"
+  aria-hidden="true">
+  <div class="backdrop-base"></div>
+  <div class="backdrop-glow"></div>
+  <div class="backdrop-grain"></div>
+
+  @if (chrome.ambientBrandVisible()) {
+    <p class="backdrop-mark">
+      Λ Ξ V <span class="backdrop-mark__accent">O S</span>
+    </p>
+  }
+</div>

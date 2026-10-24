@@ -14,6 +14,14 @@ export class NativeFederationService {
   public readonly manifest = signal<Record<string, string>>({});
   public readonly remotes = signal<RemoteDefinition[]>([
     {
+      name: 'beep-erp-srp',
+      url: 'http://127.0.0.1:9002/remoteEntry.json',
+      status: 'STANDBY',
+      description: 'B.E.E.P syndicate resource planning (React remote)',
+      version: 'dynamic',
+      exposedModule: './shell-surface'
+    },
+    {
       name: 'remote-analytics',
       url: 'http://localhost:3001/remoteEntry.json',
       status: 'STANDBY',
@@ -88,10 +96,24 @@ export class NativeFederationService {
         
         // Update statuses
         this.remotes.update(items => {
-          return items.map(item => ({
+          const known = new Set(items.map((item) => item.name));
+          const merged = items.map(item => ({
             ...item,
             url: data[item.name] || item.url
           }));
+          for (const [name, url] of Object.entries(data)) {
+            if (!known.has(name)) {
+              merged.push({
+                name,
+                url,
+                status: 'STANDBY',
+                description: 'Manifest remote',
+                version: 'manifest',
+                exposedModule: name === 'beep-erp-srp' ? './shell-surface' : './Component'
+              });
+            }
+          }
+          return merged;
         });
         return data;
       }

@@ -1,42 +1,95 @@
 @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&family=Lexend:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
+/* Verdigris Interface Protocol — dark (default) */
 @theme {
-  --color-surface: #0e1015;
-  --color-surface-dim: #0e1015;
+  --color-surface: #121317;
+  --color-surface-dim: #121317;
   --color-surface-bright: #38393d;
-  --color-surface-lowest: #08090c;
-  --color-surface-low: #14161c;
-  --color-surface-container: #1a1c23;
-  --color-surface-high: #22252f;
-  --color-surface-highest: #2d303c;
-  --color-surface-panel: #151922;
+  --color-surface-lowest: #0d0e12;
+  --color-surface-low: #1a1b20;
+  --color-surface-container: #1f1f24;
+  --color-surface-high: #292a2e;
+  --color-surface-highest: #343439;
+  --color-surface-variant: #343439;
+  --color-surface-panel: #1a1b20;
   --color-surface-deep: #12141a;
-  --color-surface-chrome: #171b26;
+  --color-surface-chrome: #1f1f24;
 
-  --color-primary: #6a0dad;
-  --color-primary-container: #3b0764;
+  --color-primary: #dfb7ff;
+  --color-on-primary: #4b007e;
+  --color-primary-container: #6a0dad;
+  --color-on-primary-container: #d4a1ff;
   --color-primary-muted: #dfb7ff;
-  --color-secondary: #20b2aa;
-  --color-secondary-container: #115e59;
-  --color-tertiary: #3eb991;
-  --color-tertiary-container: #14532d;
-  --color-on-tertiary: #002116;
+  --color-inverse-primary: #8333c6;
+
+  --color-secondary: #59dad1;
+  --color-on-secondary: #003734;
+  --color-secondary-container: #00a8a0;
+  --color-on-secondary-container: #003532;
+
+  --color-tertiary: #65dbb1;
+  --color-on-tertiary: #003828;
+  --color-tertiary-container: #00523c;
+  --color-on-tertiary-container: #52caa1;
+
   --color-magenta: #e0218a;
   --color-magenta-glow: #ff2a9d;
   --color-magenta-dim: #8b1254;
 
-  --color-background: #0e1015;
-  --color-on-surface: #f5fffa;
-  --color-on-surface-variant: #8c94a8;
-  --color-outline: #f5fffa;
-  --color-outline-variant: #8c94a8;
-  --color-error: #ff4d6d;
-  --color-error-soft: #ff8096;
+  --color-background: #121317;
+  --color-on-background: #e3e2e7;
+  --color-on-surface: #e3e2e7;
+  --color-on-surface-variant: #cfc2d5;
+  --color-inverse-surface: #e3e2e7;
+  --color-inverse-on-surface: #2f3035;
+  --color-outline: #988d9e;
+  --color-outline-variant: #4d4353;
+  --color-surface-tint: #dfb7ff;
+
+  --color-error: #ffb4ab;
+  --color-on-error: #690005;
+  --color-error-container: #93000a;
+  --color-on-error-container: #ffdad6;
+  --color-error-soft: #ffb4ab;
   --color-warning: #fbbf24;
+
+  --color-readout: #f5fffa;
+  --color-conchoidal: #8c94a8;
 
   --font-display: "Comfortaa", cursive;
   --font-body: "Lexend", sans-serif;
+}
+
+/* Light theme — cool enterprise wash (§2) */
+html[data-theme="light"] {
+  color-scheme: light;
+
+  --color-surface: #f5f7fa;
+  --color-surface-dim: #e8ecf2;
+  --color-surface-bright: #ffffff;
+  --color-surface-lowest: #e8ecf2;
+  --color-surface-low: #f0f2f6;
+  --color-surface-container: #f5f7fa;
+  --color-surface-high: #ffffff;
+  --color-surface-highest: #ffffff;
+  --color-surface-variant: #d8dce4;
+  --color-surface-panel: #f0f2f6;
+  --color-surface-deep: #e3e2e7;
+  --color-surface-chrome: #f5f7fa;
+
+  --color-background: #f5f7fa;
+  --color-on-background: #2f3035;
+  --color-on-surface: #2f3035;
+  --color-on-surface-variant: #4d4353;
+  --color-inverse-surface: #2f3035;
+  --color-inverse-on-surface: #e3e2e7;
+  --color-outline: #988d9e;
+  --color-outline-variant: #cfc2d5;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
 }
 
 :root {

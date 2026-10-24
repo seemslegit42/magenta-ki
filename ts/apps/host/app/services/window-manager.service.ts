@@ -1,8 +1,10 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, inject, Injector, signal, computed } from '@angular/core';
 import { WindowBounds, ProcessDescriptor } from '../models/webos.models';
+import { AppHubService } from './app-hub.service';
 
 @Injectable({ providedIn: 'root' })
 export class WindowManagerService {
+  private readonly injector = inject(Injector);
   private windows = signal<Map<string, WindowBounds>>(new Map());
   private _processes = signal<ProcessDescriptor[]>([]);
   public topZIndex = signal<number>(100);
@@ -96,6 +98,10 @@ export class WindowManagerService {
     isFederated?: boolean;
     federatedConfig?: unknown;
   }): string {
+    if (app.id === 'app-store' || app.id === 'native-federation') {
+      return this.injector.get(AppHubService).open('catalog');
+    }
+
     const title = app.title || app.name || app.id;
     let component = app.entryComponent || app.componentName;
     if (!component) {
@@ -111,6 +117,7 @@ export class WindowManagerService {
       else if (app.id === 'gateway' || app.id === 'gateway-console') component = 'GatewayConsoleComponent';
       else if (app.id === 'agentic-value-framework' || app.id === 'avf') component = 'AgenticValueFrameworkComponent';
       else if (app.id === 'chat-window' || app.id === 'chat' || app.id === 'ai-copilot') component = 'ChatWindowComponent';
+      else if (app.id === 'beep-erp' || app.id === 'beep') component = 'BeepErpWindowComponent';
       else component = 'RemoteContainerComponent';
     }
     return this.spawnProcess(

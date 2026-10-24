@@ -16,24 +16,21 @@ import { NativeFederationService, RemoteDefinition } from '../../../services/nat
   imports: [FormField],
   template: `
     <div class="space-y-6">
-      <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-white/10 pb-4 gap-3">
-        <div>
-          <h2 class="font-display text-xl font-bold text-white flex items-center space-x-2">
-            <span class="material-icons text-magenta">storefront</span>
-            <span>Native Federation App Store</span>
-          </h2>
-          <p class="text-xs text-on-surface-variant mt-1">Angular 22 ApplicationBuilder & &#64;angular-architects/native-federation runtime mesh.</p>
+      @if (embedded()) {
+        <p class="text-[11px] text-on-surface-variant font-mono border border-outline/12 rounded-lg px-3 py-2 bg-surface-container/50">
+          Install from the core catalog, manage <strong class="text-secondary font-semibold">Dynamic Remotes</strong> (replaces Federation Studio), or register new MFE endpoints.
+        </p>
+      } @else {
+        <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-white/10 pb-4 gap-3">
+          <div>
+            <h2 class="font-display text-xl font-bold text-white flex items-center space-x-2">
+              <span class="material-icons text-magenta">storefront</span>
+              <span>Catalog &amp; extensions</span>
+            </h2>
+            <p class="text-xs text-on-surface-variant mt-1">Discover modules, federation remotes, and registration.</p>
+          </div>
         </div>
-        <div class="flex items-center space-x-2">
-          <span class="text-xs px-2.5 py-1 rounded-full bg-tertiary/10 text-tertiary border border-tertiary/20 font-mono flex items-center space-x-1.5">
-            <span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
-            <span>Federation Host: app (Port 3000)</span>
-          </span>
-          <span class="text-xs px-2.5 py-1 rounded-full bg-primary/20 text-secondary border border-secondary/30 font-mono">
-            Angular 22.2.0
-          </span>
-        </div>
-      </div>
+      }
 
       <!-- Navigation Tabs -->
       <div class="flex items-center space-x-2 border-b border-white/10 pb-2 text-xs font-mono">
@@ -298,6 +295,8 @@ import { NativeFederationService, RemoteDefinition } from '../../../services/nat
 })
 export class AppStoreComponent {
   readonly pid = input.required<string>();
+  /** When nested inside Applications hub, omit duplicate page chrome. */
+  readonly embedded = input(false);
   private windowMgr = inject(WindowManagerService);
   protected federationService = inject(NativeFederationService);
 

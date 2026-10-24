@@ -13,6 +13,8 @@ import { RemoteContainerComponent } from '../apps/remote-container/remote-contai
 import { AppLauncherComponent } from '../apps/app-launcher/app-launcher.component';
 import { AgenticValueFrameworkComponent } from '../apps/agentic-value-framework/agentic-value-framework.component';
 import { ChatWindowComponent } from '../apps/chat-window/chat-window.component';
+import { BeepErpWindowComponent } from '../apps/beep-erp/beep-erp-window.component';
+import { TablerIconComponent } from '../common/tabler-icon.component';
 
 @Component({
   selector: 'app-window',
@@ -30,7 +32,9 @@ import { ChatWindowComponent } from '../apps/chat-window/chat-window.component';
     RemoteContainerComponent,
     AppLauncherComponent,
     AgenticValueFrameworkComponent,
-    ChatWindowComponent
+    ChatWindowComponent,
+    BeepErpWindowComponent,
+    TablerIconComponent,
   ],
   template: `
     <div
@@ -58,11 +62,15 @@ import { ChatWindowComponent } from '../apps/chat-window/chat-window.component';
 
         <div class="flex items-center justify-between w-full">
           <div class="flex items-center space-x-2.5 overflow-hidden">
-            <svg class="w-4 h-4 text-tertiary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <rect x="4" y="4" width="16" height="16" rx="2"></rect>
-              <path d="M4 10h16"></path>
-              <path d="M10 4v16"></path>
-            </svg>
+            @if (descriptor().icon === 'beep') {
+              <app-tabler-icon name="beep" size="16" class="text-tertiary shrink-0" />
+            } @else {
+              <svg class="w-4 h-4 text-tertiary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+                <path d="M4 10h16"></path>
+                <path d="M10 4v16"></path>
+              </svg>
+            }
             <span class="font-display font-semibold text-xs tracking-wide text-on-surface truncate">{{ descriptor().title }}</span>
             <span class="hidden sm:inline text-[10px] font-mono text-on-surface-variant/80">{{ descriptor().pid }}</span>
           </div>
@@ -152,6 +160,9 @@ import { ChatWindowComponent } from '../apps/chat-window/chat-window.component';
           }
           @case ('ChatWindowComponent') {
             <app-chat-window [pid]="descriptor().pid" />
+          }
+          @case ('BeepErpWindowComponent') {
+            <app-beep-erp-window />
           }
           @case ('RemoteContainerComponent') {
             <app-remote-container [pid]="descriptor().pid" [descriptor]="descriptor()" />
