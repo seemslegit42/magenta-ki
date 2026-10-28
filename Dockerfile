@@ -1,19 +1,19 @@
-FROM node:20-alpine AS builder
+FROM oven/bun:latest AS builder
 
 WORKDIR /app
 COPY package*.json ./
-RUN npm install
+RUN bun install
 
 COPY . .
-RUN npm run build
+RUN bun run build
 
-FROM node:20-alpine
+FROM oven/bun:latest
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci --only=production
+RUN bun install --production
 
 COPY --from=builder /app/dist /app/dist
 
-EXPOSE 3000
-ENV PORT=3000
-CMD ["node", "dist/app/server/server.mjs"]
+EXPOSE 3001
+ENV PORT=3001
+CMD ["bun", "dist/app/server/server.mjs"]

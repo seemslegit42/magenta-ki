@@ -30,6 +30,9 @@ func main() {
 	mux.HandleFunc("GET /api/xi/sankey", handlers.GetXiSankey)
 	mux.HandleFunc("GET /api/xi/governance", handlers.GetXiGovernance)
 
+	// Telemetry
+	mux.HandleFunc("GET /api/telemetry/sse", handlers.TelemetrySSE)
+
 	// Appwrite Console & Instance Management Routes
 	mux.Handle("GET /api/console/info", middleware.AuthMiddleware(http.HandlerFunc(handlers.GetConsoleInfo)))
 

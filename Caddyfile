@@ -1,0 +1,9 @@
+:3000 {
+    # Serve static assets
+    root * /app/browser
+    file_server
+
+    # Reverse proxy to API (Go) and SSR (Node)
+    reverse_proxy /api/* lexvos-api:8080
+    reverse_proxy /* lexvos-ssr:3001
+}

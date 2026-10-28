@@ -4,19 +4,32 @@ include:
   - path: appwrite/docker-compose.yml
 
 services:
-  lexvos-gateway:
+  lexvos-ssr:
     build:
       context: .
       dockerfile: Dockerfile
+    environment:
+      - PORT=3001
+    networks:
+      - gateway
+
+  lexvos-api:
+    build:
+      context: ./go
+      dockerfile: Dockerfile
+    environment:
+      - PORT=8080
+    networks:
+      - gateway
+      - appwrite
+
+  caddy:
+    image: caddy:latest
     ports:
       - "3000:3000"
-    environment:
-      - PORT=3000
-    env_file:
-      - ./appwrite.env
-    restart: unless-stopped
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
     networks:
-      - appwrite
       - gateway
 
 networks:
