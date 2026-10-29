@@ -1,24 +1,24 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { WindowManagerService } from './window-manager.service';
 
-/** Launch = run installed apps. Catalog = discover, remotes, federation management. */
-export type AppHubPanel = 'launch' | 'catalog';
+/** Catalog = discover, remotes, federation management. Launch = run installed apps. */
+export type AppHubPanel = 'catalog' | 'launch' | 'remotes' | 'pinned';
 
 @Injectable({ providedIn: 'root' })
 export class AppHubService {
   private readonly windowManager = inject(WindowManagerService);
 
-  readonly requestedPanel = signal<AppHubPanel>('launch');
+  readonly requestedPanel = signal<AppHubPanel>('catalog');
 
-  open(panel: AppHubPanel = 'launch'): string {
+  open(panel: AppHubPanel = 'catalog'): string {
     this.requestedPanel.set(panel);
     const pid = this.windowManager.openApp({
       id: 'app-launcher',
-      name: 'Applications',
-      icon: 'apps',
+      name: 'Application Catalog',
+      title: 'Application Catalog',
+      icon: 'store',
       category: 'system',
     });
-    // Re-emit so an already-open hub window switches tabs.
     this.requestedPanel.set(panel);
     return pid;
   }

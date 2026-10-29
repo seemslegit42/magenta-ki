@@ -7,6 +7,12 @@ import {
 import { WindowManagerService } from '../../ts/apps/host/app/services/window-manager.service';
 import { NativeFederationService } from '../../ts/apps/host/app/services/native-federation.service';
 
+import { DockRegistryService } from '../../ts/apps/host/app/services/dock-registry.service';
+import { AppHubService } from '../../ts/apps/host/app/services/app-hub.service';
+import { NotificationService } from '../../ts/apps/host/app/services/notification.service';
+import { AuditService } from '../../ts/apps/host/app/services/audit.service';
+import { AuthRbacService } from '../../ts/apps/host/app/services/auth-rbac.service';
+
 describe('AppLauncherComponent', () => {
   let component: AppLauncherComponent;
   let windowManager: WindowManagerService;
@@ -19,6 +25,11 @@ describe('AppLauncherComponent', () => {
       providers: [
         { provide: WindowManagerService, useValue: windowManager },
         { provide: NativeFederationService, useValue: federation },
+        DockRegistryService,
+        AppHubService,
+        NotificationService,
+        AuditService,
+        AuthRbacService,
       ],
     });
     component = runInInjectionContext(injector, () => new AppLauncherComponent());

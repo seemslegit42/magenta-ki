@@ -4,7 +4,7 @@ import { AppHubService } from './app-hub.service';
 
 @Injectable({ providedIn: 'root' })
 export class WindowManagerService {
-  private readonly injector = inject(Injector);
+  private injector: Injector | null = null;
   private windows = signal<Map<string, WindowBounds>>(new Map());
   private _processes = signal<ProcessDescriptor[]>([]);
   public topZIndex = signal<number>(100);
@@ -21,6 +21,11 @@ export class WindowManagerService {
   public dockVisible = signal<boolean>(true);
 
   constructor() {
+    try {
+      this.injector = inject(Injector, { optional: true });
+    } catch {
+      this.injector = null;
+    }
     if (typeof window !== 'undefined') {
       window.addEventListener('resize', () => {
         const mobile = window.innerWidth < 768;
@@ -98,14 +103,16 @@ export class WindowManagerService {
     isFederated?: boolean;
     federatedConfig?: unknown;
   }): string {
-    if (app.id === 'app-store' || app.id === 'native-federation') {
-      return this.injector.get(AppHubService).open('catalog');
+    if (app.id === 'app-store' || app.id === 'native-federation' || app.id === 'app-catalog') {
+      if (this.injector) {
+        return this.injector.get(AppHubService).open('catalog');
+      }
     }
 
-    const title = app.title || app.name || app.id;
+    const title = app.title || app.name || (app.id === 'app-launcher' ? 'Application Catalog' : app.id);
     let component = app.entryComponent || app.componentName;
     if (!component) {
-      if (app.id === 'app-store') component = 'AppStoreComponent';
+      if (app.id === 'app-store' || app.id === 'app-catalog') component = 'AppLauncherComponent';
       else if (app.id === 'app-launcher') component = 'AppLauncherComponent';
       else if (app.id === 'native-federation') component = 'RemoteContainerComponent';
       else if (app.id === 'wopi-office') component = 'WopiOfficeComponent';

@@ -16,10 +16,10 @@ import {
 } from '../../../services/beep-remote.service';
 import { NativeFederationService } from '../../../services/native-federation.service';
 
-type ShellSurfaceModule = {
+interface ShellSurfaceModule {
   mountBeepShell?: (container: HTMLElement) => Promise<void>;
   unmountBeepShell?: () => void;
-};
+}
 
 @Component({
   selector: 'app-beep-erp-window',

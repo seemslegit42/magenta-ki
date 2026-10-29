@@ -17,31 +17,27 @@ import { BeepLaunchService } from '../../services/beep-launch.service';
           Λ Ξ V <span class="text-magenta">O S</span>
         </span>
 
-        <nav aria-label="System Menu" class="flex items-center gap-0.5 text-xs text-on-surface-variant min-w-0">
+        <nav aria-label="System Menu" class="flex items-center gap-1.5 text-xs text-on-surface-variant min-w-0">
           <button
             type="button"
-            class="px-2 sm:px-2.5 py-1.5 rounded-lg bg-primary-container/25 border border-tertiary/35 hover:border-tertiary cursor-pointer transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-tertiary/50 flex items-center gap-1.5"
+            class="px-2 sm:px-2.5 py-1.5 rounded-lg bg-primary-container/25 border border-tertiary/35 hover:border-tertiary cursor-pointer transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-tertiary/50 flex items-center gap-1.5 shadow-xs"
             (click)="openBeep()"
             title="B.E.E.P — Syndicate Resource Planning"
             aria-label="Open B.E.E.P ERP">
             <app-tabler-icon name="beep" size="18" class="text-tertiary shrink-0" />
             <span class="font-display font-semibold text-on-surface hidden sm:inline text-[11px] tracking-wide">B.E.E.P</span>
           </button>
+
+          <!-- System Application Catalog (Install & Manage Micro-Frontends) -->
           <button
             type="button"
-            class="px-2 sm:px-3 py-1.5 rounded-lg hover:bg-white/8 hover:text-tertiary cursor-pointer transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-tertiary/50 flex items-center gap-1.5"
-            (click)="openLaunch()"
-            title="Launch installed applications">
-            <app-tabler-icon name="apps" size="16" class="text-tertiary shrink-0" />
-            <span class="font-medium text-on-surface hidden sm:inline">Launch</span>
-          </button>
-          <button
-            type="button"
-            class="px-2 sm:px-3 py-1.5 rounded-lg hover:bg-white/8 hover:text-secondary cursor-pointer transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-secondary/50 flex items-center gap-1.5"
+            class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-surface-container/80 hover:bg-surface-high border border-outline/16 hover:border-secondary/50 text-on-surface cursor-pointer transition-all focus:outline-none focus-visible:ring-1 focus-visible:ring-secondary/50 flex items-center gap-1.5 shadow-xs"
             (click)="openCatalog()"
-            title="Catalog, remotes, and extensions">
+            title="Application Catalog — Install apps and manage Native Federation micro-frontends"
+            aria-label="Open Application Catalog">
             <app-tabler-icon name="store" size="16" class="text-secondary shrink-0" />
-            <span class="font-medium text-on-surface hidden sm:inline">Catalog</span>
+            <span class="font-display font-medium text-on-surface text-xs tracking-wide">Application Catalog</span>
+            <span class="hidden md:inline-flex px-1.5 py-0.2 rounded text-[9px] font-mono bg-secondary/15 text-secondary border border-secondary/30">MFE Hub</span>
           </button>
         </nav>
       </div>
@@ -75,10 +71,6 @@ export class StatusbarComponent {
 
   openBeep(): void {
     this.beepLaunch.open();
-  }
-
-  openLaunch(): void {
-    this.appHub.open('launch');
   }
 
   openCatalog(): void {

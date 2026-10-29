@@ -105,6 +105,41 @@ import { CommonModule } from '@angular/common';
           <path d="M4 4l10 8l-10 8z" />
           <path d="M14 4l10 8l-10 8z" />
         }
+        @case ('pin') {
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+          <path d="M9 4v6l-2 4v2h10v-2l-2 -4v-6" />
+          <path d="M12 16l0 5" />
+          <path d="M8 4l8 0" />
+        }
+        @case ('file-text') {
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+          <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+          <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
+          <path d="M9 9l1 0" />
+          <path d="M9 13l6 0" />
+          <path d="M9 17l6 0" />
+        }
+        @case ('folder') {
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+          <path d="M5 4h4l3 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2" />
+        }
+        @case ('database') {
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+          <path d="M12 6m-8 0a8 3 0 1 0 16 0a8 3 0 1 0 -16 0" />
+          <path d="M4 6v6a8 3 0 0 0 16 0v-6" />
+          <path d="M4 12v6a8 3 0 0 0 16 0v-6" />
+        }
+        @case ('category') {
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+          <path d="M4 4h6v6h-6z" />
+          <path d="M14 4h6v6h-6z" />
+          <path d="M4 14h6v6h-6z" />
+          <circle cx="17" cy="17" r="3" />
+        }
+        @case ('check') {
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+          <path d="M5 12l5 5l10 -10" />
+        }
         @default {
           <circle cx="12" cy="12" r="9" />
         }
