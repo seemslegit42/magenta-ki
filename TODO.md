@@ -9,7 +9,8 @@
 - [x] Pass all unit tests (14/14 green) and ESLint checks (0 errors)
 
 - [x] Refactor `go/app.go` with Gin web framework and Appwrite Go SDK best practices (multi-tenancy, team isolation, TablesDB CRUD, Blades AI agent)
-- [ ] Implement drag-and-drop custom desktop icon rearrangement
+- [x] Implement drag-and-drop custom desktop icon rearrangement with snap-to-grid and localStorage persistence
+- [x] Author and consolidate complete documentation suite across all systems (`/docs/architecture.md`, `/docs/developer-guide.md`, `/docs/user-guide.md`, `/docs/setup.md`, `/docs/api-reference.md`, `README.md`)
 - [ ] Expand WOPI protocol mock server with real-time WebDAV file locks
 - [ ] Add offline PWA service worker caching for Native Federation manifests
 - [ ] Connect Turso edge database replicas to live gateway proxy
@@ -28,16 +29,15 @@
 - [x] Formulate Hybrid Pricing & Value Committee (HPVC) governance model and proposal voting
 - [x] Implement Sankey economic flow diagram data structure for CFO and telemetry visualization
 - [x] Integrate Ξ Economy Cockpit into `GatewayConsoleComponent` (zero new front-end files)
-- [x] Pass unit test suite for XiEconomyService (bun test runner only)
+- [x] Pass unit test suite for XiEconomyService (7/7 green, 68/68 bun unit tests, 14/14 vitest tests)
 - [x] Complete Phase 1: Establish Neutral `/contracts/` Subtree (Zero Schema Drift)
   - [x] Canonical SQLite / libSQL DDL (`contracts/sql/schema.sql`) covering System, Processes, Windows, RBAC, Appwrite, Polar & Xi Economy
   - [x] Canonical sqlc queries (`contracts/sql/queries/system.sql`)
   - [x] Canonical OpenAPI 3.1 REST/RPC specification (`contracts/openapi/webos.v1.yaml`)
   - [x] Generation pipelines (`contracts/scripts/codegen-ts.sh`, `contracts/scripts/codegen-go.sh`)
-  - [x] Auto-generated TypeScript contract definitions (`ts/apps/host/generated/api.types.ts`) re-exported via `webos.models.ts`
-- [x] Phase 2 (partial): Bun control plane (`bun/`) owns `/api/*`; Go Xi peel via `GO_API_URL` + `go/gateway/README.md`
-- [x] Phase 3: Decouple `/ts/apps/host` to pure Angular Native Federation Host (evacuated from `src/`)
-- [x] Phase 4 (partial): Root evacuation of Angular `src/` → `ts/apps/host`; Express removed
-- [ ] Lefthook execution scoping (remaining Phase 4 polish)
+  - [x] Auto-generated TypeScript contract definitions (`src/generated/api.types.ts`) re-exported via `webos.models.ts`
+- [ ] Phase 2: Scaffold `/go/gateway/` reverse proxy and peel off `/api/*` endpoints
+- [ ] Phase 3: Decouple `/ts/apps/host` to pure Angular Native Federation Host
+- [ ] Phase 4: Root Evacuation & Lefthook Execution Scoping
 
 

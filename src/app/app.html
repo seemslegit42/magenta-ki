@@ -1,0 +1,255 @@
+<main class="relative w-screen h-screen overflow-hidden flex flex-col bg-[#0E1015]">
+  <!-- OS Status Bar -->
+  <app-statusbar />
+
+  <!-- Real-Time Desktop Notification Toast Overlays (Top-Right) -->
+  <div class="fixed top-12 right-4 sm:right-6 z-50 flex flex-col space-y-3 pointer-events-none max-w-sm w-full px-2 sm:px-0">
+    @for (toast of notificationService.toasts(); track toast.id) {
+      <div 
+        class="pointer-events-auto p-3.5 rounded-2xl bg-[#151922]/95 backdrop-blur-xl border border-white/10 shadow-2xl flex items-start space-x-3 transition-all duration-300"
+        [class.border-[#E0218A]/50]="toast.priority === 'urgent' || toast.category === 'security'"
+        [class.shadow-[0_0_20px_rgba(224,33,138,0.2)]]="toast.priority === 'urgent' || toast.category === 'security'">
+        <div 
+          class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
+          [class.bg-[#3EB991]/20]="toast.category === 'update'"
+          [class.text-[#3EB991]]="toast.category === 'update'"
+          [class.bg-[#20B2AA]/20]="toast.category === 'task'"
+          [class.text-[#20B2AA]]="toast.category === 'task'"
+          [class.bg-[#E0218A]/20]="toast.category === 'security'"
+          [class.text-[#FF2A9D]]="toast.category === 'security'"
+          [class.bg-[#6A0DAD]/20]="toast.category === 'message'"
+          [class.text-[#6A0DAD]]="toast.category === 'message'">
+          <mat-icon class="text-sm">
+            @switch (toast.category) {
+              @case ('security') { security }
+              @case ('task') { assignment }
+              @case ('message') { chat }
+              @default { notifications_active }
+            }
+          </mat-icon>
+        </div>
+
+        <div class="flex-1 overflow-hidden">
+          <div class="flex items-center justify-between">
+            <h4 class="font-['Comfortaa'] font-semibold text-white text-xs truncate">{{ toast.title }}</h4>
+            <span class="text-[9px] text-[#8C94A8] font-mono ml-1">{{ toast.timestamp | date:'HH:mm:ss' }}</span>
+          </div>
+          <p class="text-[11px] text-[#8C94A8] mt-0.5 leading-snug">{{ toast.message }}</p>
+        </div>
+
+        <button
+          type="button"
+          class="w-6 h-6 rounded-lg hover:bg-white/10 flex items-center justify-center text-[#8C94A8] hover:text-white transition-colors cursor-pointer"
+          (click)="notificationService.dismissToast(toast.id)">
+          <mat-icon class="text-xs">close</mat-icon>
+        </button>
+      </div>
+    }
+  </div>
+
+
+  <!-- Desktop Stage -->
+  <div class="relative flex-1 overflow-hidden">
+    <!-- Wallpaper Grid / Background Glow -->
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#3B0764]/30 via-[#0E1015] to-[#08090C] pointer-events-none"></div>
+    <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-[#6A0DAD]/15 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#E0218A]/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <!-- Large Subtle SVG Watermark Centered in Workspace (Sits behind all windows and UI) -->
+    <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none z-0 overflow-hidden">
+      <!-- Ambient Radial Color Glows Behind Logo -->
+      <div class="absolute w-[500px] h-[500px] sm:w-[750px] sm:h-[750px] bg-gradient-to-tr from-[#6A0DAD]/12 via-[#E0218A]/08 to-[#20B2AA]/10 rounded-full blur-[140px] pointer-events-none"></div>
+
+      <!-- Watermark SVG Container with Fine-tuned Low-Opacity & Frosted Dark Aesthetics -->
+      <div class="relative w-full max-w-[880px] px-6 flex flex-col items-center justify-center opacity-[0.07] sm:opacity-[0.09] hover:opacity-[0.12] transition-opacity duration-1000">
+        <svg 
+          viewBox="0 0 1000 580" 
+          fill="none" 
+          xmlns="http://www.w3.org/2000/svg" 
+          class="w-full h-auto drop-shadow-[0_0_80px_rgba(32,178,170,0.15)]"
+          aria-hidden="true">
+          <defs>
+            <!-- Roman Aqua & Emerald Gradient -->
+            <linearGradient id="levos-aqua" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#20B2AA" stop-opacity="0.95" />
+              <stop offset="50%" stop-color="#3EB991" stop-opacity="0.8" />
+              <stop offset="100%" stop-color="#20B2AA" stop-opacity="0.4" />
+            </linearGradient>
+
+            <!-- Magenta & Purple Resonance Gradient -->
+            <linearGradient id="levos-magenta" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#E0218A" stop-opacity="0.9" />
+              <stop offset="100%" stop-color="#6A0DAD" stop-opacity="0.4" />
+            </linearGradient>
+
+            <!-- Crystalline Silver Chrome Gradient -->
+            <linearGradient id="levos-silver" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.98" />
+              <stop offset="45%" stop-color="#E5E7EB" stop-opacity="0.88" />
+              <stop offset="100%" stop-color="#9CA3AF" stop-opacity="0.5" />
+            </linearGradient>
+
+            <!-- Radial Core Ambient Filter -->
+            <filter id="levos-ambient-blur" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3" />
+            </filter>
+            <filter id="levos-glow-soft" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="1.5" />
+            </filter>
+          </defs>
+
+          <!-- Outer Precision Geometry & Telemetry Rings -->
+          <g transform="translate(500, 170)">
+            <!-- Outer Reticle -->
+            <circle cx="0" cy="0" r="130" stroke="white" stroke-opacity="0.08" stroke-width="1" />
+            <circle cx="0" cy="0" r="114" stroke="#20B2AA" stroke-opacity="0.22" stroke-dasharray="3 6" stroke-width="1.2" />
+            <circle cx="0" cy="0" r="88" stroke="white" stroke-opacity="0.1" stroke-width="0.75" />
+            <circle cx="0" cy="0" r="64" stroke="#E0218A" stroke-opacity="0.18" stroke-dasharray="1 5" stroke-width="1" />
+
+            <!-- Cardinal Axis Tick Marks -->
+            <line x1="-145" y1="0" x2="-120" y2="0" stroke="#20B2AA" stroke-opacity="0.4" stroke-width="1.5" />
+            <line x1="120" y1="0" x2="145" y2="0" stroke="#20B2AA" stroke-opacity="0.4" stroke-width="1.5" />
+            <line x1="0" y1="-145" x2="0" y2="-120" stroke="#20B2AA" stroke-opacity="0.4" stroke-width="1.5" />
+            <line x1="0" y1="120" x2="0" y2="145" stroke="#20B2AA" stroke-opacity="0.4" stroke-width="1.5" />
+
+            <!-- Orbital Micro-Nodes -->
+            <circle cx="-130" cy="0" r="2" fill="#20B2AA" opacity="0.6" />
+            <circle cx="130" cy="0" r="2" fill="#20B2AA" opacity="0.6" />
+            <circle cx="0" cy="-130" r="2" fill="#20B2AA" opacity="0.6" />
+            <circle cx="0" cy="130" r="2" fill="#20B2AA" opacity="0.6" />
+
+            <!-- 45-degree Angled Diamond Cross -->
+            <line x1="-70" y1="-70" x2="-55" y2="-55" stroke="white" stroke-opacity="0.2" stroke-width="1" />
+            <line x1="70" y1="70" x2="55" y2="55" stroke="white" stroke-opacity="0.2" stroke-width="1" />
+            <line x1="70" y1="-70" x2="55" y2="-55" stroke="white" stroke-opacity="0.2" stroke-width="1" />
+            <line x1="-70" y1="70" x2="-55" y2="55" stroke="white" stroke-opacity="0.2" stroke-width="1" />
+
+            <!-- Faceted Crystalline Insignia Geometry -->
+            <!-- Top Apex Diamond -->
+            <polygon points="0,-82 48,-36 0,10 -48,-36" fill="url(#levos-aqua)" fill-opacity="0.04" stroke="url(#levos-aqua)" stroke-width="1.5" stroke-opacity="0.6" />
+            
+            <!-- Lower Refraction Facet -->
+            <polygon points="-48,-36 0,10 0,72 -54,32" fill="url(#levos-magenta)" fill-opacity="0.03" stroke="url(#levos-magenta)" stroke-width="1.2" stroke-opacity="0.5" />
+            <polygon points="48,-36 0,10 0,72 54,32" fill="url(#levos-aqua)" fill-opacity="0.05" stroke="url(#levos-aqua)" stroke-width="1.2" stroke-opacity="0.5" />
+
+            <!-- Stylized Greek Lambda (Λ) & Xi (Ξ) Core Monogram -->
+            <!-- Lambda Chevrons -->
+            <path d="M0,-54 L34,22 M0,-54 L-34,22" stroke="url(#levos-silver)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+            
+            <!-- Xi Dual Quantum Energy Bars -->
+            <line x1="-20" y1="-8" x2="20" y2="-8" stroke="#20B2AA" stroke-width="2.5" stroke-linecap="round" />
+            <line x1="-14" y1="6" x2="14" y2="6" stroke="#E0218A" stroke-width="2.5" stroke-linecap="round" />
+
+            <!-- Inverted Prism Reflector (V) Base -->
+            <path d="M-28,48 L0,18 L28,48" stroke="url(#levos-aqua)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+
+            <!-- Faceted Apex Nodes -->
+            <circle cx="0" cy="-82" r="2.5" fill="#20B2AA" />
+            <circle cx="48" cy="-36" r="2" fill="#E0218A" />
+            <circle cx="-48" cy="-36" r="2" fill="#3EB991" />
+            <circle cx="0" cy="72" r="2.5" fill="#20B2AA" />
+          </g>
+
+          <!-- Core Logotype: Λ Ξ V O S -->
+          <!-- Ambient Glow Layer -->
+          <text 
+            x="500" 
+            y="370" 
+            text-anchor="middle" 
+            font-family="'Comfortaa', sans-serif" 
+            font-weight="700" 
+            font-size="88" 
+            letter-spacing="28" 
+            fill="#20B2AA" 
+            opacity="0.3" 
+            filter="url(#levos-ambient-blur)">
+            Λ Ξ V O S
+          </text>
+
+          <!-- Primary Crisp Vector Text Layer -->
+          <text 
+            x="500" 
+            y="370" 
+            text-anchor="middle" 
+            font-family="'Comfortaa', sans-serif" 
+            font-weight="700" 
+            font-size="88" 
+            letter-spacing="28" 
+            fill="url(#levos-silver)">
+            Λ Ξ V O S
+          </text>
+
+          <!-- Precision Sub-Rule and Flanking Geometry -->
+          <g transform="translate(500, 420)">
+            <!-- Left Telemetry Line -->
+            <line x1="-360" y1="0" x2="-210" y2="0" stroke="url(#levos-aqua)" stroke-width="1.2" stroke-opacity="0.45" />
+            <circle cx="-360" cy="0" r="2.5" fill="#20B2AA" opacity="0.7" />
+            <circle cx="-210" cy="0" r="1.5" fill="#E0218A" opacity="0.7" />
+
+            <!-- Center Tagline -->
+            <text 
+              x="0" 
+              y="5" 
+              text-anchor="middle" 
+              font-family="'Lexend', sans-serif" 
+              font-weight="300" 
+              font-size="13" 
+              letter-spacing="12" 
+              fill="#20B2AA" 
+              opacity="0.9">
+              THE FUTURE NEEDS CONTEXT
+            </text>
+
+            <!-- Right Telemetry Line -->
+            <line x1="210" y1="0" x2="360" y2="0" stroke="url(#levos-aqua)" stroke-width="1.2" stroke-opacity="0.45" />
+            <circle cx="210" cy="0" r="1.5" fill="#E0218A" opacity="0.7" />
+            <circle cx="360" cy="0" r="2.5" fill="#20B2AA" opacity="0.7" />
+          </g>
+
+          <!-- Architectural Metadata Coordinates / Subtle System Telemetry -->
+          <g transform="translate(500, 465)">
+            <text 
+              x="0" 
+              y="0" 
+              text-anchor="middle" 
+              font-family="'Lexend', sans-serif" 
+              font-weight="200" 
+              font-size="9.5" 
+              letter-spacing="5" 
+              fill="#8C94A8" 
+              opacity="0.6">
+              NEURAL RUNTIME // AGENTFS VFS // SECURE KERNEL // EST. 2026
+            </text>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+
+    <!-- Draggable Desktop Shortcut Icons Layer -->
+    <app-desktop-icons />
+
+    <!-- Window Manager Layer -->
+    @for (proc of windowManager.activeProcesses(); track proc.pid) {
+      @if (proc.isOpen && !proc.isMinimized) {
+        @let bounds = windowManager.getBounds(proc.pid);
+        @if (bounds) {
+          <app-window [descriptor]="proc" [bounds]="bounds" />
+        }
+      }
+    }
+  </div>
+
+  <!-- Syncopated Dock -->
+  <app-dock />
+  <app-search />
+
+  <!-- BEEP Sassy Assistant Widget -->
+  <app-beep-assistant />
+
+  <!-- Mandatory Brand Signature Stamp (Bottom-Left) -->
+  <div class="fixed bottom-3 left-4 z-[9999] pointer-events-none opacity-40 mix-blend-overlay flex flex-col select-none">
+    <div class="font-['Comfortaa'] font-bold text-[10px] text-[#F5FFFA] tracking-normal">ΛΞV Inc</div>
+    <div class="font-['Lexend'] font-light text-[8px] text-[#F5FFFA] tracking-[0.2em]">The Future Needs Context</div>
+  </div>
+</main>

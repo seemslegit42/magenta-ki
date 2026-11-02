@@ -1,27 +1,20 @@
-# Revised Implementation Plan: Appwrite Go SDK & Micro App Refinement
+# Implementation Plan - Background Logo Integration & Frosted Glass CSS Enhancement
 
-This revised plan integrates Appwrite Go SDK best practices (multi-tenancy, team-based permissions, TablesDB row operations, and schema initialization) alongside micro app window refactoring and Native Federation enhancements.
+## User Requirements
+- Integrate the app logo `Λ Ξ V O S` into the background as a subtle centered watermark in the workspace.
+- Improve global background and CSS with a minimalist frosted glass dark surface theme.
 
-## Proposed Steps
+## Proposed Changes
 
-### 1. Appwrite Go SDK Best Practices Alignment
-- **Target File**: `/go/app.go`
-- **Actions**:
-  - Enforce multi-tenant tenant isolation using `role.Team(teamId, role)` permission patterns.
-  - Implement idempotent schema provisioning scripts ensuring tables, columns (`title`, `description`, `isComplete`, `createdBy`, `teamId`), and indexes are configured properly.
-  - Apply immutable column guards (`$id`, `$createdAt`, `$updatedAt`, `createdBy`, `teamId`) on all update operations.
+### 1. Global CSS (`/src/styles.css`)
+- Enhance background styling with rich minimalist frosted glass utilities (`backdrop-blur-md`, subtle radial gradients in Digital Wabi Sabi palette `#0E1015`, `#6A0DAD`, `#20B2AA`, `#E0218A`).
+- Add glowing backdrop highlights and noise/texture overlay classes.
 
-### 2. Micro App Windows Refinement
-- **Target Files**: `/src/app/components/window/window.component.ts`, `/src/app/components/apps/app-launcher/app-launcher.component.ts`
-- **Actions**:
-  - Purge any placeholder or speculative telemetry text across all main micro app windows.
-  - Standardize glassmorphic borders, touch/drag handles, and responsive layouts.
+### 2. Desktop Shell (`/src/app/components/desktop/desktop.component.ts`)
+- Embed the subtle centered watermark `Λ Ξ V O S` with elegant typography (Comfortaa display font, low opacity, letter-spacing, and subtle glow) right in the center of the desktop workspace background.
+- Ensure the watermark sits behind all application windows (`z-0`) so it never interferes with interaction, meeting WCAG AA accessibility standards.
 
-### 3. Native Federation & PWA Offline Caching
-- **Target Files**: `/src/app/components/apps/remote-container/remote-container.component.ts`, `/src/server.ts`
-- **Actions**:
-  - Integrate dynamic module loading using `@angular-architects/native-federation`.
-  - Add robust manifest probing and offline service worker caching rules for federated chunks.
-
-## Next Steps
-Please review and approve this revised plan to proceed with execution.
+## Verification Plan
+- Compile applet with `compile_applet`.
+- Verify linter with `lint_applet`.
+- Run unit tests with `npm run test:unit`.

@@ -1,0 +1,46 @@
+# Native Federation — LLM & Developer Documentation
+
+## Overview
+Native Federation is a modern, standards-based alternative to Webpack Module Federation. It relies entirely on browser-native features: ECMAScript Modules (ESM) and Import Maps. It does not require a custom module loader runtime or Webpack container entry points.
+
+## Core Concepts
+- **Browser Native:** Loads chunks as standard ESM modules directly by the browser engine.
+- **Import Maps:** Uses standard W3C import maps to resolve shared libraries (e.g. `@angular/core`, `rxjs`).
+- **Angular Integration:** First-class support for Angular ApplicationBuilder (`@angular/build:application`) via `@angular-architects/native-federation`.
+- **Manifest (`federation.manifest.json`):** Maps remote names to their respective `remoteEntry.json` URLs.
+
+## Configuration (`federation.config.mjs`)
+```javascript
+import { withNativeFederation, fromPackageJson } from '@angular-architects/native-federation/config';
+
+export default withNativeFederation({
+  name: 'app',
+  shared: fromPackageJson({ singleton: true, strictVersion: true, requiredVersion: 'auto', build: 'package' }),
+  skip: ['rxjs/ajax', 'rxjs/fetch'],
+  features: {
+    denseChunking: true
+  }
+});
+```
+
+## Bootstrap & Initialization (`main.ts`)
+```typescript
+import { initFederation } from '@angular-architects/native-federation';
+
+initFederation('federation.manifest.json', {
+  hostRemoteEntry: { url: "./remoteEntry.json" }
+})
+  .catch(err => console.error(err))
+  .then(() => import('./bootstrap'))
+  .catch(err => console.error(err));
+```
+
+## Dynamic Loading
+```typescript
+import { loadRemoteModule } from '@angular-architects/native-federation';
+
+const mod = await loadRemoteModule({
+  remoteName: 'remote-analytics',
+  exposedModule: './Component'
+});
+```

@@ -5,8 +5,7 @@
 		"packageManager": "npm",
 		"schematicCollections": [
 			"angular-eslint"
-    ],
-    "analytics": false
+		]
 	},
 	"newProjectRoot": "projects",
 	"projects": {
@@ -14,7 +13,7 @@
 			"projectType": "application",
 			"schematics": {},
 			"root": "",
-			"sourceRoot": "ts/apps/host",
+			"sourceRoot": "src",
 			"prefix": "app",
 			"architect": {
 				"build": {
@@ -22,8 +21,7 @@
 					"options": {
 						"cacheExternalArtifacts": true,
 						"tsConfig": "tsconfig.federation.json",
-						"ssr": true,
-						"entryPoints": ["ts/apps/host/main.ts"]
+						"ssr": true
 					},
 					"configurations": {
 						"production": {
@@ -50,23 +48,25 @@
 					"options": {
 						"port": 3000,
 						"host": "0.0.0.0",
-						"allowedHosts": true,
-						"proxyConfig": "proxy.conf.json"
+						"allowedHosts": true
 					}
+				},
+				"test": {
+					"builder": "@angular/build:unit-test"
 				},
 				"lint": {
 					"builder": "@angular-eslint/builder:lint",
 					"options": {
 						"lintFilePatterns": [
-							"ts/apps/host/**/*.ts",
-							"ts/apps/host/**/*.html"
+							"src/**/*.ts",
+							"src/**/*.html"
 						]
 					}
 				},
 				"esbuild": {
 					"builder": "@angular/build:application",
 					"options": {
-						"browser": "ts/apps/host/main.ts",
+						"browser": "src/main.ts",
 						"tsConfig": "tsconfig.app.json",
 						"assets": [
 							{
@@ -75,12 +75,12 @@
 							}
 						],
 						"styles": [
-							"ts/apps/host/styles.css"
+							"src/styles.css"
 						],
-						"server": "ts/apps/host/main.server.ts",
+						"server": "src/main.server.ts",
 						"outputMode": "server",
 						"ssr": {
-							"entry": "ts/apps/host/server.ts"
+							"entry": "src/server.ts"
 						},
 						"polyfills": [
 							"es-module-shims"

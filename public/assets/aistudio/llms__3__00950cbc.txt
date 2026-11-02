@@ -1,0 +1,93 @@
+# Native Federation (v4)
+
+> Native Federation is a browser-native implementation of Module Federation for building Micro Frontends using web standards (ESM + Import Maps). It provides a shared API across build tools (esbuild, Angular CLI, Vite) and a runtime that wires remotes into a host via a generated import map.
+
+This file indexes the Native Federation documentation for LLMs and AI coding tools. Each link points to a standalone markdown version of the corresponding docs page, mirroring the site's folder structure.
+
+The ecosystem is split into four layers:
+
+- **Core** (`@softarc/native-federation`) — the tooling-agnostic builder that consumes a `federation.config.mjs` and produces a `remoteEntry.json` plus an import map.
+- **Orchestrator** (`@softarc/native-federation-orchestrator`) — the host-side runtime: version negotiation across many remotes, caching, and SRI verification.
+- **Adapters** — wire the core into a specific build tool (esbuild, Vite, Angular CLI).
+- **Runtime** (`@softarc/native-federation-runtime`) — the classic host runtime the Orchestrator replaces; end-of-life.
+
+Documentation for the previous major is indexed separately at https://native-federation.com/docs/v3/llms.txt.
+
+## Getting Started
+
+- [Overview](https://native-federation.com/docs/v4/getting-started.md): switchboard linking to every section's getting-started page
+- [Architecture Overview](https://native-federation.com/docs/v4/architecture.md): how hosts, remotes, the builder, and the runtime fit together
+- [The Mental Model](https://native-federation.com/docs/v4/mental-model.md): core concepts for reasoning about Native Federation
+- [Terminology](https://native-federation.com/docs/v4/terminology.md): glossary of host, remote, shared, exposed, import map, etc.
+- [Tutorial](https://native-federation.com/docs/v4/tutorial.md): end-to-end walkthrough building a host and a remote
+- [v3 vs v4](https://native-federation.com/docs/v4/v3-vs-v4.md): what changed between majors
+- [Migration to v4](https://native-federation.com/docs/v4/migration.md): upgrade steps from v3
+
+## Runtime / Orchestrator
+
+- [Overview](https://native-federation.com/docs/v4/orchestrator/index.md): what the orchestrator solves and when to use it
+- [Getting Started](https://native-federation.com/docs/v4/orchestrator/getting-started.md)
+- [Architecture](https://native-federation.com/docs/v4/orchestrator/architecture.md): internal design and extension points
+- [Configuration](https://native-federation.com/docs/v4/orchestrator/configuration.md): every config option
+- [Version Resolver](https://native-federation.com/docs/v4/orchestrator/version-resolver.md): how shared-dependency version conflicts are resolved
+- [Dependency Pooling](https://native-federation.com/docs/v4/orchestrator/pooling.md): isolating shared dependencies into separate pools
+- [Event Registry](https://native-federation.com/docs/v4/orchestrator/event-registry.md): `window.__NF_REGISTRY__` — race-free init, cross-MFE resources and event streams
+- [Node.js / SSR](https://native-federation.com/docs/v4/orchestrator/node.md): `initNodeFederation` and the `module.register()` loader hook
+- [Module Federation](https://native-federation.com/docs/v4/orchestrator/module-federation.md): `createGetShared` — bridge resolved singletons into webpack Module Federation's `shared` config
+- [Security & SRI](https://native-federation.com/docs/v4/orchestrator/security.md): subresource integrity for remote entries and their chunks
+- [Legacy Runtime](https://native-federation.com/docs/v4/runtime/index.md): the end-of-life classic runtime and the gaps that motivated the Orchestrator
+
+## Core
+
+- [Overview](https://native-federation.com/docs/v4/core/index.md): what the core package does and its public surface
+- [Getting Started](https://native-federation.com/docs/v4/core/getting-started.md): install, minimal config, wire the builder
+- [federation.config.mjs](https://native-federation.com/docs/v4/core/configuration.md): every option on `withNativeFederation`
+- [Sharing Dependencies](https://native-federation.com/docs/v4/core/sharing.md): `share`, `shareAll`, secondary entry points
+- [Build Process](https://native-federation.com/docs/v4/core/build-process.md): the `federationBuilder` lifecycle including watch mode
+- [Caching](https://native-federation.com/docs/v4/core/caching.md): how the builder caches shared bundles
+- [Build Adapters](https://native-federation.com/docs/v4/core/build-adapters.md): the `NFBuildAdapter` contract
+- [Build Artifacts](https://native-federation.com/docs/v4/core/artifacts.md): `remoteEntry.json` and the generated import map
+- [API Reference](https://native-federation.com/docs/v4/core/api-reference.md): exported functions and types
+
+## Adapters
+
+- [Overview](https://native-federation.com/docs/v4/adapters/index.md): which adapters exist and when to use each
+- [Build Your Own](https://native-federation.com/docs/v4/adapters/build-your-own.md): implement `NFBuildAdapter` for a new bundler
+
+## esbuild Adapter
+
+- [Overview](https://native-federation.com/docs/v4/adapters/esbuild/index.md): the framework-agnostic reference build adapter
+- [Getting Started](https://native-federation.com/docs/v4/adapters/esbuild/getting-started.md): a complete build script for a host and a remote
+- [Builder](https://native-federation.com/docs/v4/adapters/esbuild/builder.md): the adapter-provided builder
+- [Adapter Configuration](https://native-federation.com/docs/v4/adapters/esbuild/configuration.md): every field on the adapter config
+- [React & CJS Interop](https://native-federation.com/docs/v4/adapters/esbuild/react-interop.md): working with CommonJS and React ecosystems
+
+## Angular Adapter
+
+- [Overview](https://native-federation.com/docs/v4/angular-adapter/index.md): the builder, schematics and helpers that integrate with the Angular CLI
+- [Getting Started](https://native-federation.com/docs/v4/angular-adapter/getting-started.md): scaffold a host and a remote with `ng add`
+- [Builder](https://native-federation.com/docs/v4/angular-adapter/builder.md): the Angular CLI builder
+- [Schematics](https://native-federation.com/docs/v4/angular-adapter/schematics.md): `ng add` and generators
+- [Angular Config](https://native-federation.com/docs/v4/angular-adapter/configuration.md): the config entry point and the generated federation config
+- [Runtime](https://native-federation.com/docs/v4/angular-adapter/runtime.md): Angular-specific runtime helpers
+- [SSR & Hydration](https://native-federation.com/docs/v4/angular-adapter/ssr.md): server-side rendering with federated remotes
+- [I18N](https://native-federation.com/docs/v4/angular-adapter/i18n.md): Angular internationalization integration
+- [Localization](https://native-federation.com/docs/v4/angular-adapter/localization.md): `@angular/common/locales` data and `shareAngularLocales`
+- [Custom Builder](https://native-federation.com/docs/v4/angular-adapter/custom-builder.md): wrapping the builder factory in your own Architect builder
+- [Migration to v4](https://native-federation.com/docs/v4/angular-adapter/migration-v4.md): the Angular-specific upgrade steps
+
+## Guides
+
+- [SSR & Hydration](https://native-federation.com/docs/v4/ssr-hydration.md): general SSR patterns
+- [Native & Module Federation](https://native-federation.com/docs/v4/native-and-module-federation.md): interop and differences
+- [Component Libs](https://native-federation.com/docs/v4/component-libs.md): sharing component libraries
+
+## DevTools
+
+- [Chrome Extension](https://native-federation.com/docs/v4/devtools.md): the read-only Chrome DevTools panel for v4 Orchestrator apps — what it shows, install, what it cannot tell you
+
+## Reference
+
+- [FAQ](https://native-federation.com/docs/v4/faq.md): common questions and pitfalls
+- [Blog Series](https://native-federation.com/docs/v4/documentation.md): the blog series behind these docs
+- [Architecture Workshop](https://native-federation.com/docs/v4/workshop.md): the architecture workshop material

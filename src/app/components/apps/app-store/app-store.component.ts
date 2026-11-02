@@ -1,9 +1,7 @@
-import { Component, ChangeDetectionStrategy, signal, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { WindowManagerService } from '../../../services/window-manager.service';
-import { NativeFederationService } from '../../../services/native-federation.service';
 
 export interface StoreItem {
   id: string;
@@ -145,6 +143,7 @@ export interface StoreItem {
   `
 })
 export class AppStoreComponent {
+  @Input() pid?: string;
   protected readonly searchControl = new FormControl<string>('', { nonNullable: true });
   protected readonly searchQuery = signal<string>('');
   protected readonly selectedCategory = signal<string>('all');
