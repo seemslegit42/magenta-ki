@@ -1,14 +1,15 @@
-<main class="relative w-screen h-screen overflow-hidden flex flex-col bg-[#0E1015]">
+<main class="relative w-screen h-screen overflow-hidden flex flex-col bg-[#0E1015] workspace-grid-overlay">
   <!-- OS Status Bar -->
   <app-statusbar />
 
   <!-- Real-Time Desktop Notification Toast Overlays (Top-Right) -->
-  <div class="fixed top-12 right-4 sm:right-6 z-50 flex flex-col space-y-3 pointer-events-none max-w-sm w-full px-2 sm:px-0">
-    @for (toast of notificationService.toasts(); track toast.id) {
+  <aside aria-label="Desktop Notifications" class="fixed top-12 right-4 sm:right-6 z-50 flex flex-col space-y-3 pointer-events-none max-w-sm w-full px-2 sm:px-0">
+    @for (toast of toasts(); track toast.id) {
       <div 
         class="pointer-events-auto p-3.5 rounded-2xl bg-[#151922]/95 backdrop-blur-xl border border-white/10 shadow-2xl flex items-start space-x-3 transition-all duration-300"
         [class.border-[#E0218A]/50]="toast.priority === 'urgent' || toast.category === 'security'"
-        [class.shadow-[0_0_20px_rgba(224,33,138,0.2)]]="toast.priority === 'urgent' || toast.category === 'security'">
+        [class.shadow-[0_0_20px_rgba(224,33,138,0.2)]]="toast.priority === 'urgent' || toast.category === 'security'"
+        role="alert">
         <div 
           class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
           [class.bg-[#3EB991]/20]="toast.category === 'update'"
@@ -40,12 +41,13 @@
         <button
           type="button"
           class="w-6 h-6 rounded-lg hover:bg-white/10 flex items-center justify-center text-[#8C94A8] hover:text-white transition-colors cursor-pointer"
-          (click)="notificationService.dismissToast(toast.id)">
+          (click)="dismissToast(toast.id)"
+          aria-label="Dismiss notification">
           <mat-icon class="text-xs">close</mat-icon>
         </button>
       </div>
     }
-  </div>
+  </aside>
 
 
   <!-- Desktop Stage -->
@@ -230,13 +232,8 @@
     <app-desktop-icons />
 
     <!-- Window Manager Layer -->
-    @for (proc of windowManager.activeProcesses(); track proc.pid) {
-      @if (proc.isOpen && !proc.isMinimized) {
-        @let bounds = windowManager.getBounds(proc.pid);
-        @if (bounds) {
-          <app-window [descriptor]="proc" [bounds]="bounds" />
-        }
-      }
+    @for (item of visibleWindows(); track item.descriptor.pid) {
+      <app-window [descriptor]="item.descriptor" [bounds]="item.bounds" />
     }
   </div>
 
