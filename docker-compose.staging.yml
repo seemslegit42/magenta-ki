@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  webos-staging-ssr:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: webos-staging-ssr
+    environment:
+      - PORT=3002
+      - NODE_ENV=staging
+    expose:
+      - "3002"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3002/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - staging-network
+
+  webos-staging-api:
+    build:
+      context: ./go
+      dockerfile: Dockerfile
+    container_name: webos-staging-api
+    environment:
+      - PORT=8081
+      - ENVIRONMENT=staging
+    expose:
+      - "8081"
+    restart: unless-stopped
+    networks:
+      - staging-network
+
+  webos-staging-proxy:
+    image: caddy:latest
+    container_name: webos-staging-proxy
+    ports:
+      - "3080:3080"
+    volumes:
+      - ./Caddyfile.staging:/etc/caddy/Caddyfile
+    depends_on:
+      - webos-staging-ssr
+      - webos-staging-api
+    restart: unless-stopped
+    networks:
+      - staging-network
+
+networks:
+  staging-network:
+    name: webos-staging-network

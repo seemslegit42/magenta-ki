@@ -3,15 +3,9 @@ import { Injector, runInInjectionContext } from '@angular/core';
 import {
   AppLauncherComponent,
   type AppLauncherItem,
-} from '../../ts/apps/host/app/components/apps/app-launcher/app-launcher.component';
-import { WindowManagerService } from '../../ts/apps/host/app/services/window-manager.service';
-import { NativeFederationService } from '../../ts/apps/host/app/services/native-federation.service';
-
-import { DockRegistryService } from '../../ts/apps/host/app/services/dock-registry.service';
-import { AppHubService } from '../../ts/apps/host/app/services/app-hub.service';
-import { NotificationService } from '../../ts/apps/host/app/services/notification.service';
-import { AuditService } from '../../ts/apps/host/app/services/audit.service';
-import { AuthRbacService } from '../../ts/apps/host/app/services/auth-rbac.service';
+} from '../../src/app/components/apps/app-launcher/app-launcher.component';
+import { WindowManagerService } from '../../src/app/services/window-manager.service';
+import { NativeFederationService } from '../../src/app/services/native-federation.service';
 
 describe('AppLauncherComponent', () => {
   let component: AppLauncherComponent;
@@ -25,11 +19,6 @@ describe('AppLauncherComponent', () => {
       providers: [
         { provide: WindowManagerService, useValue: windowManager },
         { provide: NativeFederationService, useValue: federation },
-        DockRegistryService,
-        AppHubService,
-        NotificationService,
-        AuditService,
-        AuthRbacService,
       ],
     });
     component = runInInjectionContext(injector, () => new AppLauncherComponent());
@@ -55,7 +44,7 @@ describe('AppLauncherComponent', () => {
 
     const appwrite = apps.find((a: AppLauncherItem) => a.id === 'appwrite-databases');
     expect(appwrite).toBeDefined();
-    expect(appwrite?.name).toContain('Appwrite');
+    expect(appwrite?.name).toContain('Databases');
 
     const federated = apps.filter((a: AppLauncherItem) => a.isFederated);
     expect(federated.length).toBeGreaterThanOrEqual(1);

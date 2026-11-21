@@ -11,9 +11,37 @@ type contextKey string
 const userContextKey = contextKey("user")
 
 type User struct {
-	ID    string
-	Email string
-	Roles []string
+	ID    string   `json:"id"`
+	Email string   `json:"email"`
+	Roles []string `json:"roles"`
+	Teams []string `json:"teams"`
+}
+
+func (u *User) HasTeam(teamID string) bool {
+	if teamID == "" {
+		return false
+	}
+	for _, t := range u.Teams {
+		if t == teamID {
+			return true
+		}
+	}
+	// Administrator role has implicit tenant/team access
+	for _, r := range u.Roles {
+		if r == "administrator" || r == "owner" {
+			return true
+		}
+	}
+	return false
+}
+
+func (u *User) HasRole(role string) bool {
+	for _, r := range u.Roles {
+		if r == role {
+			return true
+		}
+	}
+	return false
 }
 
 // AuthMiddleware extracts and validates Bearer token or tenant identity
@@ -32,7 +60,8 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		user := &User{
 			ID:    userID,
 			Email: "operator@verdigris.cloud",
-			Roles: []string{"developer", "administrator"},
+			Roles: []string{"developer", "administrator", "owner"},
+			Teams: []string{"team_enterprise_alpha", "team_devops"},
 		}
 
 		ctx := context.WithValue(r.Context(), userContextKey, user)
@@ -40,6 +69,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+// GetUser returns authenticated user context, or anonymous if unauthenticated
 func GetUser(ctx context.Context) *User {
 	if user, ok := ctx.Value(userContextKey).(*User); ok {
 		return user
@@ -48,5 +78,6 @@ func GetUser(ctx context.Context) *User {
 		ID:    "usr_anonymous",
 		Email: "anonymous@verdigris.cloud",
 		Roles: []string{"guest"},
+		Teams: []string{},
 	}
 }

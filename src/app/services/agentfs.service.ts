@@ -5,9 +5,8 @@ import { ToolCallRecord, VfsInode } from '../models/webos.models';
 export class AgentFSService {
   private inodes = signal<Map<number, VfsInode>>(new Map([
     [1, { id: 1, mode: 16877, size: 4096, mtime: Date.now(), data: '' }], // root directory
-    [2, { id: 2, name: 'workspace.md', mode: 33188, size: 1024, mtime: Date.now(), data: '# Verdigris WebOS Workspace\nAutonomous Agent workspace initialized via AgentFS v2.' }],
-    [3, { id: 3, name: 'config.json', mode: 33188, size: 2048, mtime: Date.now(), data: '{"project": "enterprise-crm", "version": "2.4.0", "sync": "turso"}' }],
-    [4, { id: 4, name: 'llms.txt', mode: 33188, size: 1536, mtime: Date.now(), data: '# Native Federation — LLM & Developer Documentation\n\n## Overview\nNative Federation is a modern, standards-based alternative to Webpack Module Federation using ESM and Import Maps.\n\n## Configuration (federation.config.mjs)\nimport { withNativeFederation, fromPackageJson } from "@angular-architects/native-federation/config";\n\nexport default withNativeFederation({\n  name: "app",\n  shared: fromPackageJson({ singleton: true, strictVersion: true })\n});' }]
+    [2, { id: 2, mode: 33188, size: 1024, mtime: Date.now(), data: '# Verdigris WebOS Workspace\nAutonomous Agent workspace initialized via AgentFS v2.' }],
+    [3, { id: 3, mode: 33188, size: 2048, mtime: Date.now(), data: '{"project": "enterprise-crm", "version": "2.4.0", "sync": "edge-mesh"}' }]
   ]));
 
   private toolCalls = signal<ToolCallRecord[]>([
@@ -73,29 +72,6 @@ export class AgentFSService {
       if (current) {
         updated.set(inodeId, { ...current, size: data.length, mtime: Date.now(), data });
       }
-      return updated;
-    });
-  }
-
-  public deleteFile(inodeId: number): VfsInode | null {
-    let deleted: VfsInode | null = null;
-    this.inodes.update(map => {
-      const updated = new Map(map);
-      const current = updated.get(inodeId);
-      if (current) {
-        deleted = { ...current };
-        updated.delete(inodeId);
-      }
-      return updated;
-    });
-    return deleted;
-  }
-
-  public restoreFile(inode: VfsInode): void {
-    const numId = Number(inode.id);
-    this.inodes.update(map => {
-      const updated = new Map(map);
-      updated.set(numId, { ...inode, id: numId });
       return updated;
     });
   }

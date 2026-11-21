@@ -15,12 +15,12 @@ export class WopiService {
       userCanWrite: true,
       supportsUpdate: true,
       supportsLocks: true,
-      content: 'Verdigris Cloud OS — Q3 Strategic Enterprise Roadmap\n\n1. Executive Summary\nDeploying federated microkernels and Native Federation app stores across global enterprise clusters.\n\n2. Key Deliverables\n- Zoneless Angular Signals desktop shell\n- AgentFS OPFS WASM sandboxing\n- Go API Gateway with Turso per-tenant edge libSQL databases\n- WOPI collaborative office federation',
+      content: 'Verdigris Cloud OS — Q3 Strategic Enterprise Roadmap\n\n1. Executive Summary\nDeploying federated microkernels and Native Federation app stores across global enterprise clusters.\n\n2. Key Deliverables\n- Zoneless Angular Signals desktop shell\n- AgentFS OPFS WASM sandboxing\n- Enterprise API Gateway with per-tenant distributed edge databases\n- WOPI collaborative office federation',
       fileType: 'document'
     }],
     ['doc_102', {
       fileId: 'doc_102',
-      baseFileName: 'Global_Turso_Tenants_Q3.xlsx',
+      baseFileName: 'Global_Edge_Tenants_Q3.xlsx',
       ownerId: 'system-enterprise-admin',
       size: 8940,
       userId: 'usr-operator',
@@ -43,7 +43,7 @@ export class WopiService {
       userCanWrite: true,
       supportsUpdate: true,
       supportsLocks: true,
-      content: 'Slide 1: Verdigris Interface Protocol VIP v2.4\nSlide 2: The Magenta Resonance & Hyperspatial UI\nSlide 3: Zero-Install Enterprise WebOS Architecture\nSlide 4: AgentFS & Turso Edge Distributed Mesh',
+      content: 'Slide 1: Verdigris Interface Protocol VIP v2.4\nSlide 2: The Magenta Resonance & Hyperspatial UI\nSlide 3: Zero-Install Enterprise WebOS Architecture\nSlide 4: AgentFS & Distributed Edge Mesh',
       fileType: 'presentation'
     }]
   ]));

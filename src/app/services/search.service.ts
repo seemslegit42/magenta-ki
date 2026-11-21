@@ -60,46 +60,11 @@ export class SearchService {
         action: () => this.wm.openApp({ id: 'security-audit', name: 'Audit Trail & RBAC Sentinel', icon: 'verified_user', category: 'security' }) 
       },
       { 
-        id: 'native-federation', 
-        name: 'Native Federation v4 Studio & DevTools', 
-        type: 'app', 
-        icon: 'network', 
-        action: () => this.wm.openApp({ id: 'native-federation', name: 'Native Federation Studio', icon: 'hub', category: 'developer' }) 
-      },
-      { 
-        id: 'app-store', 
-        name: 'App Store & Catalog', 
-        type: 'app', 
-        icon: 'store', 
-        action: () => this.wm.openApp({ id: 'app-store', name: 'App Store & Catalog', icon: 'storefront', category: 'system' }) 
-      },
-      { 
-        id: 'wopi-office', 
-        name: 'WOPI Office Suite', 
-        type: 'app', 
-        icon: 'work', 
-        action: () => this.wm.openApp({ id: 'wopi-office', name: 'WOPI Office Suite', icon: 'description', category: 'productivity' }) 
-      },
-      { 
-        id: 'agentfs-explorer', 
-        name: 'AgentFS File Explorer & Documents', 
-        type: 'app', 
-        icon: 'folder', 
-        action: () => this.wm.openApp({ id: 'agentfs-explorer', name: 'AgentFS Explorer', icon: 'folder_open', category: 'productivity' }) 
-      },
-      { 
         id: 'settings', 
         name: 'System Settings', 
         type: 'app', 
         icon: 'settings', 
         action: () => this.wm.openApp({ id: 'settings', name: 'Verdigris System Settings', icon: 'settings', category: 'system' }) 
-      },
-      { 
-        id: 'recycle-bin', 
-        name: 'Recycle Bin & Trash Purge', 
-        type: 'app', 
-        icon: 'trash', 
-        action: () => this.wm.openApp({ id: 'recycle-bin', name: 'Recycle Bin', icon: 'delete', entryComponent: 'RecycleBinComponent', category: 'system' }) 
       }
     ]);
   }

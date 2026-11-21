@@ -27,22 +27,6 @@ import { AvfDomain } from '../../../models/avf.models';
             A New Calculus for Revenue & Valuation in the Age of the Autonomous Enterprise.
           </p>
         </div>
-
-        <!-- Executive Telemetry Strip -->
-        <div class="flex items-center flex-wrap gap-2 text-xs">
-          <div class="px-3 py-1.5 rounded-xl bg-[#14161F] border border-[#3EB991]/30 text-[#3EB991] flex items-center space-x-1.5 font-mono shadow-sm">
-            <span class="w-2 h-2 rounded-full bg-[#3EB991] animate-pulse"></span>
-            <span>Yr 5 Rev: &#36;{{ avf.fiveYearProjection()[4].projectedRevenue | number }}</span>
-          </div>
-          <div class="px-3 py-1.5 rounded-xl bg-[#14161F] border border-[#20B2AA]/30 text-[#20B2AA] flex items-center space-x-1.5 font-mono shadow-sm">
-            <app-tabler-icon name="network" size="14" class="text-[#20B2AA]" />
-            <span>ROIC: {{ avf.roicMetrics().currentRoic }}x</span>
-          </div>
-          <div class="px-3 py-1.5 rounded-xl bg-[#6A0DAD]/20 border border-[#dfb7ff]/30 text-[#dfb7ff] flex items-center space-x-1.5 font-mono shadow-sm">
-            <app-tabler-icon name="clock" size="14" class="text-[#dfb7ff]" />
-            <span>Flywheel: {{ avf.roicMetrics().flywheelRpm }} RPM</span>
-          </div>
-        </div>
       </header>
 
       <!-- Navigation Tabs (Crystalline Canon Tabler Glyphs) -->

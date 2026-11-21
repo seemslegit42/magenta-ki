@@ -95,7 +95,7 @@ export class TerminalComponent {
       this.logs.update(list => [...list, {
         time: new Date().toLocaleTimeString(),
         prefix: 'sys>',
-        text: 'Available Commands:\n- help: Show this guide\n- status: Display active PIDs and Turso edge metrics\n- clear: Clear terminal logs\n- ai [prompt]: Query the Gemini AI Autonomous Agent & Copilot',
+        text: 'Available Commands:\n- help: Show this guide\n- status: Display active PIDs and distributed edge metrics\n- clear: Clear terminal logs\n- ai [prompt]: Query the Enterprise AI Autonomous Agent & Copilot',
         type: 'system'
       }]);
       return;
@@ -105,7 +105,7 @@ export class TerminalComponent {
       this.logs.update(list => [...list, {
         time: new Date().toLocaleTimeString(),
         prefix: 'sys>',
-        text: 'Active PIDs: 6 | Memory: 42.4 MB | OPFS WASM Status: Operational | Turso Edge Mesh: Connected',
+        text: 'Active PIDs: 6 | Memory: 42.4 MB | OPFS WASM Status: Operational | Edge Mesh: Connected',
         type: 'system'
       }]);
       return;

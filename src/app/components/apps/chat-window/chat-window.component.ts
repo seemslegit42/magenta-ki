@@ -43,7 +43,6 @@ export interface ChatMessage {
           <div>
             <h2 class="font-['Comfortaa'] text-sm font-bold text-[#F5FFFA] flex items-center space-x-2">
               <span>Sovereign Copilot</span>
-              <span class="text-[9px] font-mono px-1.5 py-0.5 rounded-full bg-[#3EB991]/20 text-[#3EB991] border border-[#3EB991]/30">VIP v2.4</span>
             </h2>
             <p class="text-[10px] text-[#8C94A8] font-light">Autonomous Agent & Streaming Cognitive Runtime</p>
           </div>
@@ -191,18 +190,6 @@ export interface ChatMessage {
             <span class="w-2 h-2 rounded-full bg-[#20B2AA] animate-bounce"></span>
             <span>Summoning Blades Copilot cognition...</span>
           </div>
-        }
-      </div>
-
-      <!-- Quick Prompt Suggestion Chips -->
-      <div class="flex items-center space-x-1.5 overflow-x-auto py-1 shrink-0 no-scrollbar">
-        @for (suggestion of suggestions; track suggestion) {
-          <button
-            type="button"
-            class="px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#3EB991]/40 text-[11px] text-[#8C94A8] hover:text-[#F5FFFA] transition-all whitespace-nowrap cursor-pointer shrink-0"
-            (click)="selectSuggestion(suggestion)">
-            {{ suggestion }}
-          </button>
         }
       </div>
 

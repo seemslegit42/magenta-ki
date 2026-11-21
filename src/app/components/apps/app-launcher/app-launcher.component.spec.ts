@@ -40,7 +40,7 @@ describe('AppLauncherComponent', () => {
     
     const appwrite = apps.find((a: AppLauncherItem) => a.id === 'appwrite-databases');
     expect(appwrite).toBeDefined();
-    expect(appwrite?.name).toContain('Appwrite');
+    expect(appwrite?.name).toContain('Databases');
 
     const federated = apps.filter((a: AppLauncherItem) => a.isFederated);
     expect(federated.length).toBeGreaterThanOrEqual(1);

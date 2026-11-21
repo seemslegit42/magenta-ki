@@ -132,12 +132,6 @@ export interface RemoteDefinition {
   lastChecked?: number;
   icon?: string;
   remoteEntryUrl?: string;
-  sriHash?: string;
-  poolId?: string;
-  chunksCount?: number;
-  exposedModules?: string[];
-  sharedDependencies?: string[];
-  buildAdapter?: 'angular' | 'esbuild' | 'vite';
 }
 
 export interface AppManifest {
@@ -483,67 +477,4 @@ export interface HpvcProposal {
   createdAt: number;
 }
 
-// ==========================================
-// Native Federation v4 Orchestrator Models
-// ==========================================
 
-export interface DependencyPool {
-  id: string;
-  name: string;
-  description: string;
-  isolated: boolean;
-  color: string;
-  assignedRemotes: string[];
-}
-
-export interface SharedDependencyConfig {
-  packageName: string;
-  requiredVersion: string;
-  resolvedVersion: string;
-  isSingleton: boolean;
-  strictVersion: boolean;
-  poolId: string;
-  sizeKb: number;
-  hasConflict: boolean;
-  conflicts?: { remoteName: string; requestedVersion: string }[];
-}
-
-export interface NFRegistryEvent {
-  id: string;
-  timestamp: number;
-  channel: string;
-  type: string;
-  source: string;
-  payload: Record<string, unknown> | string;
-  status: 'delivered' | 'pending' | 'queued';
-}
-
-export interface NFSharedResource {
-  key: string;
-  sourceRemote: string;
-  type: string;
-  updatedAt: number;
-  valueSummary: string;
-}
-
-export interface DesktopShortcut {
-  id: string;
-  title: string;
-  icon: string;
-  entryComponent: string;
-  category: ProcessDescriptor['category'];
-  x: number;
-  y: number;
-  color: string;
-}
-
-export interface RecycledItem {
-  id: string;
-  name: string;
-  type: 'shortcut' | 'file' | 'document' | 'other';
-  icon: string;
-  originalLocation: string;
-  deletedAt: number;
-  sizeBytes: number;
-  data: Record<string, unknown> | DesktopShortcut | VfsInode | unknown;
-}

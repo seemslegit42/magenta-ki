@@ -3,6 +3,7 @@ import { AppwriteDatabase, AppwriteTable, AppwriteColumn, AuditCategory, AuditSe
 import { AuditService } from './audit.service';
 import { NotificationService } from './notification.service';
 import { AuthRbacService } from './auth-rbac.service';
+import { AppwriteBackendApiService, ItemRecord, ProjectRecord } from './appwrite-backend-api.service';
 
 export interface SdkCodeConfig {
   endpoint: string;
@@ -36,11 +37,13 @@ export class AppwriteDatabaseService {
   private auditService: AuditService;
   private notificationService: NotificationService;
   private authRbac: AuthRbacService;
+  public readonly backendApi: AppwriteBackendApiService;
 
   constructor() {
     let resolvedAudit: AuditService | null = null;
     let resolvedNotif: NotificationService | null = null;
     let resolvedAuth: AuthRbacService | null = null;
+    let resolvedApi: AppwriteBackendApiService | null = null;
 
     try {
       resolvedAudit = inject(AuditService, { optional: true });
@@ -57,16 +60,25 @@ export class AppwriteDatabaseService {
     } catch {
       resolvedAuth = null;
     }
+    try {
+      resolvedApi = inject(AppwriteBackendApiService, { optional: true });
+    } catch {
+      resolvedApi = null;
+    }
 
     this.auditService = resolvedAudit ?? new AuditService();
     this.notificationService = resolvedNotif ?? new NotificationService();
     this.authRbac = resolvedAuth ?? new AuthRbacService();
+    this.backendApi = resolvedApi ?? new AppwriteBackendApiService();
   }
 
-  public setDependenciesForTesting(audit: AuditService, notif: NotificationService, auth: AuthRbacService): void {
+  public setDependenciesForTesting(audit: AuditService, notif: NotificationService, auth: AuthRbacService, backendApi?: AppwriteBackendApiService): void {
     this.auditService = audit;
     this.notificationService = notif;
     this.authRbac = auth;
+    if (backendApi) {
+      (this as { backendApi: AppwriteBackendApiService }).backendApi = backendApi;
+    }
   }
 
   private databasesState = signal<AppwriteDatabase[]>([
@@ -993,5 +1005,118 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
       response,
       stdoutLogs
     };
+  }
+
+  // --- Live Backend Connectivity Methods (Go/Express Backend API) ---
+
+  public async getLiveHealth() {
+    return this.backendApi.getHealth();
+  }
+
+  public async getLiveConsoleInfo(sessionToken?: string) {
+    return this.backendApi.getConsoleInfo(sessionToken);
+  }
+
+  public async listLiveItems(sessionToken?: string): Promise<ItemRecord[]> {
+    return this.backendApi.listItems(sessionToken);
+  }
+
+  public async createLiveItem(title: string, teamId?: string, sessionToken?: string): Promise<ItemRecord> {
+    const item = await this.backendApi.createItem(title, teamId, sessionToken);
+    this.auditService.logEvent({
+      action: 'APPWRITE_ITEM_CREATED',
+      category: AuditCategory.DATABASE,
+      severity: AuditSeverity.INFO,
+      status: 'success',
+      targetEntity: item.$id || 'unknown',
+      details: `Created item "${title}" with teamId "${teamId || 'personal'}" via live backend API.`,
+    });
+    return item;
+  }
+
+  public async updateLiveItem(id: string, payload: Partial<ItemRecord>, sessionToken?: string): Promise<ItemRecord> {
+    const item = await this.backendApi.updateItem(id, payload, sessionToken);
+    this.auditService.logEvent({
+      action: 'APPWRITE_ITEM_UPDATED',
+      category: AuditCategory.DATABASE,
+      severity: AuditSeverity.INFO,
+      status: 'success',
+      targetEntity: id,
+      details: `Updated item "${id}" via live backend API.`,
+    });
+    return item;
+  }
+
+  public async deleteLiveItem(id: string, sessionToken?: string): Promise<boolean> {
+    const success = await this.backendApi.deleteItem(id, sessionToken);
+    this.auditService.logEvent({
+      action: 'APPWRITE_ITEM_DELETED',
+      category: AuditCategory.DATABASE,
+      severity: AuditSeverity.WARNING,
+      status: 'success',
+      targetEntity: id,
+      details: `Deleted item "${id}" via live backend API.`,
+    });
+    return success;
+  }
+
+  public async listLiveProjects(teamId?: string, sessionToken?: string): Promise<ProjectRecord[]> {
+    return this.backendApi.listProjects(teamId, sessionToken);
+  }
+
+  public async createLiveProject(name: string, description?: string, teamId?: string, sessionToken?: string): Promise<ProjectRecord> {
+    const proj = await this.backendApi.createProject(name, description, teamId, sessionToken);
+    this.auditService.logEvent({
+      action: 'APPWRITE_PROJECT_CREATED',
+      category: AuditCategory.DATABASE,
+      severity: AuditSeverity.INFO,
+      status: 'success',
+      targetEntity: proj.$id || 'unknown',
+      details: `Created project "${name}" with teamId "${teamId || 'personal'}" via live backend API.`,
+    });
+    return proj;
+  }
+
+  public async updateLiveProject(id: string, payload: Partial<ProjectRecord>, sessionToken?: string): Promise<ProjectRecord> {
+    const proj = await this.backendApi.updateProject(id, payload, sessionToken);
+    this.auditService.logEvent({
+      action: 'APPWRITE_PROJECT_UPDATED',
+      category: AuditCategory.DATABASE,
+      severity: AuditSeverity.INFO,
+      status: 'success',
+      targetEntity: id,
+      details: `Updated project "${id}" via live backend API. Immutability enforced.`,
+    });
+    return proj;
+  }
+
+  public async deleteLiveProject(id: string, sessionToken?: string): Promise<boolean> {
+    const success = await this.backendApi.deleteProject(id, sessionToken);
+    this.auditService.logEvent({
+      action: 'APPWRITE_PROJECT_DELETED',
+      category: AuditCategory.DATABASE,
+      severity: AuditSeverity.WARNING,
+      status: 'success',
+      targetEntity: id,
+      details: `Deleted project "${id}" via live backend API.`,
+    });
+    return success;
+  }
+
+  public async uploadLiveFile(base64Data: string, fileName: string, mimeType?: string, sessionToken?: string) {
+    const res = await this.backendApi.uploadFile(base64Data, fileName, mimeType, sessionToken);
+    this.auditService.logEvent({
+      action: 'APPWRITE_STORAGE_UPLOADED',
+      category: AuditCategory.FILESYSTEM,
+      severity: AuditSeverity.INFO,
+      status: 'success',
+      targetEntity: res.fileId,
+      details: `Uploaded file "${fileName}" (fileId: ${res.fileId}) via centralized storage wrapper.`,
+    });
+    return res;
+  }
+
+  public async downloadLiveFileDataUrl(fileId: string, mimeType?: string, sessionToken?: string): Promise<string> {
+    return this.backendApi.getFileDataUrl(fileId, mimeType, sessionToken);
   }
 }

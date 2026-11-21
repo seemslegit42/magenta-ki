@@ -25,7 +25,7 @@ export interface AppLauncherItem {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="flex flex-col h-full space-y-5 font-['Lexend'] text-[#F5FFFA]">
-      <!-- Header & Top Command Telemetry -->
+      <!-- Header -->
       <header class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-white/10 gap-3">
         <div>
           <h2 class="font-['Comfortaa'] text-2xl font-bold text-[#F5FFFA] flex items-center space-x-2.5">
@@ -36,24 +36,9 @@ export interface AppLauncherItem {
             Sovereign workspace launcher for system kernels, local tools, and Native Federation micro-frontends.
           </p>
         </div>
-
-        <!-- Telemetry Badges -->
-        <div class="flex items-center flex-wrap gap-2 text-xs">
-          <div class="px-3 py-1.5 rounded-full bg-[#1A1D24] border border-[#20B2AA]/30 text-[#20B2AA] flex items-center space-x-1.5 font-mono">
-            <span class="w-2 h-2 rounded-full bg-[#20B2AA] animate-pulse"></span>
-            <span>{{ runningProcessesCount() }} Active Windows</span>
-          </div>
-          <div class="px-3 py-1.5 rounded-full bg-[#1A1D24] border border-[#3EB991]/30 text-[#3EB991] flex items-center space-x-1.5 font-mono">
-            <mat-icon class="text-sm text-[#3EB991]">hub</mat-icon>
-            <span>{{ federationService.remotes().length }} Remotes</span>
-          </div>
-          <div class="px-3 py-1.5 rounded-full bg-[#6A0DAD]/25 border border-[#dfb7ff]/30 text-[#dfb7ff] flex items-center space-x-1 font-mono">
-            <span>VIP v2.4</span>
-          </div>
-        </div>
       </header>
 
-      <!-- Filter Bar: Search + Category Pills -->
+      <!-- Filter Bar: Search Input -->
       <section aria-label="App Filters" class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-[#12141A]/80 border border-white/10 rounded-xl p-3">
         <!-- Search Input -->
         <div class="relative flex-1">
@@ -65,28 +50,6 @@ export interface AppLauncherItem {
             class="w-full pl-9 pr-4 py-2 rounded-lg bg-[#0D0E12] border border-white/10 text-xs text-[#F5FFFA] placeholder-[#8C94A8]/60 focus:outline-none focus:border-[#3EB991] focus:ring-1 focus:ring-[#3EB991]/50 transition-all font-['Lexend']"
           />
         </div>
-
-        <!-- Category Selector -->
-        <div class="flex items-center flex-wrap gap-1.5 text-xs">
-          @for (cat of categories; track cat.id) {
-            <button
-              type="button"
-              class="px-2.5 py-1.5 rounded-lg border text-[11px] font-medium transition-all flex items-center space-x-1 cursor-pointer focus:outline-none"
-              [class.bg-[#3EB991]]="selectedCategory() === cat.id"
-              [class.text-[#0D0E12]]="selectedCategory() === cat.id"
-              [class.border-[#3EB991]]="selectedCategory() === cat.id"
-              [class.font-bold]="selectedCategory() === cat.id"
-              [class.bg-[#1A1D24]]="selectedCategory() !== cat.id"
-              [class.text-[#8C94A8]]="selectedCategory() !== cat.id"
-              [class.border-white/10]="selectedCategory() !== cat.id"
-              [class.hover:text-[#F5FFFA]]="selectedCategory() !== cat.id"
-              [class.hover:border-white/20]="selectedCategory() !== cat.id"
-              (click)="selectedCategory.set(cat.id)">
-              <mat-icon class="text-xs">{{ cat.icon }}</mat-icon>
-              <span>{{ cat.label }}</span>
-            </button>
-          }
-        </div>
       </section>
 
       <!-- Applications Grid -->
@@ -95,7 +58,7 @@ export interface AppLauncherItem {
           <div class="flex flex-col items-center justify-center h-48 rounded-xl border border-dashed border-white/10 p-6 text-center">
             <mat-icon class="text-3xl text-[#8C94A8] mb-2">search_off</mat-icon>
             <p class="text-sm font-semibold text-[#F5FFFA]">No matching applications found</p>
-            <p class="text-xs text-[#8C94A8] mt-1">Try refining your search keyword or switching category filters.</p>
+            <p class="text-xs text-[#8C94A8] mt-1">Try refining your search keyword.</p>
           </div>
         } @else {
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
@@ -187,16 +150,6 @@ export interface AppLauncherItem {
           <span class="hidden sm:inline-block">•</span>
           <span class="hidden sm:inline-block font-mono">Port 3000</span>
         </div>
-
-        <div class="flex items-center space-x-2">
-          <button
-            type="button"
-            class="px-2.5 py-1 rounded bg-[#1A1D24] hover:bg-[#22252F] text-[#F5FFFA] text-[11px] font-mono border border-white/10 flex items-center space-x-1 transition-colors"
-            (click)="launchAllEssentials()">
-            <mat-icon class="text-xs text-[#20B2AA]">rocket_launch</mat-icon>
-            <span>Launch Core Suite</span>
-          </button>
-        </div>
       </footer>
     </div>
   `
@@ -257,6 +210,15 @@ export class AppLauncherComponent {
       componentName: 'AppwriteDatabasesComponent'
     },
     {
+      id: 'projects-manager',
+      name: 'Enterprise Projects Manager',
+      category: 'database',
+      icon: 'folder_special',
+      description: 'Authoritative project records with team-based tenant isolation, reactive forms, and strict immutability checks.',
+      version: 'v1.0.0',
+      componentName: 'ProjectsManagerComponent'
+    },
+    {
       id: 'security-audit',
       name: 'Audit Trail & RBAC Sentinel',
       category: 'security',
@@ -312,12 +274,21 @@ export class AppLauncherComponent {
     },
     {
       id: 'native-federation',
-      name: 'Native Federation v4 Studio & DevTools',
+      name: 'Native Federation Studio',
       category: 'developer',
       icon: 'hub',
-      description: 'Orchestrator v4 DevTools: Version Resolver, Dependency Pooling, window.__NF_REGISTRY__ bus, SRI integrity, and ESM import maps.',
-      version: 'v4.6.0',
-      componentName: 'NativeFederationStudioComponent'
+      description: 'Manage remote micro-frontends, probe endpoints, and inspect Angular ApplicationBuilder federation chunks.',
+      version: 'v22.2.0',
+      componentName: 'RemoteContainerComponent'
+    },
+    {
+      id: 'cicd-pipeline',
+      name: 'CI/CD & Staging Pipeline',
+      category: 'developer',
+      icon: 'alt_route',
+      description: 'Automated continuous integration, unit & e2e test runner, container builds, and staging target deployment manager.',
+      version: 'v2.4.0',
+      componentName: 'CicdPipelineComponent'
     },
     {
       id: 'settings',
@@ -327,15 +298,6 @@ export class AppLauncherComponent {
       description: 'Configure syncopated UI rhythm cadence, window boundaries, audio synthesizer, and haptic feedback.',
       version: 'v2.4.0',
       componentName: 'SettingsComponent'
-    },
-    {
-      id: 'recycle-bin',
-      name: 'Recycle Bin',
-      category: 'system',
-      icon: 'delete',
-      description: 'System recycling bin for deleted desktop shortcuts, documents, and sandboxed AgentFS inodes with restoration and permanent purge controls.',
-      version: 'v2.4.0',
-      componentName: 'RecycleBinComponent'
     }
   ];
 

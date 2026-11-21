@@ -101,7 +101,7 @@ export class WindowManagerService {
     if (!component) {
       if (app.id === 'app-store') component = 'AppStoreComponent';
       else if (app.id === 'app-launcher') component = 'AppLauncherComponent';
-      else if (app.id === 'native-federation' || app.id === 'federation-studio') component = 'NativeFederationStudioComponent';
+      else if (app.id === 'native-federation') component = 'RemoteContainerComponent';
       else if (app.id === 'wopi-office') component = 'WopiOfficeComponent';
       else if (app.id === 'agentfs' || app.id === 'agentfs-explorer') component = 'AgentFsExplorerComponent';
       else if (app.id === 'terminal') component = 'TerminalComponent';
@@ -111,8 +111,8 @@ export class WindowManagerService {
       else if (app.id === 'gateway' || app.id === 'gateway-console') component = 'GatewayConsoleComponent';
       else if (app.id === 'agentic-value-framework' || app.id === 'avf') component = 'AgenticValueFrameworkComponent';
       else if (app.id === 'chat-window' || app.id === 'chat' || app.id === 'ai-copilot') component = 'ChatWindowComponent';
-      else if (app.id === 'telemetry' || app.id === 'telemetry-dashboard') component = 'TelemetryDashboardComponent';
-      else if (app.id === 'recycle-bin' || app.id === 'trash') component = 'RecycleBinComponent';
+      else if (app.id === 'projects-manager' || app.id === 'projects') component = 'ProjectsManagerComponent';
+      else if (app.id === 'cicd' || app.id === 'cicd-pipeline') component = 'CicdPipelineComponent';
       else component = 'RemoteContainerComponent';
     }
     return this.spawnProcess(

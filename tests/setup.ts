@@ -1,3 +1,4 @@
+import '@angular/compiler';
 import '@testing-library/jest-dom';
 import { TestBed } from '@angular/core/testing';
 import {

@@ -121,49 +121,46 @@ import { UserRole, AuditCategory, AuditSeverity } from '../../../models/webos.mo
           </div>
         </div>
 
-        <!-- 2. Role Governance & Permissions (RBAC) -->
+        <!-- 2. Edge Infrastructure & Offsite Identity Status -->
         <div class="bg-[#151922] border border-white/10 rounded-xl p-5 space-y-4">
           <div class="flex items-center justify-between border-b border-white/5 pb-2">
             <div class="flex items-center space-x-2">
-              <span class="material-icons text-sm text-[#20B2AA]">admin_panel_settings</span>
-              <h3 class="font-display text-sm font-semibold text-white">User Role & Access Matrix</h3>
+              <span class="material-icons text-sm text-[#20B2AA]">cloud_sync</span>
+              <h3 class="font-display text-sm font-semibold text-white">Edge Infrastructure & Session Status</h3>
             </div>
-            <span class="text-[10px] text-[#8C94A8] font-mono">RBAC v2.4</span>
+            <span class="text-[10px] text-[#3EB991] font-mono">Offsite Auth</span>
           </div>
 
           <div class="p-3 rounded-xl bg-white/5 border border-white/5 space-y-2">
             <div class="flex items-center justify-between">
-              <span class="text-xs text-[#8C94A8]">Current Authenticated User:</span>
+              <span class="text-xs text-[#8C94A8]">Authenticated Identity:</span>
               <span class="text-xs font-bold text-white">{{ authRbac.currentUser().name }}</span>
             </div>
             <div class="flex items-center justify-between">
-              <span class="text-xs text-[#8C94A8]">Assigned Role:</span>
-              <span class="text-xs font-mono uppercase font-bold text-[#FF2A9D]">{{ authRbac.currentRole() }}</span>
+              <span class="text-xs text-[#8C94A8]">Identity Management:</span>
+              <span class="text-xs font-mono uppercase font-bold text-[#3EB991]">Offsite Container</span>
             </div>
             <div class="flex items-center justify-between">
-              <span class="text-xs text-[#8C94A8]">Privilege Tokens:</span>
-              <span class="text-xs font-mono text-[#3EB991]">{{ authRbac.currentUser().permissions.length }} active permissions</span>
+              <span class="text-xs text-[#8C94A8]">Session Scopes:</span>
+              <span class="text-xs font-mono text-[#20B2AA]">{{ authRbac.currentUser().permissions.length }} active tokens</span>
             </div>
           </div>
 
           <div class="space-y-2">
-            <label for="role-select" class="text-xs text-[#8C94A8] block">Switch Active Role Simulation</label>
+            <label for="edge-sync-select" class="text-xs text-[#8C94A8] block">Edge Mesh Telemetry Cadence</label>
             <select
-              id="role-select"
-              class="w-full bg-[#0E1015] border border-white/10 rounded-lg p-2.5 text-xs text-white"
-              [value]="authRbac.currentRole()"
-              (change)="onRoleChange($event)">
-              <option value="administrator">Administrator (Full Root & Security Access)</option>
-              <option value="content_creator">Content Creator (WOPI & AgentFS Authoring)</option>
-              <option value="general_user">General User (Read-Only / Basic Shell)</option>
+              id="edge-sync-select"
+              class="w-full bg-[#0E1015] border border-white/10 rounded-lg p-2.5 text-xs text-white">
+              <option value="30s">30s (Balanced Telemetry & Edge State)</option>
+              <option value="15s">15s (High-Frequency Diagnostic Sync)</option>
+              <option value="60s">60s (Conservation & Low Bandwidth)</option>
             </select>
           </div>
 
           <div class="p-3 rounded-lg bg-black/30 border border-white/5 space-y-1.5 text-[11px] font-mono">
-            <p class="text-[#20B2AA] font-bold">Role Capabilities Summary:</p>
-            <p class="text-[#8C94A8]">• <strong>Administrator:</strong> Gateway routing, IAM config, audit logs, process kill, security sentinel.</p>
-            <p class="text-[#8C94A8]">• <strong>Content Creator:</strong> WOPI authoring, X-WOPI-Lock, AgentFS CoW sandbox, tool execution.</p>
-            <p class="text-[#8C94A8]">• <strong>General User:</strong> Document view-only, terminal diagnostics, personal alert queue.</p>
+            <p class="text-[#20B2AA] font-bold">Identity & Session Architecture:</p>
+            <p class="text-[#8C94A8]">• <strong>Zero In-App User Management:</strong> User accounts, passwords, and IAM lifecycles are exclusively handled by the offsite container.</p>
+            <p class="text-[#8C94A8]">• <strong>Session Token:</strong> The client operates with cryptographically signed tokens verified via gateway middleware.</p>
           </div>
         </div>
 
@@ -228,6 +225,7 @@ export class SettingsComponent {
   protected notificationService = inject(NotificationService);
   protected authRbac = inject(AuthRbacService);
   protected auditService = inject(AuditService);
+  protected activeRole: UserRole = this.authRbac.currentRole();
 
   public toggleDesktopToasts(event: Event): void {
     const checked = (event.target as HTMLInputElement).checked;
@@ -235,6 +233,7 @@ export class SettingsComponent {
     this.auditService.logEvent({
       action: 'NOTIFICATION_PREF_CHANGED',
       category: AuditCategory.SYSTEM,
+      severity: AuditSeverity.INFO,
       details: `Desktop toasts ${checked ? 'enabled' : 'disabled'}.`,
     });
   }
@@ -245,6 +244,7 @@ export class SettingsComponent {
     this.auditService.logEvent({
       action: 'NOTIFICATION_PREF_CHANGED',
       category: AuditCategory.SYSTEM,
+      severity: AuditSeverity.INFO,
       details: `Notification audio ${checked ? 'enabled' : 'disabled'}.`,
     });
   }
@@ -260,22 +260,6 @@ export class SettingsComponent {
     });
   }
 
-  public onRoleChange(event: Event): void {
-    const newRole = (event.target as HTMLSelectElement).value as UserRole;
-    this.authRbac.switchRole(newRole);
-    this.auditService.logEvent({
-      action: 'USER_ROLE_SWITCH',
-      category: AuditCategory.RBAC,
-      severity: AuditSeverity.INFO,
-      details: `Active role updated to ${newRole} via Settings console.`,
-    });
-    this.notificationService.notify({
-      title: 'Role Switched',
-      message: `Active operational identity updated to ${newRole}.`,
-      category: 'security',
-      priority: 'normal',
-    });
-  }
 
   public sendSampleToast(): void {
     this.notificationService.notify({

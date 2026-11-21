@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common';
   imports: [FormsModule, CommonModule],
   template: `
     <div class="space-y-6">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
+      <div class="flex items-center justify-between border-b border-white/10 pb-4">
         <div>
           <h2 class="font-display text-xl font-bold text-white flex items-center space-x-2">
             <span class="material-icons text-[#E0218A]">description</span>
@@ -21,7 +21,7 @@ import { CommonModule } from '@angular/common';
           </h2>
           <p class="text-xs text-[#8C94A8] mt-1">Web Application Open Platform Interface (WOPI) protocol with atomic locks, GetFile/PutFile, and real-time co-authoring.</p>
         </div>
-        <div class="flex flex-wrap items-center gap-2">
+        <div class="flex items-center space-x-2">
           <span class="text-xs px-2.5 py-1 rounded-full bg-[#E0218A]/10 text-[#FF2A9D] border border-[#E0218A]/20 font-mono">
             Role: {{ authRbac.currentRole() }}
           </span>

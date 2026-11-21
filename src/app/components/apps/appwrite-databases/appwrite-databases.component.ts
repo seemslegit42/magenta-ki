@@ -1,14 +1,16 @@
-import { Component, Input, inject, signal, computed } from '@angular/core';
+import { Component, Input, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { AppwriteDatabaseService, SdkCodeConfig, SdkExecutionResult } from '../../../services/appwrite-database.service';
 import { AuthRbacService } from '../../../services/auth-rbac.service';
 import { NotificationService } from '../../../services/notification.service';
 import { AppwriteDatabase, AppwriteTable, AppwriteColumn } from '../../../models/webos.models';
+import { ItemRecord, ProjectRecord, ConsoleInfo } from '../../../services/appwrite-backend-api.service';
 
 @Component({
   selector: 'app-appwrite-databases',
   standalone: true,
-  imports: [CommonModule, DatePipe],
+  imports: [CommonModule, DatePipe, FormsModule],
   template: `
     <div class="space-y-6 select-none font-['Lexend'] text-white">
       <!-- Top Title & Global Metrics Bar -->
@@ -17,11 +19,8 @@ import { AppwriteDatabase, AppwriteTable, AppwriteColumn } from '../../../models
           <div class="flex items-center space-x-2">
             <span class="w-2.5 h-2.5 rounded-full bg-[#20B2AA] shadow-[0_0_12px_#20B2AA]"></span>
             <h2 class="font-display text-xl font-bold text-white flex items-center space-x-2">
-              <span>Appwrite Databases Console</span>
+              <span>Enterprise Database Studio</span>
             </h2>
-            <span class="text-[10px] text-[#20B2AA] bg-[#20B2AA]/15 px-2 py-0.5 rounded-full border border-[#20B2AA]/30 font-mono">
-              Enterprise TablesDB
-            </span>
           </div>
           <p class="text-xs text-[#8C94A8] mt-1">
             Manage multi-tenant databases, schema tables, dedicated vs shared infrastructure, and server SDK generators.
@@ -52,7 +51,7 @@ import { AppwriteDatabase, AppwriteTable, AppwriteColumn } from '../../../models
           <button
             class="px-3.5 py-1.5 rounded-xl bg-[#20B2AA] hover:bg-[#3EB991] text-[#0E1015] text-xs font-bold transition-all shadow-[0_0_20px_rgba(32,178,170,0.3)] flex items-center space-x-1.5 active:scale-95"
             (click)="openCreateDbModal()"
-            title="Create a new Appwrite Database">
+            title="Create a new Database">
             <span class="material-icons text-xs">add_circle</span>
             <span class="font-display">Create Database</span>
           </button>
@@ -245,9 +244,22 @@ import { AppwriteDatabase, AppwriteTable, AppwriteColumn } from '../../../models
           [class.text-[#8C94A8]]="activeTab() !== 'advisor'"
           (click)="activeTab.set('advisor')">
           <span class="material-icons text-sm text-[#FF2A9D]">psychology</span>
-          <span>Architecture & BEEP (Sassy Clippy)</span>
+          <span>Architecture & BEEP</span>
           @if (activeTab() === 'advisor') {
             <span class="absolute bottom-0 left-0 right-0 h-0.5 bg-[#20B2AA]"></span>
+          }
+        </button>
+
+        <button
+          class="pb-3 px-2 text-xs font-display font-semibold transition-colors relative flex items-center space-x-2"
+          [class.text-[#3EB991]]="activeTab() === 'live-gateway'"
+          [class.text-[#8C94A8]]="activeTab() !== 'live-gateway'"
+          (click)="activeTab.set('live-gateway'); loadLiveBackendData()">
+          <span class="material-icons text-sm text-[#3EB991]">cloud_sync</span>
+          <span>Live Backend Gateway</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-[#3EB991] animate-pulse"></span>
+          @if (activeTab() === 'live-gateway') {
+            <span class="absolute bottom-0 left-0 right-0 h-0.5 bg-[#3EB991]"></span>
           }
         </button>
       </div>
@@ -266,41 +278,6 @@ import { AppwriteDatabase, AppwriteTable, AppwriteColumn } from '../../../models
                 placeholder="Search database by name, ID or region..."
                 [value]="searchFilter()"
                 (input)="onSearchInput($event)" />
-            </div>
-
-            <!-- Infrastructure Filter Buttons -->
-            <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
-              <span class="text-[11px] text-[#8C94A8] mr-1">Infrastructure:</span>
-              <button
-                class="px-2.5 py-1 rounded-lg text-xs font-display transition-colors"
-                [class.bg-[#20B2AA]]="infraFilter() === 'all'"
-                [class.text-[#0E1015]]="infraFilter() === 'all'"
-                [class.font-bold]="infraFilter() === 'all'"
-                [class.bg-white/5]="infraFilter() !== 'all'"
-                [class.text-[#8C94A8]]="infraFilter() !== 'all'"
-                (click)="infraFilter.set('all')">
-                All ({{ dbService.databaseCount() }})
-              </button>
-              <button
-                class="px-2.5 py-1 rounded-lg text-xs font-display transition-colors"
-                [class.bg-[#E0218A]]="infraFilter() === 'dedicated'"
-                [class.text-white]="infraFilter() === 'dedicated'"
-                [class.font-bold]="infraFilter() === 'dedicated'"
-                [class.bg-white/5]="infraFilter() !== 'dedicated'"
-                [class.text-[#8C94A8]]="infraFilter() !== 'dedicated'"
-                (click)="infraFilter.set('dedicated')">
-                Dedicated ({{ dbService.dedicatedCount() }})
-              </button>
-              <button
-                class="px-2.5 py-1 rounded-lg text-xs font-display transition-colors"
-                [class.bg-[#3EB991]]="infraFilter() === 'shared'"
-                [class.text-[#0E1015]]="infraFilter() === 'shared'"
-                [class.font-bold]="infraFilter() === 'shared'"
-                [class.bg-white/5]="infraFilter() !== 'shared'"
-                [class.text-[#8C94A8]]="infraFilter() !== 'shared'"
-                (click)="infraFilter.set('shared')">
-                Shared ({{ dbService.sharedCount() }})
-              </button>
             </div>
           </div>
 
@@ -340,7 +317,7 @@ import { AppwriteDatabase, AppwriteTable, AppwriteColumn } from '../../../models
 
                   <!-- Description -->
                   <p class="text-xs text-[#8C94A8] mt-3 line-clamp-2 leading-relaxed">
-                    {{ db.description || 'Appwrite Database configured with TablesDB schema support.' }}
+                    {{ db.description || 'Database configured with relational schema support.' }}
                   </p>
 
                   <!-- Tables & Counts Preview -->
@@ -581,7 +558,7 @@ import { AppwriteDatabase, AppwriteTable, AppwriteColumn } from '../../../models
                   <span>Server SDK Code Generator (Create Database)</span>
                 </h3>
                 <p class="text-xs text-[#8C94A8] mt-0.5">
-                  Select your runtime language to generate production server integration snippets based on official Appwrite specifications.
+                  Select your runtime language to generate production server integration snippets based on official cloud specifications.
                 </p>
               </div>
 
@@ -662,7 +639,7 @@ import { AppwriteDatabase, AppwriteTable, AppwriteColumn } from '../../../models
                 <span class="w-3 h-3 rounded-full bg-[#FF4D6D]/80"></span>
                 <span class="w-3 h-3 rounded-full bg-amber-400/80"></span>
                 <span class="w-3 h-3 rounded-full bg-[#3EB991]/80"></span>
-                <span class="font-mono text-xs text-[#8C94A8] ml-2">appwrite-tablesdb-{{ selectedLanguage() }}.snippet</span>
+                <span class="font-mono text-xs text-[#8C94A8] ml-2">tablesdb-{{ selectedLanguage() }}.snippet</span>
               </div>
 
               <button
@@ -829,6 +806,490 @@ import { AppwriteDatabase, AppwriteTable, AppwriteColumn } from '../../../models
         </div>
       }
 
+      <!-- TAB 5: LIVE BACKEND GATEWAY & AUTHORITATIVE DATA REPOSITORIES -->
+      @if (activeTab() === 'live-gateway') {
+        <div class="space-y-6">
+          <!-- Gateway Node & Live Telemetry Banner -->
+          <div class="bg-[#151922]/95 backdrop-blur-xl p-5 rounded-2xl border border-white/10 shadow-xl space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-3">
+              <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-2xl bg-[#3EB991]/20 border border-[#3EB991]/40 flex items-center justify-center text-[#3EB991]">
+                  <span class="material-icons text-xl">hub</span>
+                </div>
+                <div>
+                  <h3 class="font-display font-bold text-white text-sm flex items-center space-x-2">
+                    <span>Centralized Backend Gateway Service</span>
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-mono"
+                      [class.bg-[#3EB991]/20]="dbService.backendApi.isConnected()"
+                      [class.text-[#3EB991]]="dbService.backendApi.isConnected()"
+                      [class.bg-[#FF4D6D]/20]="!dbService.backendApi.isConnected()"
+                      [class.text-[#FF4D6D]]="!dbService.backendApi.isConnected()">
+                      {{ dbService.backendApi.isConnected() ? 'ONLINE & SYNCED' : 'DISCONNECTED' }}
+                    </span>
+                  </h3>
+                  <p class="text-[11px] text-[#8C94A8] mt-0.5 font-light">
+                    Direct RPC bridge enforcing Authoritative Access Pattern, multi-tenant team boundaries, and immutability.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Action buttons -->
+              <div class="flex items-center space-x-2">
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-white text-xs border border-white/10 transition-all flex items-center space-x-1.5 active:scale-95"
+                  (click)="loadLiveBackendData()"
+                  [disabled]="liveLoading()">
+                  <span class="material-icons text-xs text-[#3EB991]" [class.animate-spin]="liveLoading()">refresh</span>
+                  <span>{{ liveLoading() ? 'Syncing...' : 'Ping Node' }}</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Metric Cards -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+              <div class="bg-black/30 border border-white/5 rounded-xl p-3">
+                <div class="text-[#8C94A8] text-[10px] uppercase font-mono">Gateway Ping</div>
+                <div class="text-white font-mono font-bold text-base mt-1 flex items-center space-x-1">
+                  <span class="text-[#3EB991]">{{ dbService.backendApi.backendLatencyMs() }} ms</span>
+                  <span class="text-[10px] text-[#8C94A8]">RTT</span>
+                </div>
+                <div class="text-[10px] text-[#8C94A8] mt-0.5 font-mono">Vite / Express SSR</div>
+              </div>
+
+              <div class="bg-black/30 border border-white/5 rounded-xl p-3">
+                <div class="text-[#8C94A8] text-[10px] uppercase font-mono">Engine</div>
+                <div class="text-white font-mono font-bold text-base mt-1">TablesDB</div>
+                <div class="text-[10px] text-[#8C94A8] mt-0.5">Authoritative Wrapper</div>
+              </div>
+
+              <div class="bg-black/30 border border-white/5 rounded-xl p-3">
+                <div class="text-[#8C94A8] text-[10px] uppercase font-mono">Tenant / Project</div>
+                <div class="text-[#20B2AA] font-mono font-bold text-sm mt-1 truncate">
+                  {{ liveConsoleInfo()?.projectId || 'verdigris-os' }}
+                </div>
+                <div class="text-[10px] text-[#8C94A8] mt-0.5 font-mono">Self-Hosted Cluster</div>
+              </div>
+
+              <div class="bg-black/30 border border-white/5 rounded-xl p-3">
+                <div class="text-[#8C94A8] text-[10px] uppercase font-mono">Live Storage Bucket</div>
+                <div class="text-[#FF2A9D] font-mono font-bold text-sm mt-1 truncate">
+                  {{ liveConsoleInfo()?.bucketId || 'default' }}
+                </div>
+                <div class="text-[10px] text-[#8C94A8] mt-0.5">Base64 &lt;-&gt; InputFile</div>
+              </div>
+            </div>
+
+            @if (liveActionStatus()) {
+              <div class="p-2.5 rounded-xl bg-white/5 border border-white/10 text-xs text-[#20B2AA] font-mono flex items-center justify-between">
+                <span>{{ liveActionStatus() }}</span>
+                <button type="button" class="text-[#8C94A8] hover:text-white" (click)="liveActionStatus.set(null)">
+                  <span class="material-icons text-xs">close</span>
+                </button>
+              </div>
+            }
+          </div>
+
+          <!-- Section 1: Projects Data Repository (Ownership & Immutability Enforcement) -->
+          <div class="bg-[#151922]/90 backdrop-blur-xl p-5 rounded-2xl border border-white/10 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-3">
+              <div>
+                <h3 class="font-display font-bold text-white text-sm flex items-center space-x-2">
+                  <span class="material-icons text-base text-[#20B2AA]">folder_special</span>
+                  <span>Projects Repository (Strict Ownership &amp; Immutability)</span>
+                  <span class="text-[10px] bg-[#20B2AA]/20 text-[#20B2AA] px-2 py-0.5 rounded-full font-mono">
+                    {{ liveProjects().length }} Records
+                  </span>
+                </h3>
+                <p class="text-[11px] text-[#8C94A8] mt-0.5">
+                  Implements multi-tenant tenant isolation with immutable <code class="text-[#FF2A9D]">createdBy</code> and <code class="text-[#FF2A9D]">teamId</code> fields.
+                </p>
+              </div>
+
+              <!-- Team Filter Selector -->
+              <div class="flex items-center space-x-1.5 text-xs font-mono">
+                <button
+                  type="button"
+                  class="px-2.5 py-1 rounded-lg border transition-colors"
+                  [class.bg-[#20B2AA]]="liveTeamFilter() === ''"
+                  [class.text-[#0E1015]]="liveTeamFilter() === ''"
+                  [class.font-bold]="liveTeamFilter() === ''"
+                  [class.border-[#20B2AA]]="liveTeamFilter() === ''"
+                  [class.bg-white/5]="liveTeamFilter() !== ''"
+                  [class.border-white/10]="liveTeamFilter() !== ''"
+                  [class.text-[#8C94A8]]="liveTeamFilter() !== ''"
+                  (click)="setLiveTeamFilter('')">
+                  All
+                </button>
+                <button
+                  type="button"
+                  class="px-2.5 py-1 rounded-lg border transition-colors"
+                  [class.bg-[#20B2AA]]="liveTeamFilter() === 'team_enterprise_alpha'"
+                  [class.text-[#0E1015]]="liveTeamFilter() === 'team_enterprise_alpha'"
+                  [class.font-bold]="liveTeamFilter() === 'team_enterprise_alpha'"
+                  [class.border-[#20B2AA]]="liveTeamFilter() === 'team_enterprise_alpha'"
+                  [class.bg-white/5]="liveTeamFilter() !== 'team_enterprise_alpha'"
+                  [class.border-white/10]="liveTeamFilter() !== 'team_enterprise_alpha'"
+                  [class.text-[#8C94A8]]="liveTeamFilter() !== 'team_enterprise_alpha'"
+                  (click)="setLiveTeamFilter('team_enterprise_alpha')">
+                  team_enterprise_alpha
+                </button>
+                <button
+                  type="button"
+                  class="px-2.5 py-1 rounded-lg border transition-colors"
+                  [class.bg-[#20B2AA]]="liveTeamFilter() === 'team_devops'"
+                  [class.text-[#0E1015]]="liveTeamFilter() === 'team_devops'"
+                  [class.font-bold]="liveTeamFilter() === 'team_devops'"
+                  [class.border-[#20B2AA]]="liveTeamFilter() === 'team_devops'"
+                  [class.bg-white/5]="liveTeamFilter() !== 'team_devops'"
+                  [class.border-white/10]="liveTeamFilter() !== 'team_devops'"
+                  [class.text-[#8C94A8]]="liveTeamFilter() !== 'team_devops'"
+                  (click)="setLiveTeamFilter('team_devops')">
+                  team_devops
+                </button>
+              </div>
+            </div>
+
+            <!-- Immutability Security Test Banner -->
+            @if (immutabilityTestResult(); as test) {
+              <div
+                class="p-3 rounded-xl border text-xs font-mono flex items-center justify-between"
+                [class.bg-[#3EB991]/15]="test.success"
+                [class.border-[#3EB991]/40]="test.success"
+                [class.text-[#3EB991]]="test.success"
+                [class.bg-[#FF4D6D]/15]="!test.success"
+                [class.border-[#FF4D6D]/40]="!test.success"
+                [class.text-[#FF4D6D]]="!test.success">
+                <div class="flex items-center space-x-2">
+                  <span class="material-icons text-sm">{{ test.success ? 'verified' : 'gpp_bad' }}</span>
+                  <span>{{ test.message }}</span>
+                </div>
+                <button type="button" class="text-[#8C94A8] hover:text-white" (click)="immutabilityTestResult.set(null)">
+                  <span class="material-icons text-xs">close</span>
+                </button>
+              </div>
+            }
+
+            <!-- Create Project Inline Bar -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-2 bg-black/40 p-3 rounded-xl border border-white/5 text-xs">
+              <div class="md:col-span-4">
+                <input
+                  type="text"
+                  placeholder="Project Name..."
+                  class="w-full bg-[#0E1015] border border-white/10 rounded-lg px-3 py-1.5 text-white focus:outline-none focus:border-[#20B2AA]"
+                  [value]="newProjName()"
+                  (input)="newProjName.set(getInputValue($event))" />
+              </div>
+              <div class="md:col-span-4">
+                <input
+                  type="text"
+                  placeholder="Description..."
+                  class="w-full bg-[#0E1015] border border-white/10 rounded-lg px-3 py-1.5 text-white focus:outline-none focus:border-[#20B2AA]"
+                  [value]="newProjDesc()"
+                  (input)="newProjDesc.set(getInputValue($event))" />
+              </div>
+              <div class="md:col-span-2">
+                <select
+                  class="w-full bg-[#0E1015] border border-white/10 rounded-lg px-2 py-1.5 text-white focus:outline-none focus:border-[#20B2AA] font-mono text-[11px]"
+                  [value]="newProjTeam()"
+                  (change)="newProjTeam.set(getInputValue($event))">
+                  <option value="team_enterprise_alpha">team_enterprise_alpha</option>
+                  <option value="team_devops">team_devops</option>
+                </select>
+              </div>
+              <div class="md:col-span-2">
+                <button
+                  type="button"
+                  class="w-full h-full py-1.5 rounded-lg bg-[#20B2AA] hover:bg-[#3EB991] text-[#0E1015] font-bold text-xs font-display flex items-center justify-center space-x-1 transition-all active:scale-95"
+                  (click)="createLiveProjectAction()"
+                  [disabled]="!newProjName().trim() || liveLoading()">
+                  <span class="material-icons text-xs">add</span>
+                  <span>Create Project</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Project Cards List -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+              @for (proj of liveProjects(); track proj.$id) {
+                <div class="bg-[#12141A] border border-white/5 hover:border-white/10 rounded-xl p-3.5 space-y-2.5 transition-all">
+                  <div class="flex items-start justify-between">
+                    <div>
+                      <h4 class="font-display font-semibold text-white text-xs">{{ proj.name }}</h4>
+                      <p class="text-[11px] text-[#8C94A8] mt-0.5 line-clamp-2">{{ proj.description || 'No description provided' }}</p>
+                    </div>
+                    <span class="text-[10px] font-mono text-[#8C94A8] bg-white/5 px-1.5 py-0.5 rounded border border-white/5">
+                      {{ proj.$id }}
+                    </span>
+                  </div>
+
+                  <div class="flex flex-wrap items-center gap-2 text-[10px] font-mono pt-1 border-t border-white/5">
+                    <span class="bg-[#3EB991]/15 text-[#3EB991] px-2 py-0.5 rounded border border-[#3EB991]/30 flex items-center space-x-1">
+                      <span class="material-icons text-[10px]">person</span>
+                      <span>createdBy: {{ proj.createdBy || 'usr_operator_7842' }}</span>
+                      <span class="material-icons text-[10px] text-[#8C94A8]" title="Immutable field">lock</span>
+                    </span>
+
+                    <span class="bg-[#20B2AA]/15 text-[#20B2AA] px-2 py-0.5 rounded border border-[#20B2AA]/30 flex items-center space-x-1">
+                      <span class="material-icons text-[10px]">groups</span>
+                      <span>teamId: {{ proj.teamId || 'personal' }}</span>
+                      <span class="material-icons text-[10px] text-[#8C94A8]" title="Immutable field">lock</span>
+                    </span>
+                  </div>
+
+                  <div class="flex items-center justify-between pt-2 border-t border-white/5 text-[11px]">
+                    <span class="text-[10px] text-[#8C94A8] font-mono">
+                      {{ proj.$createdAt | date:'short' }}
+                    </span>
+
+                    <div class="flex items-center space-x-1.5">
+                      <button
+                        type="button"
+                        class="px-2 py-1 rounded bg-[#FF2A9D]/10 hover:bg-[#FF2A9D]/20 text-[#FF2A9D] border border-[#FF2A9D]/30 text-[10px] font-mono transition-all flex items-center space-x-1"
+                        (click)="testImmutabilityViolationAction(proj)"
+                        title="Simulate illegal modification to createdBy and verify server rejects it">
+                        <span class="material-icons text-[10px]">security</span>
+                        <span>Test Immutability</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        class="p-1 rounded bg-white/5 hover:bg-red-500/20 text-[#8C94A8] hover:text-red-400 transition-colors"
+                        (click)="deleteLiveProjectAction(proj.$id || '')"
+                        title="Delete Project">
+                        <span class="material-icons text-xs">delete</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              } @empty {
+                <div class="col-span-full py-8 text-center text-xs text-[#8C94A8] font-mono">
+                  No projects found for current team scope. Create a new project above.
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Section 2: Items Repository (Centralized Data Access Pattern) -->
+          <div class="bg-[#151922]/90 backdrop-blur-xl p-5 rounded-2xl border border-white/10 space-y-4">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+              <div>
+                <h3 class="font-display font-bold text-white text-sm flex items-center space-x-2">
+                  <span class="material-icons text-base text-[#3EB991]">table_rows</span>
+                  <span>Items Repository (Authoritative Access Wrapper)</span>
+                  <span class="text-[10px] bg-[#3EB991]/20 text-[#3EB991] px-2 py-0.5 rounded-full font-mono">
+                    {{ liveItems().length }} Items
+                  </span>
+                </h3>
+                <p class="text-[11px] text-[#8C94A8] mt-0.5">
+                  Centralized TablesDB wrapper eliminating direct SDK imports in components.
+                </p>
+              </div>
+            </div>
+
+            <!-- Create Item Inline -->
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 bg-black/40 p-3 rounded-xl border border-white/5 text-xs">
+              <div class="sm:col-span-8">
+                <input
+                  type="text"
+                  placeholder="New Item Title..."
+                  class="w-full bg-[#0E1015] border border-white/10 rounded-lg px-3 py-1.5 text-white focus:outline-none focus:border-[#3EB991]"
+                  [value]="newItemTitle()"
+                  (input)="newItemTitle.set(getInputValue($event))" />
+              </div>
+              <div class="sm:col-span-4">
+                <button
+                  type="button"
+                  class="w-full h-full py-1.5 rounded-lg bg-[#3EB991] hover:bg-[#20B2AA] text-[#0E1015] font-bold text-xs font-display flex items-center justify-center space-x-1 transition-all active:scale-95"
+                  (click)="createLiveItemAction()"
+                  [disabled]="!newItemTitle().trim() || liveLoading()">
+                  <span class="material-icons text-xs">add</span>
+                  <span>Insert Row</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Items List -->
+            <div class="space-y-2 max-h-64 overflow-y-auto">
+              @for (item of liveItems(); track item.$id) {
+                <div class="flex items-center justify-between p-2.5 rounded-xl bg-[#12141A] border border-white/5 text-xs">
+                  <div class="flex items-center space-x-2.5">
+                    <span class="material-icons text-xs text-[#3EB991]">label</span>
+                    <span class="text-white font-medium">{{ item.title }}</span>
+                    <span class="text-[10px] text-[#8C94A8] font-mono">({{ item.teamId || 'personal' }})</span>
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <span class="text-[10px] text-[#8C94A8] font-mono">{{ item.$id }}</span>
+                    <button
+                      type="button"
+                      class="text-[#8C94A8] hover:text-red-400 p-1"
+                      (click)="deleteLiveItemAction(item.$id || '')">
+                      <span class="material-icons text-xs">delete</span>
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Section 3: Centralized Storage Pipeline (Base64 <-> InputFile Conversion Flow) -->
+          <div class="bg-[#151922]/90 backdrop-blur-xl p-5 rounded-2xl border border-white/10 space-y-4">
+            <div class="border-b border-white/10 pb-3">
+              <h3 class="font-display font-bold text-white text-sm flex items-center space-x-2">
+                <span class="material-icons text-base text-[#FF2A9D]">cloud_upload</span>
+                <span>Storage Pipeline: Base64 &lt;-&gt; InputFile Conversion Flow</span>
+              </h3>
+              <p class="text-[11px] text-[#8C94A8] mt-0.5">
+                Complies with non-negotiable rule: Client sends Base64, server converts to InputFile, returns File ID only. Database never stores Base64.
+              </p>
+            </div>
+
+            <!-- Step diagram pills -->
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 text-[10px] font-mono">
+              <div class="p-2 rounded-xl bg-white/5 border border-white/5 text-center">
+                <div class="text-[#20B2AA] font-bold">1. Client Payload</div>
+                <div class="text-[#8C94A8] mt-0.5">Base64 string</div>
+              </div>
+              <div class="p-2 rounded-xl bg-white/5 border border-white/5 text-center">
+                <div class="text-[#3EB991] font-bold">2. Server Conversion</div>
+                <div class="text-[#8C94A8] mt-0.5">Decodes to InputFile</div>
+              </div>
+              <div class="p-2 rounded-xl bg-white/5 border border-white/5 text-center">
+                <div class="text-[#FF2A9D] font-bold">3. Storage Upload</div>
+                <div class="text-[#8C94A8] mt-0.5">Returns File ID only</div>
+              </div>
+              <div class="p-2 rounded-xl bg-white/5 border border-white/5 text-center">
+                <div class="text-[#dfb7ff] font-bold">4. Download Flow</div>
+                <div class="text-[#8C94A8] mt-0.5">Server streams Data URL</div>
+              </div>
+            </div>
+
+            <!-- Storage Upload Box -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Upload test -->
+              <div class="bg-black/30 p-3.5 rounded-xl border border-white/5 space-y-2.5 text-xs">
+                <div class="font-display font-semibold text-white text-xs">Upload File (Base64 Flow)</div>
+                <div>
+                  <label for="storage-file-name" class="block text-[10px] text-[#8C94A8] mb-1 font-mono">File Name</label>
+                  <input
+                    id="storage-file-name"
+                    type="text"
+                    class="w-full bg-[#0E1015] border border-white/10 rounded-lg px-2.5 py-1 text-white font-mono text-[11px] focus:outline-none focus:border-[#FF2A9D]"
+                    [value]="storageFileName()"
+                    (input)="storageFileName.set(getInputValue($event))" />
+                </div>
+                <div>
+                  <label for="storage-file-content" class="block text-[10px] text-[#8C94A8] mb-1 font-mono">File Content (Encoded to Base64 in flight)</label>
+                  <textarea
+                    id="storage-file-content"
+                    rows="2"
+                    class="w-full bg-[#0E1015] border border-white/10 rounded-lg p-2 text-white font-mono text-[11px] focus:outline-none focus:border-[#FF2A9D]"
+                    [value]="storageUploadText()"
+                    (input)="storageUploadText.set(getInputValue($event))"></textarea>
+                </div>
+                <button
+                  type="button"
+                  class="w-full py-2 rounded-xl bg-[#FF2A9D] hover:bg-[#E0218A] text-white font-bold text-xs font-display flex items-center justify-center space-x-1.5 transition-all shadow-lg active:scale-95"
+                  (click)="uploadLiveFileAction()"
+                  [disabled]="liveLoading()">
+                  <span class="material-icons text-xs">upload_file</span>
+                  <span>Upload &amp; Generate File ID</span>
+                </button>
+              </div>
+
+              <!-- Download test -->
+              <div class="bg-black/30 p-3.5 rounded-xl border border-white/5 space-y-2.5 text-xs">
+                <div class="font-display font-semibold text-white text-xs">Read File (Data URL Stream Flow)</div>
+                <div>
+                  <label for="storage-file-id" class="block text-[10px] text-[#8C94A8] mb-1 font-mono">Target File ID</label>
+                  <input
+                    id="storage-file-id"
+                    type="text"
+                    class="w-full bg-[#0E1015] border border-white/10 rounded-lg px-2.5 py-1 text-white font-mono text-[11px] focus:outline-none focus:border-[#20B2AA]"
+                    [value]="storageFileIdInput()"
+                    (input)="storageFileIdInput.set(getInputValue($event))" />
+                </div>
+                <div class="flex items-center space-x-2">
+                  <button
+                    type="button"
+                    class="flex-1 py-2 rounded-xl bg-[#20B2AA] hover:bg-[#3EB991] text-[#0E1015] font-bold text-xs font-display flex items-center justify-center space-x-1.5 transition-all active:scale-95"
+                    (click)="downloadLiveFileAction()"
+                    [disabled]="liveLoading()">
+                    <span class="material-icons text-xs">download</span>
+                    <span>Fetch as Data URL</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="px-3 py-2 rounded-xl bg-white/5 hover:bg-red-500/20 text-[#8C94A8] hover:text-red-400 font-mono text-xs border border-white/10 transition-colors"
+                    (click)="deleteLiveFileAction()"
+                    title="Purge file from bucket">
+                    <span class="material-icons text-xs">delete</span>
+                  </button>
+                </div>
+
+                @if (downloadedContentPreview(); as preview) {
+                  <div class="p-2 rounded-lg bg-black/50 border border-white/10 text-[11px] font-mono text-[#3EB991] max-h-20 overflow-y-auto">
+                    <span class="text-[9px] text-[#8C94A8] block">Decoded Content Preview:</span>
+                    {{ preview }}
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 4: Centralized Messaging Gateway -->
+          <div class="bg-[#151922]/90 backdrop-blur-xl p-5 rounded-2xl border border-white/10 space-y-4">
+            <div class="border-b border-white/10 pb-3">
+              <h3 class="font-display font-bold text-white text-sm flex items-center space-x-2">
+                <span class="material-icons text-base text-[#dfb7ff]">mark_email_read</span>
+                <span>Centralized Messaging Gateway (Email, Push, SMS)</span>
+              </h3>
+              <p class="text-[11px] text-[#8C94A8] mt-0.5">
+                Authoritative dispatch pattern for transactional communications without client SDK leaks.
+              </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <button
+                type="button"
+                class="p-3.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all text-left flex items-start space-x-2.5 active:scale-95"
+                (click)="sendLiveEmailAction()"
+                [disabled]="liveLoading()">
+                <span class="material-icons text-base text-[#20B2AA]">email</span>
+                <div>
+                  <div class="font-display font-bold text-white text-xs">Send Email</div>
+                  <div class="text-[10px] text-[#8C94A8] mt-0.5 font-mono">POST /api/messaging/email</div>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                class="p-3.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all text-left flex items-start space-x-2.5 active:scale-95"
+                (click)="sendLivePushAction()"
+                [disabled]="liveLoading()">
+                <span class="material-icons text-base text-[#FF2A9D]">notifications_active</span>
+                <div>
+                  <div class="font-display font-bold text-white text-xs">Dispatch Push</div>
+                  <div class="text-[10px] text-[#8C94A8] mt-0.5 font-mono">POST /api/messaging/push</div>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                class="p-3.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all text-left flex items-start space-x-2.5 active:scale-95"
+                (click)="sendLiveSMSAction()"
+                [disabled]="liveLoading()">
+                <span class="material-icons text-base text-[#3EB991]">sms</span>
+                <div>
+                  <div class="font-display font-bold text-white text-xs">Send SMS</div>
+                  <div class="text-[10px] text-[#8C94A8] mt-0.5 font-mono">POST /api/messaging/sms</div>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+
       <!-- MODAL 1: CREATE DATABASE MODAL -->
       @if (showCreateDbModal()) {
         <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in">
@@ -836,7 +1297,7 @@ import { AppwriteDatabase, AppwriteTable, AppwriteColumn } from '../../../models
             <div class="flex items-center justify-between border-b border-white/10 pb-3">
               <div class="flex items-center space-x-2">
                 <span class="material-icons text-[#20B2AA]">storage</span>
-                <h3 class="font-display font-bold text-base text-white">Create Appwrite Database</h3>
+                <h3 class="font-display font-bold text-base text-white">Create New Database</h3>
               </div>
               <button
                 class="w-7 h-7 rounded-lg hover:bg-white/10 text-[#8C94A8] hover:text-white flex items-center justify-center"
@@ -1007,14 +1468,14 @@ import { AppwriteDatabase, AppwriteTable, AppwriteColumn } from '../../../models
     </div>
   `
 })
-export class AppwriteDatabasesComponent {
+export class AppwriteDatabasesComponent implements OnInit {
   @Input({ required: true }) pid!: string;
 
   protected dbService = inject(AppwriteDatabaseService);
   protected authRbac = inject(AuthRbacService);
   protected notificationService = inject(NotificationService);
 
-  protected activeTab = signal<'overview' | 'tables' | 'sdk' | 'advisor'>('overview');
+  protected activeTab = signal<'overview' | 'tables' | 'sdk' | 'advisor' | 'live-gateway'>('overview');
   protected searchFilter = signal('');
   protected infraFilter = signal<'all' | 'shared' | 'dedicated'>('all');
   protected selectedDbId = signal<string>('db_enterprise_core');
@@ -1023,6 +1484,29 @@ export class AppwriteDatabasesComponent {
   protected copiedCode = signal(false);
   protected isSimulatingSdk = signal(false);
   protected sdkResult = signal<SdkExecutionResult | null>(null);
+
+  // Live Gateway state
+  protected liveProjects = signal<ProjectRecord[]>([]);
+  protected liveItems = signal<ItemRecord[]>([]);
+  protected liveConsoleInfo = signal<ConsoleInfo | null>(null);
+  protected liveTeamFilter = signal<string>('');
+  protected liveLoading = signal<boolean>(false);
+  protected liveActionStatus = signal<string | null>(null);
+  protected immutabilityTestResult = signal<{ success: boolean; message: string } | null>(null);
+
+  protected newProjName = signal('');
+  protected newProjDesc = signal('');
+  protected newProjTeam = signal('team_enterprise_alpha');
+
+  protected newItemTitle = signal('');
+  protected newItemTeam = signal('team_enterprise_alpha');
+
+  protected storageUploadText = signal('Enterprise Edge Cluster Configuration & Token Matrix v2.4');
+  protected storageFileName = signal('cluster-config.json');
+  protected storageFileIdInput = signal('file_sample_spec');
+  protected uploadedFileId = signal<string | null>('file_sample_spec');
+  protected downloadedDataUrl = signal<string | null>(null);
+  protected downloadedContentPreview = signal<string | null>(null);
 
   // Modals state
   protected showCreateDbModal = signal(false);
@@ -1353,7 +1837,7 @@ export class AppwriteDatabasesComponent {
   public triggerBeepSass(): void {
     const level = this.beepSassLevel();
     const gentleQuotes = [
-      "Databases are the largest organizational unit in Appwrite! Each one holds tables like a proud parent.",
+      "Databases are the top-level organizational unit! Each one holds tables and schema collections.",
       "Consider using dedicated NVMe infrastructure if your read-to-write ratio resembles a firehose.",
       "Pro tip: Always create an index on frequently queried foreign keys. Your CPU will send you a thank-you note."
     ];
@@ -1382,5 +1866,238 @@ export class AppwriteDatabasesComponent {
 
   public formatJson(obj: unknown): string {
     return JSON.stringify(obj, null, 2);
+  }
+
+  ngOnInit(): void {
+    this.loadLiveBackendData();
+  }
+
+  public async loadLiveBackendData(): Promise<void> {
+    this.liveLoading.set(true);
+    try {
+      const [projects, items, info] = await Promise.all([
+        this.dbService.listLiveProjects(this.liveTeamFilter() || undefined),
+        this.dbService.listLiveItems(),
+        this.dbService.getLiveConsoleInfo().catch(() => null)
+      ]);
+      this.liveProjects.set(projects);
+      this.liveItems.set(items);
+      if (info) this.liveConsoleInfo.set(info);
+      this.playChime(580, 0.08, 'sine');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error loading backend data';
+      this.liveActionStatus.set(`Failed to fetch backend data: ${msg}`);
+    } finally {
+      this.liveLoading.set(false);
+    }
+  }
+
+  public async setLiveTeamFilter(teamId: string): Promise<void> {
+    this.liveTeamFilter.set(teamId);
+    await this.loadLiveBackendData();
+  }
+
+  public async createLiveProjectAction(): Promise<void> {
+    const name = this.newProjName().trim();
+    if (!name) return;
+    this.liveLoading.set(true);
+    try {
+      await this.dbService.createLiveProject(name, this.newProjDesc().trim() || undefined, this.newProjTeam());
+      this.newProjName.set('');
+      this.newProjDesc.set('');
+      this.liveActionStatus.set(`Created project "${name}" in team ${this.newProjTeam()}`);
+      await this.loadLiveBackendData();
+      this.playChime(780, 0.1, 'sine');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error creating project';
+      this.liveActionStatus.set(`Error creating project: ${msg}`);
+    } finally {
+      this.liveLoading.set(false);
+    }
+  }
+
+  public async deleteLiveProjectAction(id: string): Promise<void> {
+    this.liveLoading.set(true);
+    try {
+      await this.dbService.deleteLiveProject(id);
+      this.liveActionStatus.set(`Deleted project ${id}`);
+      await this.loadLiveBackendData();
+      this.playChime(420, 0.1, 'sawtooth');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error deleting project';
+      this.liveActionStatus.set(`Error: ${msg}`);
+    } finally {
+      this.liveLoading.set(false);
+    }
+  }
+
+  public async testImmutabilityViolationAction(proj: ProjectRecord): Promise<void> {
+    this.liveLoading.set(true);
+    try {
+      // Attempt unauthorized modification of immutable createdBy & teamId fields
+      await this.dbService.updateLiveProject(proj.$id || '', {
+        createdBy: 'unauthorized_hacker_user',
+        teamId: 'infiltrated_team'
+      });
+      this.immutabilityTestResult.set({
+        success: false,
+        message: 'Security Alert: Backend failed to reject modification to immutable fields!'
+      });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Access denied';
+      this.immutabilityTestResult.set({
+        success: true,
+        message: `Ownership Immutability Enforced! Server rejected attempt: ${msg}`
+      });
+      this.playChime(640, 0.15, 'triangle');
+    } finally {
+      this.liveLoading.set(false);
+    }
+  }
+
+  public async createLiveItemAction(): Promise<void> {
+    const title = this.newItemTitle().trim();
+    if (!title) return;
+    this.liveLoading.set(true);
+    try {
+      await this.dbService.createLiveItem(title, this.newItemTeam());
+      this.newItemTitle.set('');
+      this.liveActionStatus.set(`Created item "${title}"`);
+      await this.loadLiveBackendData();
+      this.playChime(740, 0.1, 'sine');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error creating item';
+      this.liveActionStatus.set(`Error: ${msg}`);
+    } finally {
+      this.liveLoading.set(false);
+    }
+  }
+
+  public async deleteLiveItemAction(id: string): Promise<void> {
+    this.liveLoading.set(true);
+    try {
+      await this.dbService.deleteLiveItem(id);
+      this.liveActionStatus.set(`Deleted item ${id}`);
+      await this.loadLiveBackendData();
+      this.playChime(420, 0.1, 'sawtooth');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error deleting item';
+      this.liveActionStatus.set(`Error: ${msg}`);
+    } finally {
+      this.liveLoading.set(false);
+    }
+  }
+
+  public async uploadLiveFileAction(): Promise<void> {
+    const text = this.storageUploadText();
+    const fileName = this.storageFileName().trim() || 'data.txt';
+    if (!text) return;
+    this.liveLoading.set(true);
+    try {
+      // Convert client text to base64 string (Mandatory Conversion Flow)
+      const base64 = btoa(unescape(encodeURIComponent(text)));
+      const res = await this.dbService.uploadLiveFile(base64, fileName, 'text/plain');
+      this.uploadedFileId.set(res.fileId);
+      this.storageFileIdInput.set(res.fileId);
+      this.liveActionStatus.set(`File uploaded successfully! Received File ID: "${res.fileId}" (Base64 stripped & InputFile generated)`);
+      this.playChime(820, 0.12, 'sine');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error uploading file';
+      this.liveActionStatus.set(`Error: ${msg}`);
+    } finally {
+      this.liveLoading.set(false);
+    }
+  }
+
+  public async downloadLiveFileAction(): Promise<void> {
+    const fileId = this.storageFileIdInput().trim();
+    if (!fileId) return;
+    this.liveLoading.set(true);
+    try {
+      const dataUrl = await this.dbService.downloadLiveFileDataUrl(fileId, 'text/plain');
+      this.downloadedDataUrl.set(dataUrl);
+      // Decode content for preview
+      const base64Content = dataUrl.split(',')[1] || '';
+      try {
+        this.downloadedContentPreview.set(decodeURIComponent(escape(atob(base64Content))));
+      } catch {
+        this.downloadedContentPreview.set(atob(base64Content));
+      }
+      this.liveActionStatus.set(`Fetched file "${fileId}" as Base64 Data URL payload (${dataUrl.length} chars)`);
+      this.playChime(660, 0.1, 'sine');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error downloading file';
+      this.liveActionStatus.set(`Error: ${msg}`);
+      this.downloadedDataUrl.set(null);
+      this.downloadedContentPreview.set(null);
+    } finally {
+      this.liveLoading.set(false);
+    }
+  }
+
+  public async deleteLiveFileAction(): Promise<void> {
+    const fileId = this.storageFileIdInput().trim();
+    if (!fileId) return;
+    this.liveLoading.set(true);
+    try {
+      await this.dbService.backendApi.deleteFile(fileId);
+      this.liveActionStatus.set(`Purged file "${fileId}" from storage bucket.`);
+      this.downloadedDataUrl.set(null);
+      this.downloadedContentPreview.set(null);
+      this.playChime(400, 0.1, 'sawtooth');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error deleting file';
+      this.liveActionStatus.set(`Error: ${msg}`);
+    } finally {
+      this.liveLoading.set(false);
+    }
+  }
+
+  public async sendLiveEmailAction(): Promise<void> {
+    this.liveLoading.set(true);
+    try {
+      const res = await this.dbService.backendApi.sendEmail(
+        'Cluster Security Audit Alert',
+        'Multi-tenant database backup snapshot #941 verified on dedicated NVMe volume.'
+      );
+      this.liveActionStatus.set(`Email dispatched! Message ID: ${res?.message?.$id || 'msg_sent'}`);
+      this.playChime(700, 0.1, 'sine');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error sending email';
+      this.liveActionStatus.set(`Error: ${msg}`);
+    } finally {
+      this.liveLoading.set(false);
+    }
+  }
+
+  public async sendLivePushAction(): Promise<void> {
+    this.liveLoading.set(true);
+    try {
+      const res = await this.dbService.backendApi.sendPush(
+        'Database Mesh Synchronized',
+        'All read replicas synced across us-central edge region.'
+      );
+      this.liveActionStatus.set(`Push notification dispatched! ID: ${res?.message?.$id || 'msg_push'}`);
+      this.playChime(850, 0.1, 'sine');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error sending push';
+      this.liveActionStatus.set(`Error: ${msg}`);
+    } finally {
+      this.liveLoading.set(false);
+    }
+  }
+
+  public async sendLiveSMSAction(): Promise<void> {
+    this.liveLoading.set(true);
+    try {
+      const res = await this.dbService.backendApi.sendSMS('Critical alert: Edge node heartbeat verified.');
+      this.liveActionStatus.set(`SMS dispatched! ID: ${res?.message?.$id || 'msg_sms'}`);
+      this.playChime(600, 0.1, 'sine');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error sending SMS';
+      this.liveActionStatus.set(`Error: ${msg}`);
+    } finally {
+      this.liveLoading.set(false);
+    }
   }
 }

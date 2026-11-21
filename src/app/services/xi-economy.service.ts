@@ -13,6 +13,7 @@ import {
 } from '../models/webos.models';
 import { AuditService } from './audit.service';
 import { NotificationService } from './notification.service';
+import { AppwriteBackendApiService } from './appwrite-backend-api.service';
 
 export interface BurnCogniOpsParams {
   customerId: string;
@@ -33,10 +34,12 @@ export interface BurnCogniOpsResult {
 export class XiEconomyService {
   private auditService: AuditService;
   private notificationService: NotificationService;
+  public readonly backendApi: AppwriteBackendApiService;
 
   constructor() {
     let resolvedAudit: AuditService | null = null;
     let resolvedNotif: NotificationService | null = null;
+    let resolvedApi: AppwriteBackendApiService | null = null;
     try {
       resolvedAudit = inject(AuditService, { optional: true });
     } catch {
@@ -47,8 +50,34 @@ export class XiEconomyService {
     } catch {
       resolvedNotif = null;
     }
+    try {
+      resolvedApi = inject(AppwriteBackendApiService, { optional: true });
+    } catch {
+      resolvedApi = null;
+    }
     this.auditService = resolvedAudit ?? new AuditService();
     this.notificationService = resolvedNotif ?? new NotificationService();
+    this.backendApi = resolvedApi ?? new AppwriteBackendApiService();
+
+    // Asynchronously synchronize initial state with backend
+    this.syncWithBackend();
+  }
+
+  public async syncWithBackend(): Promise<void> {
+    try {
+      const floor = await this.backendApi.getXiFloor();
+      if (floor?.components) {
+        this.cogsBreakdown.update(prev => ({
+          ...prev,
+          cInfra: floor.components['cInfra'] ?? prev.cInfra,
+          cExec: floor.components['cExec'] ?? prev.cExec,
+          cAlign: floor.components['cAlign'] ?? prev.cAlign,
+          cValid: floor.components['cValid'] ?? prev.cValid,
+        }));
+      }
+    } catch {
+      // Retain local resilient baseline
+    }
   }
 
   // --- Economic Constants & State (Signals) ---

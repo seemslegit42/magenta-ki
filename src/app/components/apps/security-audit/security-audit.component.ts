@@ -17,10 +17,10 @@ import { AuditCategory, AuditSeverity, UserRole } from '../../../models/webos.mo
         <div>
           <h2 class="font-display text-xl font-bold text-white flex items-center space-x-2">
             <span class="material-icons text-[#E0218A]">verified_user</span>
-            <span>Security Governance, Audit Trail & RBAC</span>
+            <span>Security Governance & Audit Trail</span>
           </h2>
           <p class="text-xs text-[#8C94A8] mt-1">
-            Real-time immutable audit trail of critical user actions, multi-tier RBAC enforcement, and compliance telemetry.
+            Real-time immutable audit trail of system events, cryptographic hash-chain verification, and access policy enforcement.
           </p>
         </div>
 
@@ -69,7 +69,7 @@ import { AuditCategory, AuditSeverity, UserRole } from '../../../models/webos.mo
           (click)="activeTab.set('rbac')">
           <div class="flex items-center space-x-2">
             <span class="material-icons text-sm">admin_panel_settings</span>
-            <span>Roles & Permissions (RBAC)</span>
+            <span>Security Policies & Access Scopes</span>
           </div>
           @if (activeTab() === 'rbac') {
             <span class="absolute bottom-0 left-0 right-0 h-0.5 bg-[#E0218A]"></span>
@@ -155,7 +155,7 @@ import { AuditCategory, AuditSeverity, UserRole } from '../../../models/webos.mo
                       <td class="py-2.5 px-3 whitespace-nowrap">
                         <div class="flex items-center space-x-1.5">
                           <span class="text-white font-medium">{{ log.userId }}</span>
-                          <span class="text-[10px] px-1.5 py-0.2 rounded bg-white/10 text-[#20B2AA]">
+                          <span class="text-[10px] text-[#20B2AA]">
                             {{ log.userRole }}
                           </span>
                         </div>
@@ -166,28 +166,11 @@ import { AuditCategory, AuditSeverity, UserRole } from '../../../models/webos.mo
                       <td class="py-2.5 px-3 whitespace-nowrap text-[#8C94A8]">
                         {{ log.category }}
                       </td>
-                      <td class="py-2.5 px-3 whitespace-nowrap">
-                        <span 
-                          class="px-2 py-0.5 rounded text-[10px] uppercase font-bold"
-                          [class.bg-[#3EB991]/20]="log.severity === 'info'"
-                          [class.text-[#3EB991]]="log.severity === 'info'"
-                          [class.bg-amber-500/20]="log.severity === 'warning'"
-                          [class.text-amber-400]="log.severity === 'warning'"
-                          [class.bg-red-500/20]="log.severity === 'critical'"
-                          [class.text-red-400]="log.severity === 'critical'"
-                          [class.bg-[#E0218A]/20]="log.severity === 'security'"
-                          [class.text-[#FF2A9D]]="log.severity === 'security'">
-                          {{ log.severity }}
-                        </span>
+                      <td class="py-2.5 px-3 whitespace-nowrap text-[#3EB991]">
+                        {{ log.severity }}
                       </td>
-                      <td class="py-2.5 px-3 whitespace-nowrap">
-                        <span
-                          class="text-[10px] px-1.5 py-0.5 rounded font-bold"
-                          [class.text-[#3EB991]]="log.status === 'success'"
-                          [class.text-red-400]="log.status === 'failure'"
-                          [class.text-amber-400]="log.status === 'blocked'">
-                          {{ log.status }}
-                        </span>
+                      <td class="py-2.5 px-3 whitespace-nowrap text-[#3EB991]">
+                        {{ log.status }}
                       </td>
                       <td class="py-2.5 px-4 text-[#8C94A8] max-w-xs truncate" [title]="log.details">
                         {{ log.details }}
@@ -209,67 +192,44 @@ import { AuditCategory, AuditSeverity, UserRole } from '../../../models/webos.mo
         </div>
       }
 
-      <!-- TAB 2: ROLES & PERMISSIONS (RBAC) -->
+      <!-- TAB 2: ACCESS POLICIES & SECURITY SCOPES -->
       @if (activeTab() === 'rbac') {
         <div class="space-y-6">
-          <!-- Active Identity Switcher -->
-          <div class="bg-[#151922] p-5 rounded-xl border border-white/10 space-y-4">
+          <!-- Offsite Identity & Access Architecture -->
+          <div class="bg-[#151922] p-5 rounded-xl border border-white/10 space-y-3">
             <div class="flex items-center justify-between">
-              <div>
-                <h3 class="font-display text-sm font-semibold text-white">Active Identity Profile Switcher</h3>
-                <p class="text-xs text-[#8C94A8]">Switch between provisioned users to test real-time privilege enforcement.</p>
+              <div class="flex items-center space-x-2.5">
+                <div class="w-8 h-8 rounded-lg bg-[#20B2AA]/20 flex items-center justify-center text-[#20B2AA]">
+                  <span class="material-icons text-base">cloud_sync</span>
+                </div>
+                <div>
+                  <h3 class="font-display text-sm font-semibold text-white">Offsite Identity & Security Architecture</h3>
+                  <p class="text-xs text-[#8C94A8]">User identities, authentication credentials, and account lifecycles are isolated offsite in external infrastructure.</p>
+                </div>
               </div>
-              <span class="text-xs px-2.5 py-1 rounded bg-[#E0218A]/20 text-[#FF2A9D] border border-[#E0218A]/30 font-mono">
-                Current Role: {{ authRbac.currentRole() }}
+              <span class="text-xs px-2.5 py-1 rounded bg-[#3EB991]/20 text-[#3EB991] border border-[#3EB991]/30 font-mono">
+                Offsite Managed
               </span>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
-              @for (profile of authRbac.allProfiles(); track profile.id) {
-                <div
-                  role="button"
-                  tabindex="0"
-                  class="p-4 rounded-xl border transition-all cursor-pointer flex flex-col justify-between outline-none focus:ring-2 focus:ring-[#E0218A]"
-                  [class.bg-[#E0218A]/10]="authRbac.currentUser().id === profile.id"
-                  [class.border-[#E0218A]]="authRbac.currentUser().id === profile.id"
-                  [class.bg-white/5]="authRbac.currentUser().id !== profile.id"
-                  [class.border-white/5]="authRbac.currentUser().id !== profile.id"
-                  (click)="authRbac.switchUser(profile.id)"
-                  (keydown.enter)="authRbac.switchUser(profile.id)">
-                  <div>
-                    <div class="flex items-center justify-between mb-2">
-                      <div class="flex items-center space-x-2">
-                        <span class="material-icons text-xl text-[#20B2AA]">{{ profile.avatar }}</span>
-                        <span class="font-display font-semibold text-white text-xs">{{ profile.name }}</span>
-                      </div>
-                      <span
-                        class="text-[10px] px-2 py-0.5 rounded font-mono font-bold"
-                        [class.bg-[#E0218A]/30]="profile.role === 'administrator'"
-                        [class.text-[#FF2A9D]]="profile.role === 'administrator'"
-                        [class.bg-[#20B2AA]/30]="profile.role === 'content_creator'"
-                        [class.text-[#20B2AA]]="profile.role === 'content_creator'"
-                        [class.bg-white/10]="profile.role === 'general_user'"
-                        [class.text-[#8C94A8]]="profile.role === 'general_user'">
-                        {{ profile.role }}
-                      </span>
-                    </div>
-                    <p class="text-[11px] text-[#8C94A8]">{{ profile.department }}</p>
-                    <p class="text-[10px] text-[#8C94A8] font-mono mt-1">{{ profile.email }}</p>
-                  </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 text-xs">
+              <div class="p-3 rounded-lg bg-white/5 border border-white/5">
+                <div class="text-[#8C94A8] text-[11px]">Active Session Principal</div>
+                <div class="font-display font-semibold text-white mt-0.5">{{ authRbac.currentUser().name }}</div>
+                <div class="text-[10px] text-[#20B2AA] font-mono mt-0.5">{{ authRbac.currentUser().email }}</div>
+              </div>
 
-                  <div class="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-[11px]">
-                    <span class="text-[#8C94A8]">{{ profile.permissions.length }} permissions</span>
-                    @if (authRbac.currentUser().id === profile.id) {
-                      <span class="text-[#3EB991] font-bold flex items-center space-x-1">
-                        <span class="material-icons text-xs">check_circle</span>
-                        <span>Active Session</span>
-                      </span>
-                    } @else {
-                      <span class="text-[#8C94A8]">Click to Switch</span>
-                    }
-                  </div>
-                </div>
-              }
+              <div class="p-3 rounded-lg bg-white/5 border border-white/5">
+                <div class="text-[#8C94A8] text-[11px]">Enforced Access Tier</div>
+                <div class="font-display font-semibold text-white uppercase mt-0.5">{{ authRbac.currentRole() }}</div>
+                <div class="text-[10px] text-[#FF2A9D] font-mono mt-0.5">Session Token Verified</div>
+              </div>
+
+              <div class="p-3 rounded-lg bg-white/5 border border-white/5">
+                <div class="text-[#8C94A8] text-[11px]">Active Policy Scopes</div>
+                <div class="font-display font-semibold text-white mt-0.5">{{ authRbac.currentUser().permissions.length }} Tokens Authorized</div>
+                <div class="text-[10px] text-[#3EB991] font-mono mt-0.5">Cryptographically Sealed</div>
+              </div>
             </div>
           </div>
 
@@ -368,7 +328,7 @@ import { AuditCategory, AuditSeverity, UserRole } from '../../../models/webos.mo
             </div>
             <h4 class="font-display text-sm font-semibold text-white">Multi-Tenant Blast Radius</h4>
             <p class="text-xs text-[#8C94A8] leading-relaxed">
-              Database-per-organization architecture ensures tenant-isolated libSQL files with zero shared memory leakage.
+              Database-per-organization architecture ensures tenant-isolated edge databases with zero shared memory leakage.
             </p>
             <div class="p-2 rounded bg-white/5 text-[10px] font-mono text-[#FF2A9D]">
               BLAST RADIUS: MINIMAL (Edge-Isolated)
@@ -395,21 +355,21 @@ export class SecurityAuditComponent {
   protected supportedRoles: UserRole[] = ['administrator', 'content_creator', 'general_user'];
 
   protected permissionChecklist = [
-    { token: 'audit:read', desc: 'Inspect system and user audit trail records', creator: false, user: false },
+    { token: 'audit:read', desc: 'Inspect system and security audit trail records', creator: false, user: false },
     { token: 'audit:export', desc: 'Export audit logs to CSV and JSON formats', creator: false, user: false },
     { token: 'audit:manage', desc: 'Purge or archive security audit ledger', creator: false, user: false },
-    { token: 'gateway:manage', desc: 'Reconfigure Go edge gateway routing & SAML', creator: false, user: false },
-    { token: 'gateway:query', desc: 'Execute direct libSQL edge queries', creator: false, user: false },
+    { token: 'gateway:manage', desc: 'Reconfigure edge gateway routing & authentication token validation', creator: false, user: false },
+    { token: 'gateway:query', desc: 'Execute direct edge database queries', creator: false, user: false },
     { token: 'wopi:read', desc: 'Read enterprise office documents', creator: true, user: true },
     { token: 'wopi:edit', desc: 'Author content and stream PutFile saves', creator: true, user: false },
     { token: 'wopi:lock', desc: 'Acquire and release exclusive X-WOPI-Lock', creator: true, user: false },
-    { token: 'agentfs:read', desc: 'Inspect SQLite VFS inodes and dentries', creator: true, user: true },
+    { token: 'agentfs:read', desc: 'Inspect virtual filesystem inodes and dentries', creator: true, user: true },
     { token: 'agentfs:write', desc: 'Modify VFS file payloads and execute tools', creator: true, user: false },
     { token: 'agentfs:snapshot', desc: 'Create isolated Copy-on-Write snapshots', creator: true, user: false },
     { token: 'process:spawn', desc: 'Launch applications into workspace windows', creator: true, user: true },
     { token: 'process:kill', desc: 'Terminate application processes by PID', creator: false, user: false },
     { token: 'settings:manage', desc: 'Configure syncopated UI and security cadence', creator: false, user: false },
-    { token: 'rbac:manage', desc: 'Assign and update user profile roles', creator: false, user: false },
+    { token: 'rbac:manage', desc: 'Inspect and enforce enterprise access control policies', creator: false, user: false },
   ];
 
   protected filteredLogs = computed(() => {

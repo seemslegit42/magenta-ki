@@ -2,13 +2,11 @@ import { Component, Input, OnInit, inject, signal, ViewChild, ViewContainerRef }
 import { CommonModule } from '@angular/common';
 import { ProcessDescriptor, RemoteDefinition } from '../../../models/webos.models';
 import { NativeFederationService } from '../../../services/native-federation.service';
-import { FormsModule } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-remote-container',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule],
+  imports: [CommonModule],
   template: `
     <div class="space-y-4 p-2 font-['Lexend'] text-[#F5FFFA]">
       <!-- Header Bar -->
@@ -105,127 +103,19 @@ import { MatIconModule } from '@angular/material/icon';
         <div #dynamicMountContainer></div>
 
         @if (status() === 'ONLINE') {
-          <div class="space-y-3">
-            <div class="p-3.5 rounded-xl bg-[#3EB991]/10 border border-[#3EB991]/30 text-[#F5FFFA] flex items-center justify-between">
-              <div class="flex items-center space-x-2 text-[#3EB991]">
-                <mat-icon class="text-sm">check_circle</mat-icon>
-                <span class="font-semibold text-xs">Remote Module Verified & Mounted</span>
-              </div>
-              <span class="text-[10px] font-mono text-[#8C94A8]">SRI: Verified (SHA-384)</span>
+          <div class="p-3.5 rounded-xl bg-[#3EB991]/10 border border-[#3EB991]/30 text-[#F5FFFA] space-y-1.5">
+            <div class="flex items-center space-x-2 text-[#3EB991]">
+              <span class="material-icons text-sm">check_circle</span>
+              <span class="font-semibold text-xs">Remote Module Verified Active</span>
             </div>
-
-            <!-- Dynamic MFE Content Simulator based on Remote Module Domain -->
-            @if (remoteName().includes('analytics')) {
-              <div class="p-4 rounded-xl bg-[#14161C] border border-white/10 space-y-3">
-                <div class="flex items-center justify-between border-b border-white/5 pb-2">
-                  <span class="text-xs font-semibold text-[#F5FFFA] flex items-center space-x-1.5">
-                    <mat-icon class="text-xs text-[#20B2AA]">insights</mat-icon>
-                    <span>Remote Analytics Engine (Port 3001)</span>
-                  </span>
-                  <span class="text-[10px] font-mono text-[#3EB991]">Live Stream: Active</span>
-                </div>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center font-mono text-xs">
-                  <div class="p-2.5 rounded-lg bg-[#0E1015] border border-white/5">
-                    <span class="text-[10px] text-[#8C94A8] block">RPS</span>
-                    <span class="text-sm font-bold text-[#3EB991] tabular-nums">1,420</span>
-                  </div>
-                  <div class="p-2.5 rounded-lg bg-[#0E1015] border border-white/5">
-                    <span class="text-[10px] text-[#8C94A8] block">CACHE HIT</span>
-                    <span class="text-sm font-bold text-[#20B2AA] tabular-nums">98.4%</span>
-                  </div>
-                  <div class="p-2.5 rounded-lg bg-[#0E1015] border border-white/5">
-                    <span class="text-[10px] text-[#8C94A8] block">AVG P95</span>
-                    <span class="text-sm font-bold text-[#dfb7ff] tabular-nums">14ms</span>
-                  </div>
-                  <div class="p-2.5 rounded-lg bg-[#0E1015] border border-white/5">
-                    <span class="text-[10px] text-[#8C94A8] block">SRI INTEGRITY</span>
-                    <span class="text-sm font-bold text-[#3EB991]">PASS</span>
-                  </div>
-                </div>
-              </div>
-            } @else if (remoteName().includes('copilot')) {
-              <div class="p-4 rounded-xl bg-[#14161C] border border-white/10 space-y-3">
-                <div class="flex items-center justify-between border-b border-white/5 pb-2">
-                  <span class="text-xs font-semibold text-[#F5FFFA] flex items-center space-x-1.5">
-                    <mat-icon class="text-xs text-[#E0218A]">psychology</mat-icon>
-                    <span>Autonomous Copilot Pipeline (Port 3002)</span>
-                  </span>
-                  <span class="text-[10px] font-mono text-[#E0218A]">Gemini Pro 2.5</span>
-                </div>
-                <div class="flex space-x-2">
-                  <input
-                    type="text"
-                    [(ngModel)]="copilotQuery"
-                    placeholder="Enter micro-frontend task or instruction..."
-                    class="flex-1 px-3 py-2 rounded-lg bg-[#0E1015] border border-white/10 text-xs text-white focus:outline-none focus:border-[#E0218A]"
-                  />
-                  <button
-                    type="button"
-                    class="px-3.5 py-2 rounded-lg bg-[#E0218A] hover:bg-[#FF2A9D] text-white text-xs font-bold transition-all cursor-pointer"
-                    (click)="runCopilotTask()">
-                    Dispatch
-                  </button>
-                </div>
-                @if (copilotResponse()) {
-                  <div class="p-3 rounded-lg bg-[#0E1015] border border-[#E0218A]/20 text-xs text-[#F5FFFA] font-light leading-relaxed animate-in fade-in">
-                    {{ copilotResponse() }}
-                  </div>
-                }
-              </div>
-            } @else if (remoteName().includes('wopi') || remoteName().includes('editor')) {
-              <div class="p-4 rounded-xl bg-[#14161C] border border-white/10 space-y-3">
-                <div class="flex items-center justify-between border-b border-white/5 pb-2">
-                  <span class="text-xs font-semibold text-[#F5FFFA] flex items-center space-x-1.5">
-                    <mat-icon class="text-xs text-[#20B2AA]">edit_note</mat-icon>
-                    <span>WOPI Distributed Document Canvas (Port 3003)</span>
-                  </span>
-                  <button
-                    type="button"
-                    class="px-2 py-0.5 rounded text-[10px] font-mono cursor-pointer border"
-                    [class.bg-[#3EB991]/20]="isDocumentLocked()"
-                    [class.text-[#3EB991]]="isDocumentLocked()"
-                    [class.border-[#3EB991]/40]="isDocumentLocked()"
-                    [class.bg-white/5]="!isDocumentLocked()"
-                    [class.text-[#8C94A8]]="!isDocumentLocked()"
-                    [class.border-white/10]="!isDocumentLocked()"
-                    (click)="isDocumentLocked.update(v => !v)">
-                    {{ isDocumentLocked() ? '🔒 X-WOPI-Lock Acquired' : '🔓 Unlocked (Click to Acquire)' }}
-                  </button>
-                </div>
-                <textarea
-                  [(ngModel)]="wopiContent"
-                  rows="4"
-                  class="w-full p-3 rounded-lg bg-[#0E1015] border border-white/10 text-xs text-white font-mono focus:outline-none focus:border-[#20B2AA]"
-                ></textarea>
-                <div class="flex items-center justify-between text-[10px] font-mono text-[#8C94A8]">
-                  <span>Words: {{ wopiContent.split(' ').length }} • CheckFileInfo Validated</span>
-                  <button
-                    type="button"
-                    class="px-3 py-1 rounded bg-[#20B2AA] hover:bg-[#1CA099] text-[#0E1015] font-bold cursor-pointer"
-                    (click)="saveWopiDraft()">
-                    PutFile Commit
-                  </button>
-                </div>
-              </div>
-            } @else {
-              <div class="p-4 rounded-xl bg-[#14161C] border border-white/10 space-y-2">
-                <span class="text-xs font-semibold text-[#F5FFFA]">Generic ESM Micro-Frontend Component</span>
-                <p class="text-xs text-[#8C94A8] leading-relaxed">
-                  Exported module <code class="text-[#20B2AA] font-mono">{{ exposedModule() }}</code> loaded into host zone without bundle collision.
-                </p>
-                <button
-                  type="button"
-                  class="px-3 py-1.5 rounded-lg bg-[#6A0DAD] hover:bg-[#8333c6] text-white text-xs font-semibold cursor-pointer"
-                  (click)="emitTestEvent()">
-                  Dispatch Cross-MFE Ping
-                </button>
-              </div>
-            }
+            <p class="text-xs text-[#F5FFFA]/90 leading-relaxed font-['Lexend']">
+              The remote micro-frontend entry has been registered and verified in the host import map. Shared dependencies execute in the host zone without duplicate bundles.
+            </p>
           </div>
         } @else {
           <div class="p-4 rounded-xl bg-white/5 border border-white/10 text-[#F5FFFA] space-y-3">
             <div class="flex items-start space-x-3">
-              <mat-icon class="text-lg text-[#20B2AA] mt-0.5">cloud_queue</mat-icon>
+              <span class="material-icons text-lg text-[#20B2AA] mt-0.5">cloud_queue</span>
               <div>
                 <h5 class="font-semibold text-xs text-white">Standby Sandbox Container</h5>
                 <p class="text-xs text-[#8C94A8] mt-1 leading-relaxed">
@@ -240,7 +130,7 @@ import { MatIconModule } from '@angular/material/icon';
                 type="button"
                 class="px-3.5 py-1.5 rounded-lg bg-[#20B2AA] hover:bg-[#1E9F98] text-[#0E1015] text-xs font-bold transition-all flex items-center space-x-1.5 shadow-md cursor-pointer"
                 (click)="testProbe()">
-                <mat-icon class="text-xs">bolt</mat-icon>
+                <span class="material-icons text-xs">bolt</span>
                 <span>Probe Endpoint</span>
               </button>
 
@@ -248,7 +138,7 @@ import { MatIconModule } from '@angular/material/icon';
                 type="button"
                 class="px-3.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white text-xs font-mono border border-white/10 transition-colors flex items-center space-x-1.5 cursor-pointer"
                 (click)="simulateMount()">
-                <mat-icon class="text-xs">play_circle_outline</mat-icon>
+                <span class="material-icons text-xs">play_circle_outline</span>
                 <span>Simulate Dynamic Mount</span>
               </button>
             </div>
@@ -339,32 +229,5 @@ export class RemoteContainerComponent implements OnInit {
     this.status.set('ONLINE');
     this.latencyMs.set(12);
     this.federationService.addLog(`[Dynamic Mount] Simulated load of ${this.remoteName()} -> ${this.exposedModule()} into ViewContainer`);
-  }
-
-  // Interactive Simulator State for Remotes
-  public copilotQuery = 'Summarize cross-MFE dependency boundaries';
-  public readonly copilotResponse = signal<string>('Copilot Pipeline initialized. Ready to execute federated workloads across remotes.');
-  public wopiContent = '# Architecture Manifesto\nAll micro-frontends maintain zero runtime collisions with the host application.';
-  public readonly isDocumentLocked = signal<boolean>(true);
-
-  public runCopilotTask(): void {
-    const q = this.copilotQuery.trim();
-    if (!q) return;
-    this.copilotResponse.set(`Processing "${q}"... Verified 0 bundle collisions. Target remote module loaded via ESM import map.`);
-    this.federationService.dispatchRegistryEvent('copilot', 'TASK_EXECUTED', this.remoteName(), { query: q });
-  }
-
-  public saveWopiDraft(): void {
-    this.federationService.dispatchRegistryEvent('wopi', 'DOCUMENT_COMMITTED', this.remoteName(), {
-      words: this.wopiContent.split(' ').length,
-      locked: this.isDocumentLocked()
-    });
-    this.federationService.addLog(`[WOPI] Committed document revisions for ${this.remoteName()} via X-WOPI-Lock`);
-  }
-
-  public emitTestEvent(): void {
-    this.federationService.dispatchRegistryEvent('mfe', 'PING_DISPATCHED', this.remoteName(), {
-      timestamp: Date.now()
-    });
   }
 }

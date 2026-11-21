@@ -34,3 +34,15 @@ func GetTablesDB() *appwrite.TablesDB {
 func GetStorage() *appwrite.Storage {
 	return appwrite.NewStorage(GetClient())
 }
+
+func GetMessaging() *appwrite.Messaging {
+	return appwrite.NewMessaging(GetClient())
+}
+
+func GetUsers() *appwrite.Users {
+	return appwrite.NewUsers(GetClient())
+}
+
+func GetTeams() *appwrite.Teams {
+	return appwrite.NewTeams(GetClient())
+}

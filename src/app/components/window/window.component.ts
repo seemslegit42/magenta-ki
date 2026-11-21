@@ -13,9 +13,8 @@ import { RemoteContainerComponent } from '../apps/remote-container/remote-contai
 import { AppLauncherComponent } from '../apps/app-launcher/app-launcher.component';
 import { AgenticValueFrameworkComponent } from '../apps/agentic-value-framework/agentic-value-framework.component';
 import { ChatWindowComponent } from '../apps/chat-window/chat-window.component';
-import { NativeFederationStudioComponent } from '../apps/native-federation/native-federation-studio.component';
-import { TelemetryDashboardComponent } from '../apps/telemetry-dashboard/telemetry-dashboard.component';
-import { RecycleBinComponent } from '../apps/recycle-bin/recycle-bin.component';
+import { CicdPipelineComponent } from '../apps/cicd-pipeline/cicd-pipeline.component';
+import { ProjectsManagerComponent } from '../apps/projects-manager/projects-manager.component';
 
 @Component({
   selector: 'app-window',
@@ -33,9 +32,8 @@ import { RecycleBinComponent } from '../apps/recycle-bin/recycle-bin.component';
     AppLauncherComponent,
     AgenticValueFrameworkComponent,
     ChatWindowComponent,
-    NativeFederationStudioComponent,
-    TelemetryDashboardComponent,
-    RecycleBinComponent
+    CicdPipelineComponent,
+    ProjectsManagerComponent
   ],
   template: `
     <div
@@ -164,14 +162,11 @@ import { RecycleBinComponent } from '../apps/recycle-bin/recycle-bin.component';
           @case ('ChatWindowComponent') {
             <app-chat-window [pid]="descriptor.pid" />
           }
-          @case ('NativeFederationStudioComponent') {
-            <app-native-federation-studio />
+          @case ('CicdPipelineComponent') {
+            <app-cicd-pipeline [pid]="descriptor.pid" />
           }
-          @case ('TelemetryDashboardComponent') {
-            <app-telemetry-dashboard />
-          }
-          @case ('RecycleBinComponent') {
-            <app-recycle-bin [pid]="descriptor.pid" />
+          @case ('ProjectsManagerComponent') {
+            <app-projects-manager [pid]="descriptor.pid" />
           }
           @case ('RemoteContainerComponent') {
             <app-remote-container [pid]="descriptor.pid" [descriptor]="descriptor" />

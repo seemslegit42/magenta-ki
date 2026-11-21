@@ -7,8 +7,6 @@ import { WopiService } from '../../../services/wopi.service';
 import { AuditService } from '../../../services/audit.service';
 import { NotificationService } from '../../../services/notification.service';
 import { VfsInode, WopiDocument, AuditCategory } from '../../../models/webos.models';
-import { RecycleBinService } from '../../../services/recycle-bin.service';
-import { WindowManagerService } from '../../../services/window-manager.service';
 
 export interface ManagedFileItem {
   uid: string;
@@ -178,13 +176,6 @@ export interface ManagedFileItem {
                 <div class="flex items-center space-x-2">
                   <button
                     type="button"
-                    class="px-2.5 py-1.5 rounded-lg bg-[#FF4D6D]/15 hover:bg-[#FF4D6D]/30 text-[#FF4D6D] text-xs font-semibold transition-colors flex items-center space-x-1 cursor-pointer"
-                    (click)="moveFileToTrash(file)">
-                    <mat-icon class="text-xs">delete_outline</mat-icon>
-                    <span>Move to Trash</span>
-                  </button>
-                  <button
-                    type="button"
                     class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-medium transition-colors flex items-center space-x-1 cursor-pointer"
                     (click)="downloadFile(file)">
                     <mat-icon class="text-xs">download</mat-icon>
@@ -226,13 +217,7 @@ export interface ManagedFileItem {
           <!-- Tool Audit & System Footer -->
           <div class="pt-3 border-t border-white/10 flex items-center justify-between text-xs text-[#8C94A8]">
             <span class="font-mono">AgentFS VFS & WOPI Mesh Active</span>
-            <button
-              type="button"
-              (click)="openRecycleBin()"
-              class="flex items-center space-x-1 text-[#FF4D6D] hover:underline cursor-pointer font-mono text-[11px]">
-              <mat-icon class="text-xs">delete_outline</mat-icon>
-              <span>Recycle Bin ({{ recycleBin.itemCount() }})</span>
-            </button>
+            <span class="font-mono text-[10px]">Atomic Sync Enabled</span>
           </div>
         </div>
       </div>
@@ -302,8 +287,6 @@ export class AgentFsExplorerComponent {
   private wopi = inject(WopiService);
   private auditService = inject(AuditService);
   private notificationService = inject(NotificationService);
-  protected readonly recycleBin = inject(RecycleBinService);
-  private windowMgr = inject(WindowManagerService);
 
   protected searchQuery = '';
   protected selectedFilter: 'all' | 'document' | 'code' | 'json' = 'all';
@@ -508,40 +491,6 @@ export class AgentFsExplorerComponent {
       message: 'Copy-on-Write snapshot successfully generated on AgentFS.',
       category: 'system',
       priority: 'normal',
-    });
-  }
-
-  public moveFileToTrash(file: ManagedFileItem): void {
-    if (file.source === 'agentfs') {
-      const deleted = this.agentFs.deleteFile(Number(file.originalId));
-      this.recycleBin.moveToTrash({
-        name: file.name,
-        type: file.type === 'document' ? 'document' : 'file',
-        icon: file.type === 'document' ? 'description' : (file.type === 'code' ? 'code' : 'text_snippet'),
-        originalLocation: `AgentFS Inode #${file.originalId}`,
-        sizeBytes: file.size,
-        data: deleted || { id: Number(file.originalId), name: file.name, data: file.content, size: file.size, mtime: file.mtime, mode: 33188 }
-      });
-    } else {
-      this.recycleBin.moveToTrash({
-        name: file.name,
-        type: 'document',
-        icon: 'description',
-        originalLocation: `WOPI Document /${file.name}`,
-        sizeBytes: file.size,
-        data: { id: file.originalId, name: file.name, content: file.content, size: file.size }
-      });
-    }
-    this.selectedFile.set(null);
-  }
-
-  public openRecycleBin(): void {
-    this.windowMgr.openApp({
-      id: 'recycle-bin',
-      title: 'Recycle Bin',
-      icon: 'delete',
-      entryComponent: 'RecycleBinComponent',
-      category: 'system'
     });
   }
 }

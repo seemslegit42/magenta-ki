@@ -1,0 +1,9 @@
+:3080 {
+    # Staging Reverse Proxy Config
+    root * /app/browser
+    file_server
+
+    # Routing rules for staging backend
+    reverse_proxy /api/* webos-staging-api:8081
+    reverse_proxy /* webos-staging-ssr:3002
+}

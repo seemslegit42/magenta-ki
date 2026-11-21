@@ -16,17 +16,9 @@ import { CommonModule } from '@angular/common';
         <div>
           <h2 class="font-display text-xl font-bold text-white flex items-center space-x-2">
             <span class="material-icons text-[#3EB991]">dns</span>
-            <span>Control Plane Gateway, Turso Edge & The Ξ Economy</span>
+            <span>Control Plane Gateway, Distributed Edge & The Ξ Economy</span>
           </h2>
-          <p class="text-xs text-[#8C94A8] mt-1 font-body">Go API gateway proxy with Appwrite SAML token validation, isolated per-tenant libSQL edge queries, Polar meters, and Cognitive Operations (Ξ) monetization.</p>
-        </div>
-        <div class="flex items-center space-x-2">
-          <span class="text-xs px-2.5 py-1 rounded-full bg-[#3EB991]/10 text-[#3EB991] border border-[#3EB991]/20 font-mono">
-            Ξ Floor: {{ xi.currentFloor().xiFloorUsd }} USD
-          </span>
-          <span class="text-xs px-2.5 py-1 rounded-full bg-[#6A0DAD]/20 text-[#20B2AA] border border-[#20B2AA]/30 font-mono">
-            Operator: {{ xi.getCustomerXiBalance('usr_operator_7842') }} Ξ
-          </span>
+          <p class="text-xs text-[#8C94A8] mt-1 font-body">API gateway proxy with session token validation, isolated per-tenant distributed edge queries, usage meters, and Cognitive Operations (Ξ) monetization.</p>
         </div>
       </div>
 
@@ -62,7 +54,7 @@ import { CommonModule } from '@angular/common';
           [class.text-[#8C94A8]]="activeTab() !== 'turso'"
           (click)="activeTab.set('turso')">
           <span class="material-icons text-sm">terminal</span>
-          <span>libSQL Edge Console</span>
+          <span>Distributed Edge Console</span>
         </button>
 
         <button
@@ -461,13 +453,13 @@ import { CommonModule } from '@angular/common';
         </div>
       }
 
-      <!-- Tab: libSQL Edge Console -->
+      <!-- Tab: Distributed Edge Console -->
       @if (activeTab() === 'turso') {
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div class="bg-[#151922] border border-white/10 rounded-xl p-4 space-y-4">
             <h3 class="font-display text-sm font-semibold text-white flex items-center space-x-2">
               <span class="material-icons text-xs text-[#20B2AA]">code</span>
-              <span>libSQL Edge Query Editor</span>
+              <span>Distributed Edge Query Editor</span>
             </h3>
 
             <textarea
@@ -478,7 +470,7 @@ import { CommonModule } from '@angular/common';
               class="px-4 py-2 rounded-lg bg-[#3EB991] hover:bg-[#3EB991]/80 text-[#002116] text-xs font-semibold transition-colors flex items-center space-x-1 shadow-md"
               (click)="runQuery()">
               <span class="material-icons text-xs">play_arrow</span>
-              <span>Execute libSQL Query</span>
+              <span>Execute Edge Query</span>
             </button>
 
             @if (queryResult(); as res) {
@@ -513,7 +505,7 @@ import { CommonModule } from '@angular/common';
             <div class="p-3 rounded-lg bg-black/30 border border-white/5 font-mono text-xs space-y-2">
               <div><span class="text-[#8C94A8]">Tenant ID:</span> <span class="text-[#20B2AA]">{{ gateway.currentTenant().tenantId }}</span></div>
               <div><span class="text-[#8C94A8]">User ID:</span> <span class="text-white">{{ gateway.currentTenant().userId }}</span></div>
-              <div><span class="text-[#8C94A8]">libSQL Edge URL:</span> <span class="text-[#3EB991] break-all">{{ gateway.currentTenant().tursoConnUrl }}</span></div>
+              <div><span class="text-[#8C94A8]">Edge Endpoint:</span> <span class="text-[#3EB991] break-all">{{ gateway.currentTenant().tursoConnUrl }}</span></div>
               <div><span class="text-[#8C94A8]">Roles:</span> <span class="text-[#E0218A]">{{ gateway.currentTenant().roles.join(', ') }}</span></div>
             </div>
           </div>

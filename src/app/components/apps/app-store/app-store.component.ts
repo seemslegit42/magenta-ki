@@ -35,13 +35,6 @@ export interface StoreItem {
             Acquire certified plugins, neural AI model weights, quantum cloud connectors, and executive themes.
           </p>
         </div>
-
-        <div class="flex items-center space-x-2 text-xs">
-          <div class="px-3 py-1.5 rounded-full bg-[#14161C] border border-[#20B2AA]/30 text-[#20B2AA] font-mono flex items-center space-x-1.5">
-            <mat-icon class="text-sm">verified</mat-icon>
-            <span>Enterprise Registry Active</span>
-          </div>
-        </div>
       </header>
 
       <!-- Search & Category Filters -->
@@ -133,11 +126,6 @@ export interface StoreItem {
 
       <!-- Footer Info -->
       <footer class="pt-3 border-t border-white/10 flex items-center justify-between text-xs text-[#8C94A8]">
-        <div class="flex items-center space-x-2 font-mono">
-          <mat-icon class="text-sm text-[#20B2AA]">security</mat-icon>
-          <span>All packages cryptographically signed and scanned by RBAC Sentinel.</span>
-        </div>
-        <span class="font-mono">Verdigris OS App Store v2.4</span>
       </footer>
     </div>
   `
@@ -191,12 +179,12 @@ export class AppStoreComponent {
     },
     {
       id: 'appwrite-sync-connector',
-      name: 'Appwrite Enterprise TablesSync',
+      name: 'Enterprise Table Sync',
       category: 'connector',
       icon: 'database',
-      description: 'Direct high-throughput synchronization bridge for Appwrite Cloud and self-hosted PostgreSQL clusters.',
+      description: 'Direct high-throughput synchronization bridge for multi-tenant cloud and distributed relational clusters.',
       version: '1.8.4',
-      publisher: 'Appwrite Inc',
+      publisher: 'Cloud Systems',
       price: 'Free',
       downloads: '32.1k',
       rating: 4.8,
@@ -217,12 +205,12 @@ export class AppStoreComponent {
     },
     {
       id: 'turso-edge-connector',
-      name: 'Turso libSQL Edge Bridge',
+      name: 'Distributed Edge Bridge',
       category: 'connector',
       icon: 'bolt',
-      description: 'Distributed SQLite edge replica connector for sub-millisecond read queries across 30+ regions.',
+      description: 'Distributed edge replica connector for sub-millisecond read queries across 30+ regions.',
       version: '0.9.2',
-      publisher: 'ChiselStrike',
+      publisher: 'Edge Systems',
       price: 'Free',
       downloads: '19.4k',
       rating: 4.7,

@@ -9,8 +9,7 @@
 - [x] Pass all unit tests (14/14 green) and ESLint checks (0 errors)
 
 - [x] Refactor `go/app.go` with Gin web framework and Appwrite Go SDK best practices (multi-tenancy, team isolation, TablesDB CRUD, Blades AI agent)
-- [x] Implement drag-and-drop custom desktop icon rearrangement with snap-to-grid and localStorage persistence
-- [x] Author and consolidate complete documentation suite across all systems (`/docs/architecture.md`, `/docs/developer-guide.md`, `/docs/user-guide.md`, `/docs/setup.md`, `/docs/api-reference.md`, `README.md`)
+- [ ] Implement drag-and-drop custom desktop icon rearrangement
 - [ ] Expand WOPI protocol mock server with real-time WebDAV file locks
 - [ ] Add offline PWA service worker caching for Native Federation manifests
 - [ ] Connect Turso edge database replicas to live gateway proxy
