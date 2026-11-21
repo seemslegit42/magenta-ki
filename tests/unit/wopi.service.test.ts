@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'bun:test';
+import { beforeEach, describe, expect, it } from 'bun:test';
 import { WopiService } from '../../src/app/services/wopi.service';
 
 describe('WopiService', () => {
@@ -12,7 +12,7 @@ describe('WopiService', () => {
     const docs = service.getDocuments();
     expect(docs.length).toBeGreaterThanOrEqual(3);
 
-    const docIds = docs.map(d => d.fileId);
+    const docIds = docs.map((d) => d.fileId);
     expect(docIds).toContain('doc_101');
     expect(docIds).toContain('doc_102');
     expect(docIds).toContain('doc_103');

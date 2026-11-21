@@ -1,20 +1,20 @@
 // Re-export canonical downstream contract types generated from /contracts/openapi/webos.v1.yaml
 export type {
-  components as WebOsApiComponents,
-  paths as WebOsApiPaths,
-  SystemPreferencesContract,
-  ProcessContract,
-  WindowStateContract,
-  UserProfileContract,
-  TenantContextContract,
-  PolarIngestEventContract,
-  PolarCheckoutSessionContract,
-  PolarCustomerStateContract,
   CogniOpsCogsBreakdownContract,
-  XiFloorDataContract,
+  components as WebOsApiComponents,
   PoAContributionParamsContract,
   PoARewardResultContract,
-  XiSankeyFlowContract
+  PolarCheckoutSessionContract,
+  PolarCustomerStateContract,
+  PolarIngestEventContract,
+  ProcessContract,
+  paths as WebOsApiPaths,
+  SystemPreferencesContract,
+  TenantContextContract,
+  UserProfileContract,
+  WindowStateContract,
+  XiFloorDataContract,
+  XiSankeyFlowContract,
 } from '../../generated/api.types';
 
 export interface ProcessDescriptor {
@@ -51,7 +51,7 @@ export interface WindowBounds {
 export const UserRole = {
   ADMIN: 'administrator',
   CREATOR: 'content_creator',
-  USER: 'general_user'
+  USER: 'general_user',
 } as const;
 export type UserRole = 'administrator' | 'content_creator' | 'general_user' | string;
 
@@ -65,7 +65,16 @@ export const AuditCategory = {
   FILESYSTEM: 'filesystem',
   PROCESS: 'process',
 } as const;
-export type AuditCategory = 'database' | 'system' | 'security' | 'auth' | 'wopi' | 'rbac' | 'filesystem' | 'process' | string;
+export type AuditCategory =
+  | 'database'
+  | 'system'
+  | 'security'
+  | 'auth'
+  | 'wopi'
+  | 'rbac'
+  | 'filesystem'
+  | 'process'
+  | string;
 
 export const AuditSeverity = {
   INFO: 'info',
@@ -211,7 +220,15 @@ export interface AuditLogEntry {
   ipAddress?: string;
 }
 
-export type NotificationCategory = 'task' | 'update' | 'security' | 'message' | 'database' | 'system' | 'audit' | string;
+export type NotificationCategory =
+  | 'task'
+  | 'update'
+  | 'security'
+  | 'message'
+  | 'database'
+  | 'system'
+  | 'audit'
+  | string;
 export type NotificationPriority = 'low' | 'normal' | 'high' | 'critical' | string;
 
 export interface WebOsNotification {
@@ -299,7 +316,15 @@ export interface PolarIngestEvent {
   };
 }
 
-export type PolarBenefitType = 'custom' | 'discord' | 'github_repository' | 'downloadables' | 'license_keys' | 'meter_credit' | 'feature_flag' | 'slack_shared_channel';
+export type PolarBenefitType =
+  | 'custom'
+  | 'discord'
+  | 'github_repository'
+  | 'downloadables'
+  | 'license_keys'
+  | 'meter_credit'
+  | 'feature_flag'
+  | 'slack_shared_channel';
 
 export interface PolarBenefit {
   id: string;
@@ -392,8 +417,8 @@ export interface PolarCheckoutSession {
 export interface CogniOpsCogsBreakdown {
   cInfra: number; // Normalized GPU-second (N-GPS) cost
   wInfra: number; // Weight (e.g. 0.25)
-  cExec: number;  // Agent execution/inference steps cost
-  wExec: number;  // Weight (e.g. 0.40)
+  cExec: number; // Agent execution/inference steps cost
+  wExec: number; // Weight (e.g. 0.40)
   cAlign: number; // Pro-rated Alignment Cost (PAC: LoRA/DPO fine-tuning)
   wAlign: number; // Weight (e.g. 0.20)
   cValid: number; // Validator Consensus Rate (VCR) cost
@@ -410,8 +435,8 @@ export interface XiFloorData {
 
 export interface PoAContributionParams {
   contributorId: string;
-  datasetWeightNk: number;     // N_k: Dataset size weight
-  qualityFactorFk: number;     // F_k: RLHF/DPO preference alignment score [0, 1]
+  datasetWeightNk: number; // N_k: Dataset size weight
+  qualityFactorFk: number; // F_k: RLHF/DPO preference alignment score [0, 1]
   efficacyImpactEdata: number; // E_data: Counterfactual model lift multiplier
 }
 
@@ -476,5 +501,3 @@ export interface HpvcProposal {
   rejections: number;
   createdAt: number;
 }
-
-

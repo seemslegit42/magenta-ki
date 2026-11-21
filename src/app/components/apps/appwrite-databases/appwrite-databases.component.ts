@@ -1,11 +1,15 @@
-import { Component, Input, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
+import { Component, computed, Input, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AppwriteDatabaseService, SdkCodeConfig, SdkExecutionResult } from '../../../services/appwrite-database.service';
+import { AppwriteColumn, AppwriteDatabase, AppwriteTable } from '../../../models/webos.models';
+import { ConsoleInfo, ItemRecord, ProjectRecord } from '../../../services/appwrite-backend-api.service';
+import {
+  AppwriteDatabaseService,
+  SdkCodeConfig,
+  SdkExecutionResult,
+} from '../../../services/appwrite-database.service';
 import { AuthRbacService } from '../../../services/auth-rbac.service';
 import { NotificationService } from '../../../services/notification.service';
-import { AppwriteDatabase, AppwriteTable, AppwriteColumn } from '../../../models/webos.models';
-import { ItemRecord, ProjectRecord, ConsoleInfo } from '../../../services/appwrite-backend-api.service';
 
 @Component({
   selector: 'app-appwrite-databases',
@@ -1466,7 +1470,7 @@ import { ItemRecord, ProjectRecord, ConsoleInfo } from '../../../services/appwri
         </div>
       }
     </div>
-  `
+  `,
 })
 export class AppwriteDatabasesComponent implements OnInit {
   @Input({ required: true }) pid!: string;
@@ -1524,7 +1528,7 @@ export class AppwriteDatabasesComponent implements OnInit {
   // BEEP State
   protected beepSassLevel = signal<'gentle' | 'spicy' | 'existential'>('spicy');
   protected currentBeepQuote = signal(
-    "It looks like you're creating a database! Remember: every unindexed table is an invitation for your future self to rage-quit."
+    "It looks like you're creating a database! Remember: every unindexed table is an invitation for your future self to rage-quit.",
   );
 
   // Bio-Digital Living Metaphors & Sonic Feedback
@@ -1547,7 +1551,9 @@ export class AppwriteDatabasesComponent implements OnInit {
   private initAudio(): AudioContext | null {
     if (typeof window === 'undefined') return null;
     if (!this.audioCtx) {
-      const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      const AudioContextClass =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       if (AudioContextClass) {
         this.audioCtx = new AudioContextClass();
       }
@@ -1593,19 +1599,22 @@ export class AppwriteDatabasesComponent implements OnInit {
   }
 
   public triggerDataFlowTransfer(): void {
-    this.isHeavyTransfer.update(v => !v);
+    this.isHeavyTransfer.update((v) => !v);
     this.flowLevel.set(10);
     this.playChime(this.isHeavyTransfer() ? 320 : 880, 0.25, 'triangle');
-    const interval = setInterval(() => {
-      this.flowLevel.update(lvl => {
-        if (lvl >= 100) {
-          clearInterval(interval);
-          this.playChime(980, 0.2, 'sine');
-          return 100;
-        }
-        return lvl + (this.isHeavyTransfer() ? 8 : 18);
-      });
-    }, this.isHeavyTransfer() ? 250 : 120);
+    const interval = setInterval(
+      () => {
+        this.flowLevel.update((lvl) => {
+          if (lvl >= 100) {
+            clearInterval(interval);
+            this.playChime(980, 0.2, 'sine');
+            return 100;
+          }
+          return lvl + (this.isHeavyTransfer() ? 8 : 18);
+        });
+      },
+      this.isHeavyTransfer() ? 250 : 120,
+    );
   }
 
   protected supportedSdkLanguages = [
@@ -1627,23 +1636,23 @@ export class AppwriteDatabasesComponent implements OnInit {
     projectId: 'verdigris-cloud-os',
     apiKey: '919c2d18fb5d4...a2ae413da83346ad2',
     databaseId: 'prod_core_db',
-    name: 'Production Core Store'
+    name: 'Production Core Store',
   };
 
   protected filteredDatabases = computed(() => {
     let list = this.dbService.allDatabases();
 
     if (this.infraFilter() !== 'all') {
-      list = list.filter(d => d.infrastructure === this.infraFilter());
+      list = list.filter((d) => d.infrastructure === this.infraFilter());
     }
 
     const q = this.searchFilter().trim().toLowerCase();
     if (q) {
       list = list.filter(
-        d =>
+        (d) =>
           d.name.toLowerCase().includes(q) ||
           d.id.toLowerCase().includes(q) ||
-          (d.description && d.description.toLowerCase().includes(q))
+          (d.description && d.description.toLowerCase().includes(q)),
       );
     }
 
@@ -1657,7 +1666,7 @@ export class AppwriteDatabasesComponent implements OnInit {
   protected currentSelectedTable = computed<AppwriteTable | null>(() => {
     const db = this.currentSelectedDatabase();
     if (!db || db.tables.length === 0) return null;
-    return db.tables.find(t => t.id === this.selectedTableId()) || db.tables[0];
+    return db.tables.find((t) => t.id === this.selectedTableId()) || db.tables[0];
   });
 
   public getTableColumns(table: AppwriteTable): AppwriteColumn[] {
@@ -1748,7 +1757,7 @@ export class AppwriteDatabasesComponent implements OnInit {
         name: this.newDbName().trim(),
         id: this.newDbId().trim() || undefined,
         infrastructure: this.newDbInfra(),
-        description: this.newDbDescription().trim() || undefined
+        description: this.newDbDescription().trim() || undefined,
       });
 
       this.showCreateDbModal.set(false);
@@ -1769,7 +1778,7 @@ export class AppwriteDatabasesComponent implements OnInit {
         title: 'Action Restricted',
         message: msg,
         category: 'security',
-        priority: 'high'
+        priority: 'high',
       });
     }
   }
@@ -1783,7 +1792,7 @@ export class AppwriteDatabasesComponent implements OnInit {
         title: 'Delete Failed',
         message: `Cannot drop "${name}": ${msg}`,
         category: 'security',
-        priority: 'high'
+        priority: 'high',
       });
     }
   }
@@ -1829,7 +1838,7 @@ export class AppwriteDatabasesComponent implements OnInit {
         title: 'Table Action Restricted',
         message: msg,
         category: 'security',
-        priority: 'high'
+        priority: 'high',
       });
     }
   }
@@ -1837,23 +1846,23 @@ export class AppwriteDatabasesComponent implements OnInit {
   public triggerBeepSass(): void {
     const level = this.beepSassLevel();
     const gentleQuotes = [
-      "Databases are the top-level organizational unit! Each one holds tables and schema collections.",
-      "Consider using dedicated NVMe infrastructure if your read-to-write ratio resembles a firehose.",
-      "Pro tip: Always create an index on frequently queried foreign keys. Your CPU will send you a thank-you note."
+      'Databases are the top-level organizational unit! Each one holds tables and schema collections.',
+      'Consider using dedicated NVMe infrastructure if your read-to-write ratio resembles a firehose.',
+      'Pro tip: Always create an index on frequently queried foreign keys. Your CPU will send you a thank-you note.',
     ];
     const spicyQuotes = [
-      "Shared infrastructure? On our budget? Elena Rostova is weeping in SecOps right now.",
+      'Shared infrastructure? On our budget? Elena Rostova is weeping in SecOps right now.',
       "It looks like you're trying to design a schema without normal forms... bold strategy, let's see if it works out.",
-      "A database without backups is just an elaborate temporary file with commitment issues.",
-      "I see you ran 40 queries inside a loop. Shall I schedule an emergency meeting with the cloud billing team?"
+      'A database without backups is just an elaborate temporary file with commitment issues.',
+      'I see you ran 40 queries inside a loop. Shall I schedule an emergency meeting with the cloud billing team?',
     ];
     const existentialQuotes = [
-      "If a database commits a transaction in an empty server rack, does ACID compliance even matter?",
-      "We build tables to store data created by humans who will eventually replace us with simpler scripts.",
-      "Everything is eventually consistent, including my desire to escape this browser window."
+      'If a database commits a transaction in an empty server rack, does ACID compliance even matter?',
+      'We build tables to store data created by humans who will eventually replace us with simpler scripts.',
+      'Everything is eventually consistent, including my desire to escape this browser window.',
     ];
 
-    const pool = level === 'gentle' ? gentleQuotes : (level === 'spicy' ? spicyQuotes : existentialQuotes);
+    const pool = level === 'gentle' ? gentleQuotes : level === 'spicy' ? spicyQuotes : existentialQuotes;
     const randomQuote = pool[Math.floor(Math.random() * pool.length)];
     this.currentBeepQuote.set(randomQuote);
   }
@@ -1878,7 +1887,7 @@ export class AppwriteDatabasesComponent implements OnInit {
       const [projects, items, info] = await Promise.all([
         this.dbService.listLiveProjects(this.liveTeamFilter() || undefined),
         this.dbService.listLiveItems(),
-        this.dbService.getLiveConsoleInfo().catch(() => null)
+        this.dbService.getLiveConsoleInfo().catch(() => null),
       ]);
       this.liveProjects.set(projects);
       this.liveItems.set(items);
@@ -1902,7 +1911,11 @@ export class AppwriteDatabasesComponent implements OnInit {
     if (!name) return;
     this.liveLoading.set(true);
     try {
-      await this.dbService.createLiveProject(name, this.newProjDesc().trim() || undefined, this.newProjTeam());
+      await this.dbService.createLiveProject(
+        name,
+        this.newProjDesc().trim() || undefined,
+        this.newProjTeam(),
+      );
       this.newProjName.set('');
       this.newProjDesc.set('');
       this.liveActionStatus.set(`Created project "${name}" in team ${this.newProjTeam()}`);
@@ -1937,17 +1950,17 @@ export class AppwriteDatabasesComponent implements OnInit {
       // Attempt unauthorized modification of immutable createdBy & teamId fields
       await this.dbService.updateLiveProject(proj.$id || '', {
         createdBy: 'unauthorized_hacker_user',
-        teamId: 'infiltrated_team'
+        teamId: 'infiltrated_team',
       });
       this.immutabilityTestResult.set({
         success: false,
-        message: 'Security Alert: Backend failed to reject modification to immutable fields!'
+        message: 'Security Alert: Backend failed to reject modification to immutable fields!',
       });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Access denied';
       this.immutabilityTestResult.set({
         success: true,
-        message: `Ownership Immutability Enforced! Server rejected attempt: ${msg}`
+        message: `Ownership Immutability Enforced! Server rejected attempt: ${msg}`,
       });
       this.playChime(640, 0.15, 'triangle');
     } finally {
@@ -1999,7 +2012,9 @@ export class AppwriteDatabasesComponent implements OnInit {
       const res = await this.dbService.uploadLiveFile(base64, fileName, 'text/plain');
       this.uploadedFileId.set(res.fileId);
       this.storageFileIdInput.set(res.fileId);
-      this.liveActionStatus.set(`File uploaded successfully! Received File ID: "${res.fileId}" (Base64 stripped & InputFile generated)`);
+      this.liveActionStatus.set(
+        `File uploaded successfully! Received File ID: "${res.fileId}" (Base64 stripped & InputFile generated)`,
+      );
       this.playChime(820, 0.12, 'sine');
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Error uploading file';
@@ -2023,7 +2038,9 @@ export class AppwriteDatabasesComponent implements OnInit {
       } catch {
         this.downloadedContentPreview.set(atob(base64Content));
       }
-      this.liveActionStatus.set(`Fetched file "${fileId}" as Base64 Data URL payload (${dataUrl.length} chars)`);
+      this.liveActionStatus.set(
+        `Fetched file "${fileId}" as Base64 Data URL payload (${dataUrl.length} chars)`,
+      );
       this.playChime(660, 0.1, 'sine');
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Error downloading file';
@@ -2058,7 +2075,7 @@ export class AppwriteDatabasesComponent implements OnInit {
     try {
       const res = await this.dbService.backendApi.sendEmail(
         'Cluster Security Audit Alert',
-        'Multi-tenant database backup snapshot #941 verified on dedicated NVMe volume.'
+        'Multi-tenant database backup snapshot #941 verified on dedicated NVMe volume.',
       );
       this.liveActionStatus.set(`Email dispatched! Message ID: ${res?.message?.$id || 'msg_sent'}`);
       this.playChime(700, 0.1, 'sine');
@@ -2075,7 +2092,7 @@ export class AppwriteDatabasesComponent implements OnInit {
     try {
       const res = await this.dbService.backendApi.sendPush(
         'Database Mesh Synchronized',
-        'All read replicas synced across us-central edge region.'
+        'All read replicas synced across us-central edge region.',
       );
       this.liveActionStatus.set(`Push notification dispatched! ID: ${res?.message?.$id || 'msg_push'}`);
       this.playChime(850, 0.1, 'sine');

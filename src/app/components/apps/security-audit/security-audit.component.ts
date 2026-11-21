@@ -1,10 +1,10 @@
-import { Component, Input, inject, signal, computed } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
+import { Component, computed, Input, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { AuditCategory, AuditSeverity, UserRole } from '../../../models/webos.models';
 import { AuditService } from '../../../services/audit.service';
 import { AuthRbacService } from '../../../services/auth-rbac.service';
 import { NotificationService } from '../../../services/notification.service';
-import { AuditCategory, AuditSeverity, UserRole } from '../../../models/webos.models';
 
 @Component({
   selector: 'app-security-audit',
@@ -337,7 +337,7 @@ import { AuditCategory, AuditSeverity, UserRole } from '../../../models/webos.mo
         </div>
       }
     </div>
-  `
+  `,
 })
 export class SecurityAuditComponent {
   @Input({ required: true }) pid!: string;
@@ -355,42 +355,77 @@ export class SecurityAuditComponent {
   protected supportedRoles: UserRole[] = ['administrator', 'content_creator', 'general_user'];
 
   protected permissionChecklist = [
-    { token: 'audit:read', desc: 'Inspect system and security audit trail records', creator: false, user: false },
+    {
+      token: 'audit:read',
+      desc: 'Inspect system and security audit trail records',
+      creator: false,
+      user: false,
+    },
     { token: 'audit:export', desc: 'Export audit logs to CSV and JSON formats', creator: false, user: false },
     { token: 'audit:manage', desc: 'Purge or archive security audit ledger', creator: false, user: false },
-    { token: 'gateway:manage', desc: 'Reconfigure edge gateway routing & authentication token validation', creator: false, user: false },
+    {
+      token: 'gateway:manage',
+      desc: 'Reconfigure edge gateway routing & authentication token validation',
+      creator: false,
+      user: false,
+    },
     { token: 'gateway:query', desc: 'Execute direct edge database queries', creator: false, user: false },
     { token: 'wopi:read', desc: 'Read enterprise office documents', creator: true, user: true },
     { token: 'wopi:edit', desc: 'Author content and stream PutFile saves', creator: true, user: false },
     { token: 'wopi:lock', desc: 'Acquire and release exclusive X-WOPI-Lock', creator: true, user: false },
-    { token: 'agentfs:read', desc: 'Inspect virtual filesystem inodes and dentries', creator: true, user: true },
-    { token: 'agentfs:write', desc: 'Modify VFS file payloads and execute tools', creator: true, user: false },
-    { token: 'agentfs:snapshot', desc: 'Create isolated Copy-on-Write snapshots', creator: true, user: false },
+    {
+      token: 'agentfs:read',
+      desc: 'Inspect virtual filesystem inodes and dentries',
+      creator: true,
+      user: true,
+    },
+    {
+      token: 'agentfs:write',
+      desc: 'Modify VFS file payloads and execute tools',
+      creator: true,
+      user: false,
+    },
+    {
+      token: 'agentfs:snapshot',
+      desc: 'Create isolated Copy-on-Write snapshots',
+      creator: true,
+      user: false,
+    },
     { token: 'process:spawn', desc: 'Launch applications into workspace windows', creator: true, user: true },
     { token: 'process:kill', desc: 'Terminate application processes by PID', creator: false, user: false },
-    { token: 'settings:manage', desc: 'Configure syncopated UI and security cadence', creator: false, user: false },
-    { token: 'rbac:manage', desc: 'Inspect and enforce enterprise access control policies', creator: false, user: false },
+    {
+      token: 'settings:manage',
+      desc: 'Configure syncopated UI and security cadence',
+      creator: false,
+      user: false,
+    },
+    {
+      token: 'rbac:manage',
+      desc: 'Inspect and enforce enterprise access control policies',
+      creator: false,
+      user: false,
+    },
   ];
 
   protected filteredLogs = computed(() => {
     let logs = this.auditService.allLogs();
 
     if (this.selectedSeverity !== 'ALL') {
-      logs = logs.filter(l => l.severity === this.selectedSeverity);
+      logs = logs.filter((l) => l.severity === this.selectedSeverity);
     }
 
     if (this.selectedCategory !== 'ALL') {
-      logs = logs.filter(l => l.category === this.selectedCategory);
+      logs = logs.filter((l) => l.category === this.selectedCategory);
     }
 
     if (this.searchQuery.trim()) {
       const q = this.searchQuery.toLowerCase();
       logs = logs.filter(
-        l =>
+        (l) =>
           l.action.toLowerCase().includes(q) ||
           l.details.toLowerCase().includes(q) ||
           l.userId.toLowerCase().includes(q) ||
-          (l.targetEntity && l.targetEntity.toLowerCase().includes(q))
+          (l.targetEntity && l.targetEntity.toLowerCase().includes(q)),
       );
     }
 

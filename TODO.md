@@ -38,5 +38,7 @@
 - [ ] Phase 2: Scaffold `/go/gateway/` reverse proxy and peel off `/api/*` endpoints
 - [ ] Phase 3: Decouple `/ts/apps/host` to pure Angular Native Federation Host
 - [ ] Phase 4: Root Evacuation & Lefthook Execution Scoping
-
-
+- [x] Initialize Git repository with GitLab Flow (`main`, `staging`, `production`) and Lefthook hooks (`pre-commit`, `commit-msg`, `pre-push`)
+- [x] Configure Bun-only GitLab CI/CD pipeline (`.gitlab-ci.yml`) with Biome quality gate, Go tests, and Docker staging deployment
+- [x] Implement 4-tier testing strategy (Biome + Bun Unit/Integration/E2E + Go tests, zero Playwright bloat)
+- [x] Launch plain-English Business Stakeholder UAT Portal (`/uat`), `/api/uat/*` endpoints, and `docs/uat-plan.md`

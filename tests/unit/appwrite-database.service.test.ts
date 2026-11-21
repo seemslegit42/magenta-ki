@@ -1,8 +1,8 @@
-import { describe, it, expect, beforeEach } from 'bun:test';
+import { beforeEach, describe, expect, it } from 'bun:test';
 import { AppwriteDatabaseService } from '../../src/app/services/appwrite-database.service';
 import { AuditService } from '../../src/app/services/audit.service';
-import { NotificationService } from '../../src/app/services/notification.service';
 import { AuthRbacService } from '../../src/app/services/auth-rbac.service';
+import { NotificationService } from '../../src/app/services/notification.service';
 
 describe('AppwriteDatabaseService', () => {
   let dbService: AppwriteDatabaseService;
@@ -31,7 +31,7 @@ describe('AppwriteDatabaseService', () => {
 
     const coreDb = dbService.getDatabase('db_enterprise_core');
     expect(coreDb).toBeDefined();
-    expect(coreDb?.tables.some(t => t.name === 'users')).toBe(true);
+    expect(coreDb?.tables.some((t) => t.name === 'users')).toBe(true);
   });
 
   it('should create a new shared database when user has database:create permission', () => {
@@ -45,8 +45,8 @@ describe('AppwriteDatabaseService', () => {
       description: 'Test database for federated services',
       initialTables: [
         { name: 'services', columnsCount: 4 },
-        { name: 'routes', columnsCount: 3 }
-      ]
+        { name: 'routes', columnsCount: 3 },
+      ],
     });
 
     expect(created.id).toBe('custom_microservices_db');
@@ -66,7 +66,7 @@ describe('AppwriteDatabaseService', () => {
     const created = dbService.createDatabase({
       name: 'High-Throughput Timeseries',
       infrastructure: 'dedicated',
-      description: 'Dedicated isolated DB'
+      description: 'Dedicated isolated DB',
     });
 
     expect(created.infrastructure).toBe('dedicated');
@@ -79,12 +79,12 @@ describe('AppwriteDatabaseService', () => {
     expect(() => {
       dbService.createDatabase({
         name: 'Forbidden DB',
-        infrastructure: 'shared'
+        infrastructure: 'shared',
       });
     }).toThrow('restricted for role');
 
     // Audit trail should record blocked event
-    const blockedLog = auditService.allLogs().find(l => l.action === 'APPWRITE_DB_CREATE_BLOCKED');
+    const blockedLog = auditService.allLogs().find((l) => l.action === 'APPWRITE_DB_CREATE_BLOCKED');
     expect(blockedLog).toBeDefined();
     expect(blockedLog?.status).toBe('blocked');
   });
@@ -95,7 +95,7 @@ describe('AppwriteDatabaseService', () => {
       projectId: 'verdigris-cloud-os',
       apiKey: 'test-secret-key-12345',
       databaseId: 'test_db_id',
-      name: 'Test Database Name'
+      name: 'Test Database Name',
     };
 
     // Node.js
@@ -146,7 +146,7 @@ describe('AppwriteDatabaseService', () => {
       projectId: 'verdigris-cloud-os',
       apiKey: 'sec_key_xyz',
       databaseId: 'simulated_mesh_db',
-      name: 'Simulated Mesh'
+      name: 'Simulated Mesh',
     };
 
     const res = await dbService.simulateSdkExecution('nodejs', config);
@@ -167,22 +167,22 @@ describe('AppwriteDatabaseService', () => {
       columns: [
         { key: 'key_id', type: 'string', required: true },
         { key: 'secret_hash', type: 'string', required: true },
-        { key: 'created_at', type: 'datetime', required: true }
-      ]
+        { key: 'created_at', type: 'datetime', required: true },
+      ],
     });
 
     expect(table.name).toBe('api_keys');
     expect(table.columnsCount).toBe(3);
 
     const db = dbService.getDatabase('db_enterprise_core');
-    expect(db?.tables.some(t => t.id === table.id)).toBe(true);
+    expect(db?.tables.some((t) => t.id === table.id)).toBe(true);
 
     // Delete table as administrator
     const deleted = dbService.deleteTable('db_enterprise_core', table.id);
     expect(deleted).toBe(true);
 
     const updatedDb = dbService.getDatabase('db_enterprise_core');
-    expect(updatedDb?.tables.some(t => t.id === table.id)).toBe(false);
+    expect(updatedDb?.tables.some((t) => t.id === table.id)).toBe(false);
   });
 
   it('should allow administrator to delete a database and purge all tables', () => {
@@ -193,7 +193,7 @@ describe('AppwriteDatabaseService', () => {
     const tempDb = dbService.createDatabase({
       id: 'db_to_delete',
       name: 'Temp Deletable DB',
-      infrastructure: 'shared'
+      infrastructure: 'shared',
     });
     expect(dbService.databaseCount()).toBe(initialCount + 1);
 
@@ -214,13 +214,13 @@ describe('AppwriteDatabaseService', () => {
   it('should insert records into a table and update row counts', () => {
     authService.switchRole('content_creator');
     const db = dbService.getDatabase('db_enterprise_core')!;
-    const initialRecords = db.tables.find(t => t.id === 'tbl_users')!.recordsCount;
+    const initialRecords = db.tables.find((t) => t.id === 'tbl_users')!.recordsCount;
 
     const inserted = dbService.insertRecord('db_enterprise_core', 'tbl_users', {
       user_id: 'usr_new_99',
       email: 'alex.vance@verdigris.cloud',
       role: 'content_creator',
-      status: 'active'
+      status: 'active',
     });
 
     expect(inserted.$id).toBeDefined();
@@ -228,9 +228,11 @@ describe('AppwriteDatabaseService', () => {
     expect(inserted['email']).toBe('alex.vance@verdigris.cloud');
 
     const updatedDb = dbService.getDatabase('db_enterprise_core')!;
-    const updatedUsersTable = updatedDb.tables.find(t => t.id === 'tbl_users')!;
+    const updatedUsersTable = updatedDb.tables.find((t) => t.id === 'tbl_users')!;
     expect(updatedUsersTable.recordsCount).toBe(initialRecords + 1);
-    expect(updatedUsersTable.sampleRecords?.some(r => r['email'] === 'alex.vance@verdigris.cloud')).toBe(true);
+    expect(updatedUsersTable.sampleRecords?.some((r) => r['email'] === 'alex.vance@verdigris.cloud')).toBe(
+      true,
+    );
 
     const auditEvent = auditService.allLogs()[0];
     expect(auditEvent.action).toBe('APPWRITE_RECORD_INSERTED');
@@ -241,7 +243,7 @@ describe('AppwriteDatabaseService', () => {
 
     expect(() => {
       dbService.insertRecord('db_enterprise_core', 'tbl_users', {
-        user_id: 'usr_unauthorized'
+        user_id: 'usr_unauthorized',
       });
     }).toThrow('restricted for role');
 

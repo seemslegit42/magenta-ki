@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Output, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, inject, Output, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProjectService } from '../../../services/project.service';
 
@@ -94,7 +94,7 @@ import { ProjectService } from '../../../services/project.service';
         </div>
       </form>
     </div>
-  `
+  `,
 })
 export class ProjectFormComponent {
   @Output() saved = new EventEmitter<void>();
@@ -109,7 +109,7 @@ export class ProjectFormComponent {
   protected readonly form = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(2)]],
     description: [''],
-    teamId: ['team_enterprise_alpha']
+    teamId: ['team_enterprise_alpha'],
   });
 
   public async onSubmit(): Promise<void> {
@@ -126,7 +126,7 @@ export class ProjectFormComponent {
       await this.projectService.createProject({
         name: val.name,
         description: val.description ? val.description : undefined,
-        teamId: val.teamId ? val.teamId : undefined
+        teamId: val.teamId ? val.teamId : undefined,
       });
       this.saved.emit();
     } catch (err: unknown) {

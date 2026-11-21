@@ -1,5 +1,5 @@
-import { Component, Input, OnInit, inject, signal, ViewChild, ViewContainerRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, Input, inject, OnInit, signal, ViewChild, ViewContainerRef } from '@angular/core';
 import { ProcessDescriptor, RemoteDefinition } from '../../../models/webos.models';
 import { NativeFederationService } from '../../../services/native-federation.service';
 
@@ -164,13 +164,13 @@ import { NativeFederationService } from '../../../services/native-federation.ser
         </div>
       </div>
     </div>
-  `
+  `,
 })
 export class RemoteContainerComponent implements OnInit {
   @Input({ required: true }) pid!: string;
   @Input() descriptor?: ProcessDescriptor;
 
-  @ViewChild('dynamicMountContainer', { read: ViewContainerRef }) 
+  @ViewChild('dynamicMountContainer', { read: ViewContainerRef })
   private dynamicMountContainer?: ViewContainerRef;
 
   protected readonly federationService = inject(NativeFederationService);
@@ -188,8 +188,8 @@ export class RemoteContainerComponent implements OnInit {
       this.remoteTitle.set(this.descriptor.title);
       const name = this.descriptor.appId.replace('remote-', '');
       this.remoteName.set(name);
-      
-      const found = this.federationService.remotes().find(r => r.name === name);
+
+      const found = this.federationService.remotes().find((r) => r.name === name);
       if (found) {
         this.remoteUrl.set(found.url);
         this.exposedModule.set(found.exposedModule);
@@ -216,7 +216,7 @@ export class RemoteContainerComponent implements OnInit {
       status: this.status(),
       description: 'Dynamic Remote',
       version: 'v1.0.0',
-      exposedModule: this.exposedModule()
+      exposedModule: this.exposedModule(),
     };
 
     const res = await this.federationService.probeRemote(remote);
@@ -228,6 +228,8 @@ export class RemoteContainerComponent implements OnInit {
   public simulateMount(): void {
     this.status.set('ONLINE');
     this.latencyMs.set(12);
-    this.federationService.addLog(`[Dynamic Mount] Simulated load of ${this.remoteName()} -> ${this.exposedModule()} into ViewContainer`);
+    this.federationService.addLog(
+      `[Dynamic Mount] Simulated load of ${this.remoteName()} -> ${this.exposedModule()} into ViewContainer`,
+    );
   }
 }

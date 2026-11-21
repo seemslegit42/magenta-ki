@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'bun:test';
+import { beforeEach, describe, expect, it } from 'bun:test';
 import { NotificationService } from '../../src/app/services/notification.service';
 
 describe('NotificationService', () => {
@@ -31,16 +31,16 @@ describe('NotificationService', () => {
 
     // Desktop toast should be added
     const toasts = service.toasts();
-    expect(toasts.some(t => t.id === notif.id)).toBe(true);
+    expect(toasts.some((t) => t.id === notif.id)).toBe(true);
   });
 
   it('should mark a notification as read and decrement unreadCount', () => {
-    const unread = service.allNotifications().find(n => !n.read)!;
+    const unread = service.allNotifications().find((n) => !n.read)!;
     const initialUnread = service.unreadCount();
 
     service.markAsRead(unread.id);
     expect(service.unreadCount()).toBe(initialUnread - 1);
-    expect(service.allNotifications().find(n => n.id === unread.id)!.read).toBe(true);
+    expect(service.allNotifications().find((n) => n.id === unread.id)!.read).toBe(true);
   });
 
   it('should mark all notifications as read', () => {
@@ -55,9 +55,9 @@ describe('NotificationService', () => {
       category: 'message',
     });
 
-    expect(service.toasts().some(t => t.id === notif.id)).toBe(true);
+    expect(service.toasts().some((t) => t.id === notif.id)).toBe(true);
     service.dismissToast(notif.id);
-    expect(service.toasts().some(t => t.id === notif.id)).toBe(false);
+    expect(service.toasts().some((t) => t.id === notif.id)).toBe(false);
   });
 
   it('should customize notification preferences and filter category alerts', () => {
@@ -81,7 +81,7 @@ describe('NotificationService', () => {
       category: 'message',
     });
 
-    expect(service.toasts().some(t => t.id === notif.id)).toBe(false);
-    expect(service.allNotifications().some(n => n.id === notif.id)).toBe(true);
+    expect(service.toasts().some((t) => t.id === notif.id)).toBe(false);
+    expect(service.allNotifications().some((n) => n.id === notif.id)).toBe(true);
   });
 });

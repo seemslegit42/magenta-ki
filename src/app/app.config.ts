@@ -1,13 +1,13 @@
 import {
   ApplicationConfig,
-  provideBrowserGlobalErrorListeners,
+  inject,
   provideAppInitializer,
+  provideBrowserGlobalErrorListeners,
 } from '@angular/core';
-import {provideRouter} from '@angular/router';
-import {inject} from '@angular/core';
+import { provideRouter } from '@angular/router';
 
-import {routes} from './app.routes';
-import {NativeFederationService} from './services/native-federation.service';
+import { routes } from './app.routes';
+import { NativeFederationService } from './services/native-federation.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [

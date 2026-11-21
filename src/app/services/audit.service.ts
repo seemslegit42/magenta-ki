@@ -1,5 +1,5 @@
-import { Injectable, signal, computed, inject } from '@angular/core';
-import { AuditLogEntry, AuditCategory, AuditSeverity } from '../models/webos.models';
+import { computed, Injectable, inject, signal } from '@angular/core';
+import { AuditCategory, AuditLogEntry, AuditSeverity } from '../models/webos.models';
 import { AuthRbacService } from './auth-rbac.service';
 
 @Injectable({ providedIn: 'root' })
@@ -92,8 +92,8 @@ export class AuditService {
 
   public readonly totalCount = computed(() => this.auditLogs().length);
 
-  public readonly securityAlertCount = computed(() =>
-    this.auditLogs().filter(l => l.severity === 'security' || l.severity === 'critical').length
+  public readonly securityAlertCount = computed(
+    () => this.auditLogs().filter((l) => l.severity === 'security' || l.severity === 'critical').length,
   );
 
   public logEvent(event: {
@@ -119,7 +119,7 @@ export class AuditService {
       ipAddress: '192.168.1.' + Math.floor(Math.random() * 100 + 10),
     };
 
-    this.auditLogs.update(logs => [entry, ...logs]);
+    this.auditLogs.update((logs) => [entry, ...logs]);
     return entry;
   }
 
@@ -128,8 +128,20 @@ export class AuditService {
   }
 
   public exportAuditLogsCsv(): string {
-    const headers = ['ID', 'Timestamp', 'User ID', 'Role', 'Action', 'Category', 'Severity', 'Target Entity', 'Status', 'Details', 'IP Address'];
-    const rows = this.auditLogs().map(l => [
+    const headers = [
+      'ID',
+      'Timestamp',
+      'User ID',
+      'Role',
+      'Action',
+      'Category',
+      'Severity',
+      'Target Entity',
+      'Status',
+      'Details',
+      'IP Address',
+    ];
+    const rows = this.auditLogs().map((l) => [
       l.id,
       new Date(l.timestamp).toISOString(),
       l.userId,
@@ -140,9 +152,9 @@ export class AuditService {
       `"${l.targetEntity || ''}"`,
       l.status,
       `"${l.details.replace(/"/g, '""')}"`,
-      l.ipAddress || ''
+      l.ipAddress || '',
     ]);
-    return [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    return [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
   }
 
   public clearLogs(): void {

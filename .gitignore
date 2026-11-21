@@ -42,6 +42,10 @@ testem.log
 /typings
 __screenshots__/
 
-# System files
+# System & Toolchain caches
 .DS_Store
 Thumbs.db
+.bun-cache/
+.go-cache/
+/bin/
+

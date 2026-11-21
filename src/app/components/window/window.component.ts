@@ -1,20 +1,21 @@
-import { Component, Input, computed, signal, inject } from '@angular/core';
-import { WindowBounds, ProcessDescriptor } from '../../models/webos.models';
+import { Component, computed, Input, inject, signal } from '@angular/core';
+import { ProcessDescriptor, WindowBounds } from '../../models/webos.models';
 import { WindowManagerService } from '../../services/window-manager.service';
 import { AgentFsExplorerComponent } from '../apps/agentfs-explorer/agentfs-explorer.component';
-import { AppStoreComponent } from '../apps/app-store/app-store.component';
-import { WopiOfficeComponent } from '../apps/wopi-office/wopi-office.component';
-import { GatewayConsoleComponent } from '../apps/gateway-console/gateway-console.component';
-import { TerminalComponent } from '../apps/terminal/terminal.component';
-import { SettingsComponent } from '../apps/settings/settings.component';
-import { SecurityAuditComponent } from '../apps/security-audit/security-audit.component';
-import { AppwriteDatabasesComponent } from '../apps/appwrite-databases/appwrite-databases.component';
-import { RemoteContainerComponent } from '../apps/remote-container/remote-container.component';
-import { AppLauncherComponent } from '../apps/app-launcher/app-launcher.component';
 import { AgenticValueFrameworkComponent } from '../apps/agentic-value-framework/agentic-value-framework.component';
+import { AppLauncherComponent } from '../apps/app-launcher/app-launcher.component';
+import { AppStoreComponent } from '../apps/app-store/app-store.component';
+import { AppwriteDatabasesComponent } from '../apps/appwrite-databases/appwrite-databases.component';
 import { ChatWindowComponent } from '../apps/chat-window/chat-window.component';
 import { CicdPipelineComponent } from '../apps/cicd-pipeline/cicd-pipeline.component';
+import { GatewayConsoleComponent } from '../apps/gateway-console/gateway-console.component';
 import { ProjectsManagerComponent } from '../apps/projects-manager/projects-manager.component';
+import { RemoteContainerComponent } from '../apps/remote-container/remote-container.component';
+import { SecurityAuditComponent } from '../apps/security-audit/security-audit.component';
+import { SettingsComponent } from '../apps/settings/settings.component';
+import { TerminalComponent } from '../apps/terminal/terminal.component';
+import { UatPortalComponent } from '../apps/uat-portal/uat-portal.component';
+import { WopiOfficeComponent } from '../apps/wopi-office/wopi-office.component';
 
 @Component({
   selector: 'app-window',
@@ -33,7 +34,8 @@ import { ProjectsManagerComponent } from '../apps/projects-manager/projects-mana
     AgenticValueFrameworkComponent,
     ChatWindowComponent,
     CicdPipelineComponent,
-    ProjectsManagerComponent
+    ProjectsManagerComponent,
+    UatPortalComponent,
   ],
   template: `
     <div
@@ -168,6 +170,9 @@ import { ProjectsManagerComponent } from '../apps/projects-manager/projects-mana
           @case ('ProjectsManagerComponent') {
             <app-projects-manager [pid]="descriptor.pid" />
           }
+          @case ('UatPortalComponent') {
+            <app-uat-portal [pid]="descriptor.pid" />
+          }
           @case ('RemoteContainerComponent') {
             <app-remote-container [pid]="descriptor.pid" [descriptor]="descriptor" />
           }
@@ -241,7 +246,7 @@ import { ProjectsManagerComponent } from '../apps/projects-manager/projects-mana
         </div>
       }
     </div>
-  `
+  `,
 })
 export class WindowComponent {
   @Input({ required: true }) descriptor!: ProcessDescriptor;
@@ -268,7 +273,7 @@ export class WindowComponent {
     }
     if (this.pullDistance() > 0) {
       const pull = this.pullDistance();
-      const scale = Math.max(0.88, 1 - (pull / 1200));
+      const scale = Math.max(0.88, 1 - pull / 1200);
       return `translate3d(0, ${pull}px, 0) scale(${scale})`;
     }
     if (this.bounds.isMaximized) {
@@ -280,7 +285,7 @@ export class WindowComponent {
   public windowOpacity = computed(() => {
     if (this.isDismissing()) return 0;
     if (this.pullDistance() > 0) {
-      return Math.max(0.4, 1 - (this.pullDistance() / 500));
+      return Math.max(0.4, 1 - this.pullDistance() / 500);
     }
     return 1;
   });
@@ -315,7 +320,7 @@ export class WindowComponent {
 
   public startDrag(event: MouseEvent | TouchEvent): void {
     this.onFocus();
-    
+
     // Check for double-tap to toggle maximize
     const now = Date.now();
     if (now - this.lastTapTime < 320) {
@@ -327,7 +332,7 @@ export class WindowComponent {
     this.lastTapTime = now;
 
     const isTouch = 'touches' in event;
-    
+
     // Two-finger pinch gesture
     if (isTouch && event.touches.length === 2) {
       this.handlePinch(event);
@@ -371,7 +376,7 @@ export class WindowComponent {
         // Desktop window repositioning
         this.windowMgr.updateBounds(this.descriptor.pid, {
           x: Math.max(0, initialX + dx),
-          y: Math.max(40, initialY + dy)
+          y: Math.max(40, initialY + dy),
         });
       }
     };
@@ -479,7 +484,7 @@ export class WindowComponent {
     if (event.touches.length < 2) return;
     const initialDist = Math.hypot(
       event.touches[0].clientX - event.touches[1].clientX,
-      event.touches[0].clientY - event.touches[1].clientY
+      event.touches[0].clientY - event.touches[1].clientY,
     );
     const initialWidth = this.bounds.width;
     const initialHeight = this.bounds.height;
@@ -488,7 +493,7 @@ export class WindowComponent {
       if (e.touches.length < 2) return;
       const dist = Math.hypot(
         e.touches[0].clientX - e.touches[1].clientX,
-        e.touches[0].clientY - e.touches[1].clientY
+        e.touches[0].clientY - e.touches[1].clientY,
       );
       const ratio = dist / initialDist;
 
@@ -499,7 +504,7 @@ export class WindowComponent {
       } else if (!this.bounds.isMaximized) {
         this.windowMgr.updateBounds(this.descriptor.pid, {
           width: Math.max(260, Math.min(window.innerWidth, initialWidth * ratio)),
-          height: Math.max(200, Math.min(window.innerHeight - 80, initialHeight * ratio))
+          height: Math.max(200, Math.min(window.innerHeight - 80, initialHeight * ratio)),
         });
       }
     };
@@ -529,8 +534,10 @@ export class WindowComponent {
       const dx = cx - startX;
       const dy = cy - startY;
       const updates: Partial<WindowBounds> = {};
-      if (direction === 'right' || direction === 'bottom-right') updates.width = Math.max(260, initialWidth + dx);
-      if (direction === 'bottom' || direction === 'bottom-right') updates.height = Math.max(180, initialHeight + dy);
+      if (direction === 'right' || direction === 'bottom-right')
+        updates.width = Math.max(260, initialWidth + dx);
+      if (direction === 'bottom' || direction === 'bottom-right')
+        updates.height = Math.max(180, initialHeight + dy);
       this.windowMgr.updateBounds(this.descriptor.pid, updates);
     };
 
@@ -550,4 +557,3 @@ export class WindowComponent {
     }
   }
 }
-

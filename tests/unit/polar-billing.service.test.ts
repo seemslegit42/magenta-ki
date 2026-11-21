@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach } from 'bun:test';
+import { beforeEach, describe, expect, it } from 'bun:test';
+import { PolarBenefitType, PolarIngestEvent, PolarMeter } from '../../src/app/models/webos.models';
 import { PolarBillingService } from '../../src/app/services/polar-billing.service';
-import { PolarMeter, PolarIngestEvent, PolarBenefitType } from '../../src/app/models/webos.models';
 
 describe('PolarBillingService', () => {
   let service: PolarBillingService;
@@ -27,15 +27,15 @@ describe('PolarBillingService', () => {
       unit: 'token',
       filter: {
         conjunction: 'and',
-        clauses: [{ property: 'name', operator: 'eq', value: 'ai_usage' }]
+        clauses: [{ property: 'name', operator: 'eq', value: 'ai_usage' }],
       },
-      aggregation: { func: 'sum', property: 'total_tokens' }
+      aggregation: { func: 'sum', property: 'total_tokens' },
     });
 
     expect(newMeter.id).toContain('mtr_');
     expect(newMeter.name).toBe('ai_tokens_meter');
     expect(newMeter.unit).toBe('token');
-    expect(service.meters().some(m => m.id === newMeter.id)).toBe(true);
+    expect(service.meters().some((m) => m.id === newMeter.id)).toBe(true);
   });
 
   it('should ingest usage events and automatically compute aggregated meter quantities', () => {
@@ -48,8 +48,8 @@ describe('PolarBillingService', () => {
           total_tokens: 1200,
           prompt_tokens: 800,
           completion_tokens: 400,
-          _cost: { amount: 2.4, currency: 'usd' }
-        }
+          _cost: { amount: 2.4, currency: 'usd' },
+        },
       },
       {
         name: 'ai_usage',
@@ -59,9 +59,9 @@ describe('PolarBillingService', () => {
           total_tokens: 800,
           prompt_tokens: 500,
           completion_tokens: 300,
-          _cost: { amount: 1.6, currency: 'usd' }
-        }
-      }
+          _cost: { amount: 1.6, currency: 'usd' },
+        },
+      },
     ];
 
     const result = service.ingestEvents(events);
@@ -69,7 +69,7 @@ describe('PolarBillingService', () => {
     expect(result.status).toBe('success');
 
     const customerState = service.getCustomerState('usr_operator_7842');
-    const aiMeter = customerState.meters.find(m => m.meterName === 'AI LLM Inference Tokens');
+    const aiMeter = customerState.meters.find((m) => m.meterName === 'AI LLM Inference Tokens');
     expect(aiMeter).toBeDefined();
     expect(aiMeter!.consumedUnits).toBeGreaterThanOrEqual(2000);
   });
@@ -83,9 +83,9 @@ describe('PolarBillingService', () => {
         external_customer_id: 'usr_operator_7842',
         metadata: {
           duration_ms: 450,
-          _cost: { amount: 15.5, currency: 'usd' }
-        }
-      }
+          _cost: { amount: 15.5, currency: 'usd' },
+        },
+      },
     ]);
 
     expect(service.totalTrackedCostCents()).toBe(initialCost + 15.5);
@@ -96,7 +96,7 @@ describe('PolarBillingService', () => {
       products: ['prod_core_kernel'],
       externalCustomerId: 'usr_operator_7842',
       customerEmail: 'operator@verdigris.cloud',
-      successUrl: 'https://verdigris.cloud/success?checkout_id={CHECKOUT_ID}'
+      successUrl: 'https://verdigris.cloud/success?checkout_id={CHECKOUT_ID}',
     });
 
     expect(checkout.checkoutId).toContain('chk_');
@@ -123,8 +123,8 @@ describe('PolarBillingService', () => {
         customer_id: 'cus_verdigris_operator',
         external_customer_id: 'usr_operator_7842',
         net_amount: 4900,
-        currency: 'usd'
-      }
+        currency: 'usd',
+      },
     };
 
     const handled = service.processWebhookEvent(webhookPayload, 'sig_valid_test_payload');

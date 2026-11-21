@@ -19,8 +19,10 @@ export class ProjectService {
     this.lastError.set(null);
     try {
       const targetTeam = teamId !== undefined ? teamId : this.activeTeamFilter();
-      const url = targetTeam ? `${this.baseUrl}/api/projects?teamId=${encodeURIComponent(targetTeam)}` : `${this.baseUrl}/api/projects`;
-      
+      const url = targetTeam
+        ? `${this.baseUrl}/api/projects?teamId=${encodeURIComponent(targetTeam)}`
+        : `${this.baseUrl}/api/projects`;
+
       const res = await fetch(url);
       if (!res.ok) {
         throw new Error(`Failed to fetch projects: ${res.statusText}`);
@@ -38,7 +40,11 @@ export class ProjectService {
     }
   }
 
-  public async createProject(payload: { name: string; description?: string; teamId?: string }): Promise<ProjectRecord> {
+  public async createProject(payload: {
+    name: string;
+    description?: string;
+    teamId?: string;
+  }): Promise<ProjectRecord> {
     this.isLoading.set(true);
     this.lastError.set(null);
     try {
@@ -57,9 +63,9 @@ export class ProjectService {
 
       const data = await res.json();
       const newProj = data.project;
-      
+
       // Update local signal state optimistically or refresh
-      this.projects.update(list => [newProj, ...list]);
+      this.projects.update((list) => [newProj, ...list]);
       return newProj;
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Unknown error creating project';
@@ -90,7 +96,7 @@ export class ProjectService {
       const data = await res.json();
       const updated = data.project;
 
-      this.projects.update(list => list.map(p => p.$id === id ? updated : p));
+      this.projects.update((list) => list.map((p) => (p.$id === id ? updated : p)));
       return updated;
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Unknown error updating project';
@@ -113,7 +119,7 @@ export class ProjectService {
         throw new Error(`Failed to delete project: ${res.statusText}`);
       }
 
-      this.projects.update(list => list.filter(p => p.$id !== id));
+      this.projects.update((list) => list.filter((p) => p.$id !== id));
       return true;
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Unknown error deleting project';

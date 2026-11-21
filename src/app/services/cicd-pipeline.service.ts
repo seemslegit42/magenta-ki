@@ -1,5 +1,11 @@
-import { Injectable, signal, computed, inject } from '@angular/core';
-import { PipelineRun, PipelineStatus, StagingTargetStatus, PipelineStep, PipelineStepName } from '../models/cicd.models';
+import { computed, Injectable, inject, signal } from '@angular/core';
+import {
+  PipelineRun,
+  PipelineStatus,
+  PipelineStep,
+  PipelineStepName,
+  StagingTargetStatus,
+} from '../models/cicd.models';
 import { AuditService } from './audit.service';
 import { NotificationService } from './notification.service';
 
@@ -13,25 +19,25 @@ export class CicdPipelineService {
   public readonly activeRunId = signal<string | null>(null);
 
   public readonly stagingTarget = signal<StagingTargetStatus>({
-    targetName: 'WebOS Staging Target (Cluster Alpha)',
+    targetName: 'WebOS Staging Target (GitLab Runner)',
     url: 'https://staging.verdigris-webos.internal',
     environment: 'staging',
     status: 'online',
-    activeVersion: 'v2.4.0',
-    activeCommitSha: 'a8f92d4',
-    lastDeployedAt: Date.now() - 3600000 * 2.5,
+    activeVersion: 'v2.5.0',
+    activeCommitSha: 'b9d41e2',
+    lastDeployedAt: Date.now() - 1800000,
     healthCheckStatus: 'passing',
-    latencyMs: 14,
-    containerId: 'webos-staging-ssr-01',
-    memoryUsageMb: 142,
-    cpuPercent: 3.2,
-    replicas: 2
+    latencyMs: 12,
+    containerId: 'webos-staging-ssr',
+    memoryUsageMb: 128,
+    cpuPercent: 2.8,
+    replicas: 2,
   });
 
   public readonly activeRun = computed(() => {
     const id = this.activeRunId();
     if (!id) return this.pipelineRuns()[0] || null;
-    return this.pipelineRuns().find(r => r.id === id) || null;
+    return this.pipelineRuns().find((r) => r.id === id) || null;
   });
 
   public readonly latestRun = computed(() => {
@@ -39,8 +45,12 @@ export class CicdPipelineService {
   });
 
   public readonly totalRuns = computed(() => this.pipelineRuns().length);
-  public readonly successfulRuns = computed(() => this.pipelineRuns().filter(r => r.status === 'success').length);
-  public readonly failedRuns = computed(() => this.pipelineRuns().filter(r => r.status === 'failed').length);
+  public readonly successfulRuns = computed(
+    () => this.pipelineRuns().filter((r) => r.status === 'success').length,
+  );
+  public readonly failedRuns = computed(
+    () => this.pipelineRuns().filter((r) => r.status === 'failed').length,
+  );
   public readonly passRatePercent = computed(() => {
     const total = this.totalRuns();
     if (total === 0) return 100;
@@ -71,119 +81,202 @@ export class CicdPipelineService {
     this.notificationService = notif;
   }
 
+  public async syncWithServer(): Promise<void> {
+    if (typeof fetch === 'undefined' || typeof window === 'undefined') return;
+    try {
+      const res = await fetch('/api/cicd/runs');
+      if (!res.ok) return;
+      const data = (await res.json()) as {
+        runs?: PipelineRun[];
+        staging?: {
+          activeVersion?: string;
+          activeCommitSha?: string;
+          lastDeployedAt?: number;
+          status?: StagingTargetStatus['status'];
+          healthCheckStatus?: StagingTargetStatus['healthCheckStatus'];
+        };
+      };
+      if (Array.isArray(data.runs) && data.runs.length > 0) {
+        this.pipelineRuns.set(data.runs);
+        if (!this.activeRunId()) {
+          this.activeRunId.set(data.runs[0].id);
+        }
+      }
+      if (data.staging) {
+        this.stagingTarget.update((curr) => ({
+          ...curr,
+          activeVersion: data.staging?.activeVersion ?? curr.activeVersion,
+          activeCommitSha: data.staging?.activeCommitSha ?? curr.activeCommitSha,
+          lastDeployedAt: data.staging?.lastDeployedAt ?? curr.lastDeployedAt,
+          status: data.staging?.status ?? curr.status,
+          healthCheckStatus: data.staging?.healthCheckStatus ?? curr.healthCheckStatus,
+        }));
+      }
+    } catch {
+      // Keep local state if API unavailable
+    }
+  }
+
   private seedInitialRuns(): void {
     const defaultRuns: PipelineRun[] = [
       {
-        id: 'run-10492',
-        commitSha: 'a8f92d4',
-        commitMessage: 'feat(cicd): configure automated build, test & staging target pipeline',
+        id: 'gl-pipe-20418',
+        commitSha: 'b9d41e2',
+        commitMessage: 'ci(gitlab): bun-only pipeline, biome quality gate & uat portal',
         author: 'bmanmarlow@gmail.com',
-        branch: 'main',
-        triggerEvent: 'push',
+        branch: 'staging',
+        triggerEvent: 'gitlab_push',
         status: 'success',
-        startedAt: Date.now() - 3600000 * 2.5,
-        completedAt: Date.now() - 3600000 * 2.45,
-        durationMs: 42800,
+        startedAt: Date.now() - 1900000,
+        completedAt: Date.now() - 1860000,
+        durationMs: 38400,
         stagingDeployedUrl: 'https://staging.verdigris-webos.internal',
         steps: [
           {
-            name: 'checkout',
-            label: 'Checkout Repository',
+            name: 'quality_biome',
+            label: 'Biome Lint & Format Gate',
             status: 'success',
-            durationMs: 1200,
-            command: 'actions/checkout@v4',
-            logs: ['fetching origin main...', 'HEAD is now at a8f92d4']
+            durationMs: 1100,
+            command: 'bunx biome ci .',
+            logs: ['Checked workspace files cleanly. 0 errors.'],
           },
           {
-            name: 'install',
-            label: 'Install Dependencies',
+            name: 'typecheck',
+            label: 'TypeScript Strict Check',
             status: 'success',
-            durationMs: 4500,
-            command: 'bun install --frozen-lockfile',
-            logs: ['bun install v1.2.0', 'Saved 1482 packages in 4.2s']
-          },
-          {
-            name: 'lint',
-            label: 'ESLint & Angular Linter',
-            status: 'success',
-            durationMs: 3800,
-            command: 'npm run lint',
-            logs: ['> ng lint', 'Linting "app"... All files pass linting.']
+            durationMs: 2800,
+            command: 'bunx tsc --noEmit',
+            logs: ['0 strict compiler diagnostics.'],
           },
           {
             name: 'test_unit',
-            label: 'Unit Test Suite (Vitest)',
+            label: 'Unit Suite (Bun + Go)',
             status: 'success',
-            durationMs: 4700,
-            command: 'npm run test:unit',
-            logs: ['RUN v4.1.11 /app/applet', '✓ 3 test files passed (14 tests)', 'Duration: 4.72s']
+            durationMs: 2400,
+            command: 'bun test tests/unit && go test ./...',
+            logs: ['Bun unit test specs passed; Go handler & auth tests passed.'],
+          },
+          {
+            name: 'test_integration',
+            label: 'HTTP Integration Suite',
+            status: 'success',
+            durationMs: 3100,
+            command: 'bun test tests/integration',
+            logs: ['REST contract & validation assertions passed.'],
           },
           {
             name: 'test_e2e',
-            label: 'E2E Test Suite (Bun Test)',
+            label: 'Workflow E2E Suite (Bun)',
             status: 'success',
-            durationMs: 8200,
-            command: 'npm run test:e2e',
-            logs: ['bun test tests/e2e', '✓ 7 test specs passed (38 assertions)']
+            durationMs: 4900,
+            command: 'bun test tests/e2e',
+            logs: ['All end-to-end user & system journeys passed without Playwright bloat.'],
           },
           {
-            name: 'build_angular',
-            label: 'Build Angular WebOS (ApplicationBuilder)',
+            name: 'build_webos',
+            label: 'Angular SSR Production Build',
             status: 'success',
-            durationMs: 11200,
-            command: 'npm run build',
-            logs: ['Building Angular bundle for production...', 'Output created in dist/app']
+            durationMs: 12100,
+            command: 'bun run build',
+            logs: ['Output generated in dist/app.'],
           },
           {
             name: 'build_go',
-            label: 'Build Go Microservice Gateway',
+            label: 'Go Gateway Binary Build',
             status: 'success',
-            durationMs: 3100,
-            command: 'go build -o bin/gateway-server ./cmd/server/main.go',
-            logs: ['Compiling Go main.go...', 'Binary output: bin/gateway-server (12.4 MB)']
-          },
-          {
-            name: 'docker_build',
-            label: 'Docker Staging Image Build',
-            status: 'success',
-            durationMs: 4100,
-            command: 'docker build -t verdigris-webos:staging .',
-            logs: ['Step 1/20: FROM oven/bun:latest', 'Successfully tagged verdigris-webos:staging']
+            durationMs: 3400,
+            command: 'cd go && go build -o ../bin/gateway-server ./cmd/server/main.go',
+            logs: ['Compiled static Go microservice gateway binary.'],
           },
           {
             name: 'deploy_staging',
-            label: 'Staging Target Deployment',
+            label: 'Docker Staging Deployment',
             status: 'success',
-            durationMs: 2000,
-            command: 'docker compose -f docker-compose.staging.yml up -d',
-            logs: ['Deploying to staging environment...', 'Healthcheck probe: HTTP 200 OK at /api/cicd/staging-health']
-          }
-        ]
+            durationMs: 8600,
+            command: 'docker compose -f docker-compose.staging.yml up -d --build',
+            logs: ['Health probe HTTP 200 OK at /api/cicd/staging-health.'],
+          },
+        ],
       },
       {
-        id: 'run-10491',
-        commitSha: 'f32c91a',
-        commitMessage: 'fix(core): optimize zoneless signals reactivity & window manager bounds',
+        id: 'gl-pipe-20417',
+        commitSha: 'a8f92d4',
+        commitMessage: 'feat(git): enforce gitlab flow & lefthook conventional commits',
         author: 'bmanmarlow@gmail.com',
-        branch: 'develop',
-        triggerEvent: 'push',
+        branch: 'main',
+        triggerEvent: 'merge_request',
         status: 'success',
-        startedAt: Date.now() - 3600000 * 5.2,
-        completedAt: Date.now() - 3600000 * 5.15,
-        durationMs: 39500,
+        startedAt: Date.now() - 3600000 * 3,
+        completedAt: Date.now() - 3600000 * 2.95,
+        durationMs: 35200,
         stagingDeployedUrl: 'https://staging.verdigris-webos.internal',
         steps: [
-          { name: 'checkout', label: 'Checkout Repository', status: 'success', durationMs: 1100, command: 'actions/checkout@v4', logs: ['HEAD at f32c91a'] },
-          { name: 'install', label: 'Install Dependencies', status: 'success', durationMs: 4200, command: 'bun install', logs: ['Dependencies cached'] },
-          { name: 'lint', label: 'ESLint & Angular Linter', status: 'success', durationMs: 3600, command: 'npm run lint', logs: ['All clean'] },
-          { name: 'test_unit', label: 'Unit Test Suite (Vitest)', status: 'success', durationMs: 4500, command: 'npm run test:unit', logs: ['14 passed'] },
-          { name: 'test_e2e', label: 'E2E Test Suite (Bun Test)', status: 'success', durationMs: 8100, command: 'npm run test:e2e', logs: ['38 passed'] },
-          { name: 'build_angular', label: 'Build Angular WebOS', status: 'success', durationMs: 10800, command: 'npm run build', logs: ['Success'] },
-          { name: 'build_go', label: 'Build Go Microservice Gateway', status: 'success', durationMs: 3000, command: 'go build', logs: ['Success'] },
-          { name: 'docker_build', label: 'Docker Staging Image Build', status: 'success', durationMs: 4200, command: 'docker build', logs: ['Tagged'] },
-          { name: 'deploy_staging', label: 'Staging Target Deployment', status: 'success', durationMs: 1800, command: 'docker compose up', logs: ['Deployed to staging'] }
-        ]
-      }
+          {
+            name: 'quality_biome',
+            label: 'Biome Lint & Format Gate',
+            status: 'success',
+            durationMs: 1050,
+            command: 'bunx biome ci .',
+            logs: ['0 errors'],
+          },
+          {
+            name: 'typecheck',
+            label: 'TypeScript Strict Check',
+            status: 'success',
+            durationMs: 2600,
+            command: 'bunx tsc --noEmit',
+            logs: ['Clean'],
+          },
+          {
+            name: 'test_unit',
+            label: 'Unit Suite (Bun + Go)',
+            status: 'success',
+            durationMs: 2100,
+            command: 'bun test tests/unit',
+            logs: ['Passed'],
+          },
+          {
+            name: 'test_integration',
+            label: 'HTTP Integration Suite',
+            status: 'success',
+            durationMs: 2900,
+            command: 'bun test tests/integration',
+            logs: ['Passed'],
+          },
+          {
+            name: 'test_e2e',
+            label: 'Workflow E2E Suite (Bun)',
+            status: 'success',
+            durationMs: 4700,
+            command: 'bun test tests/e2e',
+            logs: ['Passed'],
+          },
+          {
+            name: 'build_webos',
+            label: 'Angular SSR Production Build',
+            status: 'success',
+            durationMs: 11200,
+            command: 'bun run build',
+            logs: ['Built dist/app'],
+          },
+          {
+            name: 'build_go',
+            label: 'Go Gateway Binary Build',
+            status: 'success',
+            durationMs: 3100,
+            command: 'go build',
+            logs: ['Compiled'],
+          },
+          {
+            name: 'deploy_staging',
+            label: 'Docker Staging Deployment',
+            status: 'success',
+            durationMs: 7550,
+            command: 'docker compose up -d',
+            logs: ['Healthy'],
+          },
+        ],
+      },
     ];
 
     this.pipelineRuns.set(defaultRuns);
@@ -192,25 +285,80 @@ export class CicdPipelineService {
 
   public triggerPipelineRun(
     branch = 'main',
-    commitMessage = 'manual: trigger automated build & test CI/CD pipeline run',
-    triggerEvent: PipelineRun['triggerEvent'] = 'workflow_dispatch'
+    commitMessage = 'ci(gitlab): trigger bun & biome verification pipeline',
+    triggerEvent: PipelineRun['triggerEvent'] = 'manual',
   ): string {
     if (this.isRunning()) return this.activeRunId() || '';
 
     const randomSha = Math.random().toString(16).substring(2, 9);
-    const runId = `run-${Math.floor(10000 + Math.random() * 90000)}`;
+    const runId = `gl-pipe-${Math.floor(20500 + Math.random() * 79000)}`;
     const startTime = Date.now();
 
     const initialSteps: PipelineStep[] = [
-      { name: 'checkout', label: 'Checkout Repository', status: 'queued', durationMs: 0, command: 'actions/checkout@v4', logs: [] },
-      { name: 'install', label: 'Install Dependencies', status: 'queued', durationMs: 0, command: 'bun install --frozen-lockfile', logs: [] },
-      { name: 'lint', label: 'ESLint & Angular Linter', status: 'queued', durationMs: 0, command: 'npm run lint', logs: [] },
-      { name: 'test_unit', label: 'Unit Test Suite (Vitest)', status: 'queued', durationMs: 0, command: 'npm run test:unit', logs: [] },
-      { name: 'test_e2e', label: 'E2E Test Suite (Bun Test)', status: 'queued', durationMs: 0, command: 'npm run test:e2e', logs: [] },
-      { name: 'build_angular', label: 'Build Angular WebOS', status: 'queued', durationMs: 0, command: 'npm run build', logs: [] },
-      { name: 'build_go', label: 'Build Go Microservice Gateway', status: 'queued', durationMs: 0, command: 'go build ./go/cmd/server/main.go', logs: [] },
-      { name: 'docker_build', label: 'Docker Staging Image Build', status: 'queued', durationMs: 0, command: 'docker build -t verdigris-webos:staging .', logs: [] },
-      { name: 'deploy_staging', label: 'Staging Target Deployment', status: 'queued', durationMs: 0, command: 'docker compose -f docker-compose.staging.yml up -d', logs: [] }
+      {
+        name: 'quality_biome',
+        label: 'Biome Lint & Format Gate',
+        status: 'queued',
+        durationMs: 0,
+        command: 'bunx biome ci .',
+        logs: [],
+      },
+      {
+        name: 'typecheck',
+        label: 'TypeScript Strict Check',
+        status: 'queued',
+        durationMs: 0,
+        command: 'bunx tsc --noEmit',
+        logs: [],
+      },
+      {
+        name: 'test_unit',
+        label: 'Unit Suite (Bun + Go)',
+        status: 'queued',
+        durationMs: 0,
+        command: 'bun test tests/unit && go test ./...',
+        logs: [],
+      },
+      {
+        name: 'test_integration',
+        label: 'HTTP Integration Suite',
+        status: 'queued',
+        durationMs: 0,
+        command: 'bun test tests/integration',
+        logs: [],
+      },
+      {
+        name: 'test_e2e',
+        label: 'Workflow E2E Suite (Bun)',
+        status: 'queued',
+        durationMs: 0,
+        command: 'bun test tests/e2e',
+        logs: [],
+      },
+      {
+        name: 'build_webos',
+        label: 'Angular SSR Production Build',
+        status: 'queued',
+        durationMs: 0,
+        command: 'bun run build',
+        logs: [],
+      },
+      {
+        name: 'build_go',
+        label: 'Go Gateway Binary Build',
+        status: 'queued',
+        durationMs: 0,
+        command: 'cd go && go build -o ../bin/gateway-server ./cmd/server/main.go',
+        logs: [],
+      },
+      {
+        name: 'deploy_staging',
+        label: 'Docker Staging Deployment',
+        status: 'queued',
+        durationMs: 0,
+        command: 'docker compose -f docker-compose.staging.yml up -d --build',
+        logs: [],
+      },
     ];
 
     const newRun: PipelineRun = {
@@ -223,65 +371,68 @@ export class CicdPipelineService {
       status: 'running',
       startedAt: startTime,
       durationMs: 0,
-      steps: initialSteps
+      steps: initialSteps,
     };
 
-    this.pipelineRuns.update(prev => [newRun, ...prev]);
+    this.pipelineRuns.update((prev) => [newRun, ...prev]);
     this.activeRunId.set(runId);
     this.isRunning.set(true);
 
     this.auditService.logEvent({
-      action: 'CICD_PIPELINE_TRIGGERED',
+      action: 'GITLAB_PIPELINE_TRIGGERED',
       category: 'system',
       severity: 'info',
       targetEntity: `pipeline:${runId}`,
-      details: `CI/CD Pipeline Triggered (${runId}) on branch [${branch}] - SHA: ${randomSha}`
+      details: `GitLab CI Pipeline (${runId}) triggered on branch [${branch}] - SHA: ${randomSha}`,
     });
 
     this.notificationService.notify({
-      title: `CI/CD Pipeline Started: ${runId}`,
+      title: `GitLab Pipeline Started: ${runId}`,
       message: `Triggered by ${triggerEvent} on ${branch} (${randomSha})`,
       category: 'task',
-      priority: 'normal'
+      priority: 'normal',
     });
 
-    // Execute steps sequentially
+    if (typeof fetch !== 'undefined' && typeof window !== 'undefined') {
+      void fetch('/api/cicd/runs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ branch, commitMessage, triggerEvent }),
+      }).catch(() => undefined);
+    }
+
     this.executeStepSequence(runId, 0, startTime);
     return runId;
   }
 
   private executeStepSequence(runId: string, stepIndex: number, startTime: number): void {
-    const run = this.pipelineRuns().find(r => r.id === runId);
+    const run = this.pipelineRuns().find((r) => r.id === runId);
     if (!run || stepIndex >= run.steps.length) {
-      // All steps completed successfully
       this.finishRun(runId, 'success', startTime);
       return;
     }
 
-    // Set step to running
     const step = run.steps[stepIndex];
     this.updateStep(runId, step.name, {
       status: 'running',
-      logs: [`[${new Date().toISOString()}] Executing step: ${step.label}`, `$ ${step.command}`]
+      logs: [`[${new Date().toISOString()}] Executing: ${step.label}`, `$ ${step.command}`],
     });
 
-    const stepDuration = 800 + Math.floor(Math.random() * 1200);
+    const stepDuration = 500 + Math.floor(Math.random() * 600);
 
     setTimeout(() => {
-      // Step success log
       const logs = [
-        `[${new Date().toISOString()}] Executing step: ${step.label}`,
+        `[${new Date().toISOString()}] Executing: ${step.label}`,
         `$ ${step.command}`,
-        `Step completed cleanly in ${(stepDuration / 1000).toFixed(2)}s. Status 0 (SUCCESS)`
+        `Completed in ${(stepDuration / 1000).toFixed(2)}s (exit code 0)`,
       ];
 
       this.updateStep(runId, step.name, {
         status: 'success',
         durationMs: stepDuration,
-        logs
+        logs,
       });
 
-      // Proceed to next step
       this.executeStepSequence(runId, stepIndex + 1, startTime);
     }, stepDuration);
   }
@@ -290,31 +441,31 @@ export class CicdPipelineService {
     const totalDuration = Date.now() - startTime;
     const deployedUrl = 'https://staging.verdigris-webos.internal';
 
-    this.pipelineRuns.update(prev => prev.map(r => {
-      if (r.id === runId) {
-        return {
-          ...r,
-          status: finalStatus,
-          completedAt: Date.now(),
-          durationMs: totalDuration,
-          stagingDeployedUrl: deployedUrl
-        };
-      }
-      return r;
-    }));
+    this.pipelineRuns.update((prev) =>
+      prev.map((r) =>
+        r.id === runId
+          ? {
+              ...r,
+              status: finalStatus,
+              completedAt: Date.now(),
+              durationMs: totalDuration,
+              stagingDeployedUrl: deployedUrl,
+            }
+          : r,
+      ),
+    );
 
     this.isRunning.set(false);
 
-    // Update Staging Target Status
-    const targetRun = this.pipelineRuns().find(r => r.id === runId);
+    const targetRun = this.pipelineRuns().find((r) => r.id === runId);
     if (targetRun && finalStatus === 'success') {
-      this.stagingTarget.update(curr => ({
+      this.stagingTarget.update((curr) => ({
         ...curr,
         status: 'online',
         activeCommitSha: targetRun.commitSha,
         lastDeployedAt: Date.now(),
         healthCheckStatus: 'passing',
-        latencyMs: 12 + Math.floor(Math.random() * 8)
+        latencyMs: 11 + Math.floor(Math.random() * 6),
       }));
 
       this.auditService.logEvent({
@@ -322,28 +473,29 @@ export class CicdPipelineService {
         category: 'system',
         severity: 'info',
         targetEntity: 'staging:target',
-        details: `Staging Deployment Succeeded - SHA ${targetRun.commitSha} live at ${deployedUrl}`
+        details: `Staging Deployment Succeeded - SHA ${targetRun.commitSha} live at ${deployedUrl}`,
       });
 
       this.notificationService.notify({
         title: `Staging Deployed (${targetRun.commitSha})`,
-        message: `Automated CI/CD pipeline succeeded in ${(totalDuration / 1000).toFixed(1)}s!`,
+        message: `Bun + Biome GitLab CI pipeline completed in ${(totalDuration / 1000).toFixed(1)}s.`,
         category: 'update',
-        priority: 'high'
+        priority: 'high',
       });
     }
   }
 
   private updateStep(runId: string, stepName: PipelineStepName, updates: Partial<PipelineStep>): void {
-    this.pipelineRuns.update(prev => prev.map(r => {
-      if (r.id === runId) {
-        return {
-          ...r,
-          steps: r.steps.map(s => s.name === stepName ? { ...s, ...updates } : s)
-        };
-      }
-      return r;
-    }));
+    this.pipelineRuns.update((prev) =>
+      prev.map((r) =>
+        r.id === runId
+          ? {
+              ...r,
+              steps: r.steps.map((s) => (s.name === stepName ? { ...s, ...updates } : s)),
+            }
+          : r,
+      ),
+    );
   }
 
   public selectRun(runId: string): void {
@@ -351,34 +503,42 @@ export class CicdPipelineService {
   }
 
   public rollbackStaging(commitSha: string): void {
-    this.stagingTarget.update(curr => ({
+    this.stagingTarget.update((curr) => ({
       ...curr,
       status: 'deploying',
       activeCommitSha: commitSha,
-      lastDeployedAt: Date.now()
+      lastDeployedAt: Date.now(),
     }));
+
+    if (typeof fetch !== 'undefined' && typeof window !== 'undefined') {
+      void fetch('/api/cicd/rollback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ commitSha }),
+      }).catch(() => undefined);
+    }
 
     this.auditService.logEvent({
       action: 'STAGING_ROLLBACK_TRIGGERED',
       category: 'system',
       severity: 'warning',
       targetEntity: 'staging:target',
-      details: `Staging Rollback Triggered to commit SHA: ${commitSha}`
+      details: `Staging Rollback Triggered to commit SHA: ${commitSha}`,
     });
 
     setTimeout(() => {
-      this.stagingTarget.update(curr => ({
+      this.stagingTarget.update((curr) => ({
         ...curr,
         status: 'online',
-        healthCheckStatus: 'passing'
+        healthCheckStatus: 'passing',
       }));
 
       this.notificationService.notify({
-        title: `Staging Rollback Complete`,
-        message: `Staging deployment target rolled back to commit ${commitSha}.`,
+        title: 'Staging Rollback Complete',
+        message: `Staging environment restored to commit ${commitSha}.`,
         category: 'update',
-        priority: 'normal'
+        priority: 'normal',
       });
-    }, 1500);
+    }, 1200);
   }
 }

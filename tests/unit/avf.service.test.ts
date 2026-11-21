@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'bun:test';
+import { beforeEach, describe, expect, it } from 'bun:test';
 import { AvfService } from '../../src/app/services/avf.service';
 
 describe('AvfService (The Agentic Value Framework)', () => {
@@ -23,10 +23,10 @@ describe('AvfService (The Agentic Value Framework)', () => {
     expect(proj.length).toBe(5);
 
     // Verify exact Table 3 figures from the canonical blueprint
-    expect(proj[0].projectedRevenue).toBe(26250);   // Year 1
-    expect(proj[1].projectedRevenue).toBe(115763);  // Year 2
-    expect(proj[2].projectedRevenue).toBe(364659);  // Year 3
-    expect(proj[3].projectedRevenue).toBe(933968);  // Year 4
+    expect(proj[0].projectedRevenue).toBe(26250); // Year 1
+    expect(proj[1].projectedRevenue).toBe(115763); // Year 2
+    expect(proj[2].projectedRevenue).toBe(364659); // Year 3
+    expect(proj[3].projectedRevenue).toBe(933968); // Year 4
     expect(proj[4].projectedRevenue).toBe(2130511); // Year 5
 
     // Verify Intelligence Premium exists and grows
@@ -52,13 +52,13 @@ describe('AvfService (The Agentic Value Framework)', () => {
 
     // Engage kill switch
     service.toggleAgentKillSwitch(targetAgent.id);
-    const lockedAgent = service.agentRegistry().find(a => a.id === targetAgent.id);
+    const lockedAgent = service.agentRegistry().find((a) => a.id === targetAgent.id);
     expect(lockedAgent?.killSwitchEngaged).toBe(true);
     expect(lockedAgent?.status).toBe('locked');
 
     // Disengage kill switch
     service.toggleAgentKillSwitch(targetAgent.id);
-    const unlockedAgent = service.agentRegistry().find(a => a.id === targetAgent.id);
+    const unlockedAgent = service.agentRegistry().find((a) => a.id === targetAgent.id);
     expect(unlockedAgent?.killSwitchEngaged).toBe(false);
     expect(unlockedAgent?.status).toBe('active');
   });
@@ -73,7 +73,7 @@ describe('AvfService (The Agentic Value Framework)', () => {
       measurementUnit: 'Per Container Dispatched',
       verificationProof: 'Port Authority EDI 301 Invariant',
       compoundingRate: 19.5,
-      humanAlternativeCost: 800
+      humanAlternativeCost: 800,
     });
 
     const updated = service.uavDefinitions();

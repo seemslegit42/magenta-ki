@@ -1,6 +1,6 @@
-import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, inject } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { NativeFederationService } from '../../../services/native-federation.service';
 import { WindowManagerService } from '../../../services/window-manager.service';
@@ -114,7 +114,7 @@ import { WindowManagerService } from '../../../services/window-manager.service';
         }
       </div>
     </div>
-  `
+  `,
 })
 export class NativeFederationStudioComponent {
   readonly federationService = inject(NativeFederationService);
@@ -124,22 +124,22 @@ export class NativeFederationStudioComponent {
   readonly remoteForm: FormGroup = this.fb.group({
     remoteName: ['', Validators.required],
     remoteEntry: ['', [Validators.required, Validators.pattern(/^https?:\/\/.+/)]],
-    exposedModule: ['./Module', Validators.required]
+    exposedModule: ['./Module', Validators.required],
   });
 
   async onSubmit() {
     if (this.remoteForm.invalid) return;
     const val = this.remoteForm.value;
-    
+
     const health = await this.federationService.testRemoteHealth(val.remoteEntry);
-    
+
     this.federationService.registerRemote({
       remoteName: val.remoteName,
       remoteEntry: val.remoteEntry,
       exposedModule: val.exposedModule,
       status: health.status,
       latencyMs: health.latencyMs,
-      version: '1.0.0'
+      version: '1.0.0',
     });
 
     this.remoteForm.reset({ exposedModule: './Module' });
@@ -151,7 +151,7 @@ export class NativeFederationStudioComponent {
       `Remote: ${remote.remoteName}`,
       'extension',
       'RemoteContainerComponent',
-      'ai'
+      'ai',
     );
   }
 }

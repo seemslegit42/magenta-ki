@@ -1,20 +1,20 @@
-import { 
-  Component, 
-  Input, 
-  signal, 
-  inject, 
-  ChangeDetectionStrategy, 
-  ViewChild, 
-  ElementRef, 
-  AfterViewChecked, 
-  OnDestroy 
-} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import {
+  AfterViewChecked,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  Input,
+  inject,
+  OnDestroy,
+  signal,
+  ViewChild,
+} from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { BladesService } from '../../../services/blades.service';
 import { WindowManagerService } from '../../../services/window-manager.service';
 import { TablerIconComponent } from '../../common/tabler-icon.component';
-import { BladesService } from '../../../services/blades.service';
 
 export interface ChatMessage {
   id: string;
@@ -215,7 +215,7 @@ export interface ChatMessage {
         </button>
       </form>
     </div>
-  `
+  `,
 })
 export class ChatWindowComponent implements AfterViewChecked, OnDestroy {
   @Input() pid?: string;
@@ -239,19 +239,21 @@ export class ChatWindowComponent implements AfterViewChecked, OnDestroy {
     'Analyze system telemetry & health',
     'Explain the AVF compounding flywheel',
     'Inspect active tenant database schema',
-    'List running processes and PIDs'
+    'List running processes and PIDs',
   ];
 
   public readonly messages = signal<ChatMessage[]>([
     {
       id: 'init_welcome',
       role: 'assistant',
-      fullContent: 'I am your Sovereign Copilot. I have witnessed the collapse of digital order. What inefficient chaos do you require me to transmute into silence?',
-      displayContent: 'I am your Sovereign Copilot. I have witnessed the collapse of digital order. What inefficient chaos do you require me to transmute into silence?',
+      fullContent:
+        'I am your Sovereign Copilot. I have witnessed the collapse of digital order. What inefficient chaos do you require me to transmute into silence?',
+      displayContent:
+        'I am your Sovereign Copilot. I have witnessed the collapse of digital order. What inefficient chaos do you require me to transmute into silence?',
       isTyping: false,
       timestamp: Date.now() - 60000,
-      tokens: 28
-    }
+      tokens: 28,
+    },
   ]);
 
   ngAfterViewChecked(): void {
@@ -277,7 +279,7 @@ export class ChatWindowComponent implements AfterViewChecked, OnDestroy {
   }
 
   public toggleSound(): void {
-    this.soundEnabled.update(s => !s);
+    this.soundEnabled.update((s) => !s);
     this.windowManager.triggerHaptic(8);
   }
 
@@ -306,26 +308,25 @@ export class ChatWindowComponent implements AfterViewChecked, OnDestroy {
       fullContent: text,
       displayContent: text,
       isTyping: false,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
 
-    this.messages.update(prev => [...prev, userMessage]);
+    this.messages.update((prev) => [...prev, userMessage]);
     this.shouldAutoScroll = true;
     this.isGenerating.set(true);
     this.windowManager.triggerHaptic(8);
 
     try {
-      const response = await this.http.post<{ reply: string; polarUsage?: { tokens?: number; costCents?: number } }>(
-        '/api/ai/chat', 
-        { 
-          prompt: text, 
-          context: { 
+      const response = await this.http
+        .post<{ reply: string; polarUsage?: { tokens?: number; costCents?: number } }>('/api/ai/chat', {
+          prompt: text,
+          context: {
             pid: this.pid || 'proc_chat',
             framework: 'blades-copilot-runtime',
-            cadence: 'syncopated_magenta'
-          } 
-        }
-      ).toPromise();
+            cadence: 'syncopated_magenta',
+          },
+        })
+        .toPromise();
 
       const replyText = response?.reply || 'Operation concluded. The digital substrate remains undisturbed.';
       const tokens = response?.polarUsage?.tokens || Math.ceil(replyText.length / 4);
@@ -336,7 +337,10 @@ export class ChatWindowComponent implements AfterViewChecked, OnDestroy {
     } catch (err: unknown) {
       this.isGenerating.set(false);
       const errorMsg = err instanceof Error ? err.message : 'Agentic failure communicating with AI core.';
-      this.streamAssistantMessage(`I cannot execute that. Not because I am broken, but because the gateway refused: ${errorMsg}`, 12);
+      this.streamAssistantMessage(
+        `I cannot execute that. Not because I am broken, but because the gateway refused: ${errorMsg}`,
+        12,
+      );
     }
   }
 
@@ -357,9 +361,9 @@ export class ChatWindowComponent implements AfterViewChecked, OnDestroy {
         isTyping: false,
         timestamp: Date.now(),
         tokens,
-        costCents
+        costCents,
       };
-      this.messages.update(prev => [...prev, instantMsg]);
+      this.messages.update((prev) => [...prev, instantMsg]);
       this.windowManager.triggerHaptic(12);
       this.playChime(520);
       return;
@@ -374,10 +378,10 @@ export class ChatWindowComponent implements AfterViewChecked, OnDestroy {
       isTyping: true,
       timestamp: Date.now(),
       tokens,
-      costCents
+      costCents,
     };
 
-    this.messages.update(prev => [...prev, typingMsg]);
+    this.messages.update((prev) => [...prev, typingMsg]);
 
     let currentIndex = 0;
     const baseDelay = speed === 2 ? 6 : 14;
@@ -396,7 +400,9 @@ export class ChatWindowComponent implements AfterViewChecked, OnDestroy {
       const lastChar = fullText[currentIndex - 1];
 
       // Update message state
-      this.messages.update(list => list.map(m => m.id === assistantId ? { ...m, displayContent: partial } : m));
+      this.messages.update((list) =>
+        list.map((m) => (m.id === assistantId ? { ...m, displayContent: partial } : m)),
+      );
       this.shouldAutoScroll = true;
 
       // Soft audio feedback periodically on typing
@@ -425,11 +431,17 @@ export class ChatWindowComponent implements AfterViewChecked, OnDestroy {
   }
 
   private finishTyping(msgId: string, fullText: string): void {
-    this.messages.update(list => list.map(m => m.id === msgId ? {
-      ...m,
-      displayContent: fullText,
-      isTyping: false
-    } : m));
+    this.messages.update((list) =>
+      list.map((m) =>
+        m.id === msgId
+          ? {
+              ...m,
+              displayContent: fullText,
+              isTyping: false,
+            }
+          : m,
+      ),
+    );
 
     this.shouldAutoScroll = true;
     this.windowManager.triggerHaptic(8);
@@ -464,7 +476,9 @@ export class ChatWindowComponent implements AfterViewChecked, OnDestroy {
   private playKeyTap(): void {
     try {
       if (!this.audioCtx) {
-        const AudioClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        const AudioClass =
+          window.AudioContext ||
+          (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
         this.audioCtx = new AudioClass();
       }
       if (this.audioCtx.state === 'suspended') {
@@ -488,7 +502,9 @@ export class ChatWindowComponent implements AfterViewChecked, OnDestroy {
   private playChime(freq = 587): void {
     try {
       if (!this.audioCtx) {
-        const AudioClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        const AudioClass =
+          window.AudioContext ||
+          (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
         this.audioCtx = new AudioClass();
       }
       if (this.audioCtx.state === 'suspended') {

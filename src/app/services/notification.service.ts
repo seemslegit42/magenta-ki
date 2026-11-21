@@ -1,5 +1,10 @@
-import { Injectable, signal, computed } from '@angular/core';
-import { WebOsNotification, NotificationPreferences, NotificationCategory, NotificationPriority } from '../models/webos.models';
+import { computed, Injectable, signal } from '@angular/core';
+import {
+  NotificationCategory,
+  NotificationPreferences,
+  NotificationPriority,
+  WebOsNotification,
+} from '../models/webos.models';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationService {
@@ -64,9 +69,7 @@ export class NotificationService {
 
   public readonly allNotifications = computed(() => this.notifications());
 
-  public readonly unreadCount = computed(() =>
-    this.notifications().filter(n => !n.read).length
-  );
+  public readonly unreadCount = computed(() => this.notifications().filter((n) => !n.read).length);
 
   public readonly toasts = computed(() => this.activeToasts());
 
@@ -93,12 +96,12 @@ export class NotificationService {
       actionLabel: payload.actionLabel,
     };
 
-    this.notifications.update(list => [notif, ...list]);
+    this.notifications.update((list) => [notif, ...list]);
 
     // Check if toasts are enabled for this category
     const prefs = this.preferences();
     if (prefs.desktopToastsEnabled && prefs.categories[category]) {
-      this.activeToasts.update(toasts => [notif, ...toasts.slice(0, 2)]);
+      this.activeToasts.update((toasts) => [notif, ...toasts.slice(0, 2)]);
 
       // Auto dismiss after 5 seconds
       setTimeout(() => {
@@ -110,17 +113,15 @@ export class NotificationService {
   }
 
   public markAsRead(id: string): void {
-    this.notifications.update(list =>
-      list.map(n => (n.id === id ? { ...n, read: true } : n))
-    );
+    this.notifications.update((list) => list.map((n) => (n.id === id ? { ...n, read: true } : n)));
   }
 
   public markAllAsRead(): void {
-    this.notifications.update(list => list.map(n => ({ ...n, read: true })));
+    this.notifications.update((list) => list.map((n) => ({ ...n, read: true })));
   }
 
   public clearNotification(id: string): void {
-    this.notifications.update(list => list.filter(n => n.id !== id));
+    this.notifications.update((list) => list.filter((n) => n.id !== id));
     this.dismissToast(id);
   }
 
@@ -130,11 +131,11 @@ export class NotificationService {
   }
 
   public dismissToast(id: string): void {
-    this.activeToasts.update(toasts => toasts.filter(t => t.id !== id));
+    this.activeToasts.update((toasts) => toasts.filter((t) => t.id !== id));
   }
 
   public updatePreferences(newPrefs: Partial<NotificationPreferences>): void {
-    this.preferences.update(current => ({
+    this.preferences.update((current) => ({
       ...current,
       ...newPrefs,
       categories: {

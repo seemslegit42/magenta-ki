@@ -1,8 +1,8 @@
-import { Component, signal, inject, afterNextRender } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TablerIconComponent } from '../common/tabler-icon.component';
-import { WindowManagerService } from '../../services/window-manager.service';
+import { afterNextRender, Component, inject, signal } from '@angular/core';
 import { AppwriteBackendApiService } from '../../services/appwrite-backend-api.service';
+import { WindowManagerService } from '../../services/window-manager.service';
+import { TablerIconComponent } from '../common/tabler-icon.component';
 
 @Component({
   selector: 'app-statusbar',
@@ -25,6 +25,10 @@ import { AppwriteBackendApiService } from '../../services/appwrite-backend-api.s
             <span class="font-medium text-[#F5FFFA]">Applications</span>
           </button>
           <button type="button" class="px-3 py-1.5 rounded-xl hover:bg-white/10 hover:text-[#20B2AA] cursor-pointer transition-all focus:outline-none border border-transparent hover:border-[#20B2AA]/30 font-medium text-[#F5FFFA] shadow-sm" (click)="openStore()">App Store</button>
+          <button type="button" class="px-3 py-1.5 rounded-xl hover:bg-white/10 hover:text-[#3EB991] cursor-pointer transition-all focus:outline-none border border-transparent hover:border-[#3EB991]/30 font-medium text-[#F5FFFA] shadow-sm flex items-center space-x-1.5" (click)="openUatPortal()">
+            <app-tabler-icon name="clipboard-check" size="15" class="text-[#3EB991]" />
+            <span>Business UAT</span>
+          </button>
         </nav>
       </div>
 
@@ -51,7 +55,7 @@ import { AppwriteBackendApiService } from '../../services/appwrite-backend-api.s
         </div>
       </div>
     </header>
-  `
+  `,
 })
 export class StatusbarComponent {
   readonly windowManager = inject(WindowManagerService);
@@ -81,14 +85,16 @@ export class StatusbarComponent {
 
   private updateTime() {
     const now = new Date();
-    this.currentTime.set(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+    this.currentTime.set(
+      now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+    );
   }
 
   openLauncher() {
     this.windowManager.openApp({
       id: 'app-launcher',
       name: 'Application Matrix',
-      icon: 'apps'
+      icon: 'apps',
     });
   }
 
@@ -96,7 +102,7 @@ export class StatusbarComponent {
     this.windowManager.openApp({
       id: 'app-store',
       name: 'Verdigris App Store & Catalog',
-      icon: 'storefront'
+      icon: 'storefront',
     });
   }
 
@@ -104,7 +110,7 @@ export class StatusbarComponent {
     this.windowManager.openApp({
       id: 'native-federation',
       name: 'Native Federation Studio',
-      icon: 'hub'
+      icon: 'hub',
     });
   }
 
@@ -114,7 +120,18 @@ export class StatusbarComponent {
       'Enterprise Database Studio',
       'database',
       'AppwriteDatabasesComponent',
-      'database'
+      'database',
     );
+  }
+
+  openUatPortal() {
+    this.windowManager.openApp({
+      id: 'uat-portal',
+      name: 'Business Acceptance (UAT)',
+      icon: 'clipboard-check',
+      componentName: 'UatPortalComponent',
+      entryComponent: 'UatPortalComponent',
+      category: 'productivity',
+    });
   }
 }

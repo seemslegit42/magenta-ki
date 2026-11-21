@@ -1,10 +1,10 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, Input, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { WindowManagerService } from '../../../services/window-manager.service';
-import { NativeFederationService, RemoteDefinition } from '../../../services/native-federation.service';
 import { ProcessDescriptor } from '../../../models/webos.models';
+import { NativeFederationService, RemoteDefinition } from '../../../services/native-federation.service';
+import { WindowManagerService } from '../../../services/window-manager.service';
 
 export interface AppLauncherItem {
   id: string;
@@ -152,7 +152,7 @@ export interface AppLauncherItem {
         </div>
       </footer>
     </div>
-  `
+  `,
 })
 export class AppLauncherComponent {
   @Input() pid?: string;
@@ -165,7 +165,7 @@ export class AppLauncherComponent {
   public readonly selectedCategory = signal<string>('all');
 
   constructor() {
-    this.searchControl.valueChanges.subscribe(val => {
+    this.searchControl.valueChanges.subscribe((val) => {
       this.searchQuery.set(val || '');
     });
   }
@@ -187,118 +187,141 @@ export class AppLauncherComponent {
       name: 'Sovereign AI Copilot',
       category: 'ai',
       icon: 'chat',
-      description: 'Autonomous conversational assistant powered by Blades and Gemini with live streaming typewriter animation.',
+      description:
+        'Autonomous conversational assistant powered by Blades and Gemini with live streaming typewriter animation.',
       version: 'v1.1.0',
-      componentName: 'ChatWindowComponent'
+      componentName: 'ChatWindowComponent',
     },
     {
       id: 'agentic-value-framework',
       name: 'Agentic Value Framework (AVF)',
       category: 'ai',
       icon: 'insights',
-      description: 'The autonomous enterprise revenue calculus: goal-oriented UAV tracking, compounding intelligence engine, and ROIC analytics.',
+      description:
+        'The autonomous enterprise revenue calculus: goal-oriented UAV tracking, compounding intelligence engine, and ROIC analytics.',
       version: 'v1.0.0',
-      componentName: 'AgenticValueFrameworkComponent'
+      componentName: 'AgenticValueFrameworkComponent',
     },
     {
       id: 'appwrite-databases',
       name: 'Appwrite Databases & SDK',
       category: 'database',
       icon: 'storage',
-      description: 'Multi-tenant database engine, TablesDB schema inspector, and Server SDK code generator for 11 environments.',
+      description:
+        'Multi-tenant database engine, TablesDB schema inspector, and Server SDK code generator for 11 environments.',
       version: 'v2.4.0',
-      componentName: 'AppwriteDatabasesComponent'
+      componentName: 'AppwriteDatabasesComponent',
     },
     {
       id: 'projects-manager',
       name: 'Enterprise Projects Manager',
       category: 'database',
       icon: 'folder_special',
-      description: 'Authoritative project records with team-based tenant isolation, reactive forms, and strict immutability checks.',
+      description:
+        'Authoritative project records with team-based tenant isolation, reactive forms, and strict immutability checks.',
       version: 'v1.0.0',
-      componentName: 'ProjectsManagerComponent'
+      componentName: 'ProjectsManagerComponent',
     },
     {
       id: 'security-audit',
       name: 'Audit Trail & RBAC Sentinel',
       category: 'security',
       icon: 'verified_user',
-      description: 'Immutable forensic audit trail, multi-role RBAC access matrix, and cryptographic compliance.',
+      description:
+        'Immutable forensic audit trail, multi-role RBAC access matrix, and cryptographic compliance.',
       version: 'v2.4.0',
-      componentName: 'SecurityAuditComponent'
+      componentName: 'SecurityAuditComponent',
     },
     {
       id: 'agentfs-explorer',
       name: 'OS File Explorer & Document Manager',
       category: 'productivity',
       icon: 'folder_open',
-      description: 'Advanced OS File Explorer for viewing, editing, and saving document files, markdown, code, and SQLite VFS inodes directly.',
+      description:
+        'Advanced OS File Explorer for viewing, editing, and saving document files, markdown, code, and SQLite VFS inodes directly.',
       version: 'v2.4.0',
-      componentName: 'AgentFsExplorerComponent'
+      componentName: 'AgentFsExplorerComponent',
     },
     {
       id: 'wopi-office',
       name: 'WOPI Office Suite',
       category: 'productivity',
       icon: 'description',
-      description: 'Collaborative document, spreadsheet, and slide editor with real-time locks and CheckFileInfo protocol.',
+      description:
+        'Collaborative document, spreadsheet, and slide editor with real-time locks and CheckFileInfo protocol.',
       version: 'v2026.4',
-      componentName: 'WopiOfficeComponent'
+      componentName: 'WopiOfficeComponent',
     },
     {
       id: 'gateway-console',
       name: 'Control Plane & Gateway',
       category: 'system',
       icon: 'dns',
-      description: 'Go API gateway orchestrator, Appwrite IAM token verification, and per-tenant libSQL routing.',
+      description:
+        'Go API gateway orchestrator, Appwrite IAM token verification, and per-tenant libSQL routing.',
       version: 'v1.8.2',
-      componentName: 'GatewayConsoleComponent'
+      componentName: 'GatewayConsoleComponent',
     },
     {
       id: 'terminal',
       name: 'WebOS AI Copilot & Terminal',
       category: 'ai',
       icon: 'terminal',
-      description: 'Interactive CLI shell and Gemini AI assistant for running automated enterprise operations.',
+      description:
+        'Interactive CLI shell and Gemini AI assistant for running automated enterprise operations.',
       version: 'v3.0.1',
-      componentName: 'TerminalComponent'
+      componentName: 'TerminalComponent',
     },
     {
       id: 'app-store',
       name: 'Verdigris App Store',
       category: 'system',
       icon: 'storefront',
-      description: 'Dynamic micro-frontend marketplace, W3C import map manager, and remote component registration.',
+      description:
+        'Dynamic micro-frontend marketplace, W3C import map manager, and remote component registration.',
       version: 'v2.4.0',
-      componentName: 'AppStoreComponent'
+      componentName: 'AppStoreComponent',
     },
     {
       id: 'native-federation',
       name: 'Native Federation Studio',
       category: 'developer',
       icon: 'hub',
-      description: 'Manage remote micro-frontends, probe endpoints, and inspect Angular ApplicationBuilder federation chunks.',
+      description:
+        'Manage remote micro-frontends, probe endpoints, and inspect Angular ApplicationBuilder federation chunks.',
       version: 'v22.2.0',
-      componentName: 'RemoteContainerComponent'
+      componentName: 'RemoteContainerComponent',
     },
     {
       id: 'cicd-pipeline',
-      name: 'CI/CD & Staging Pipeline',
+      name: 'GitLab CI/CD & Pipeline',
       category: 'developer',
       icon: 'alt_route',
-      description: 'Automated continuous integration, unit & e2e test runner, container builds, and staging target deployment manager.',
-      version: 'v2.4.0',
-      componentName: 'CicdPipelineComponent'
+      description:
+        'GitLab Flow continuous integration with Bun, Biome, Lefthook, Go builds, and staging deployment.',
+      version: 'v2.5.0',
+      componentName: 'CicdPipelineComponent',
+    },
+    {
+      id: 'uat-portal',
+      name: 'Business Acceptance (UAT)',
+      category: 'productivity',
+      icon: 'fact_check',
+      description:
+        'Plain-language acceptance checklist and release sign-off portal designed for business stakeholders.',
+      version: 'v1.0.0',
+      componentName: 'UatPortalComponent',
     },
     {
       id: 'settings',
       name: 'Verdigris System Settings',
       category: 'system',
       icon: 'settings',
-      description: 'Configure syncopated UI rhythm cadence, window boundaries, audio synthesizer, and haptic feedback.',
+      description:
+        'Configure syncopated UI rhythm cadence, window boundaries, audio synthesizer, and haptic feedback.',
       version: 'v2.4.0',
-      componentName: 'SettingsComponent'
-    }
+      componentName: 'SettingsComponent',
+    },
   ];
 
   // Combined apps including dynamic remotes from NativeFederationService
@@ -308,12 +331,17 @@ export class AppLauncherComponent {
       id: `remote-${rem.name}`,
       name: rem.name.replace(/^remote-/, '').toUpperCase() + ' (Micro-Frontend)',
       category: rem.name.includes('copilot') ? 'ai' : 'federated',
-      icon: rem.name.includes('analytics') ? 'insights' : (rem.name.includes('copilot') ? 'psychology' : 'layers'),
-      description: rem.description || `Dynamic Native Federation remote micro-frontend served from ${rem.url}`,
+      icon: rem.name.includes('analytics')
+        ? 'insights'
+        : rem.name.includes('copilot')
+          ? 'psychology'
+          : 'layers',
+      description:
+        rem.description || `Dynamic Native Federation remote micro-frontend served from ${rem.url}`,
       version: rem.version || 'v1.0.0',
       componentName: 'RemoteContainerComponent',
       isFederated: true,
-      federatedConfig: { url: rem.url, exposedModule: rem.exposedModule }
+      federatedConfig: { url: rem.url, exposedModule: rem.exposedModule },
     }));
 
     return [...this.coreApps, ...federatedItems];
@@ -325,9 +353,10 @@ export class AppLauncherComponent {
     const category = this.selectedCategory();
     const search = this.searchQuery().trim().toLowerCase();
 
-    return list.filter(item => {
+    return list.filter((item) => {
       const matchCat = category === 'all' || item.category === category;
-      const matchSearch = !search ||
+      const matchSearch =
+        !search ||
         item.name.toLowerCase().includes(search) ||
         item.description.toLowerCase().includes(search) ||
         item.id.toLowerCase().includes(search);
@@ -336,13 +365,13 @@ export class AppLauncherComponent {
   });
 
   public readonly runningProcessesCount = computed(() => {
-    return this.windowManager.processes().filter(p => p.isOpen).length;
+    return this.windowManager.processes().filter((p) => p.isOpen).length;
   });
 
   public getProcessState(appId: string): ProcessDescriptor | undefined {
-    return this.windowManager.processes().find(
-      p => p.isOpen && (p.appId === appId || p.pid === `proc_${appId}` || p.pid === appId)
-    );
+    return this.windowManager
+      .processes()
+      .find((p) => p.isOpen && (p.appId === appId || p.pid === `proc_${appId}` || p.pid === appId));
   }
 
   public isProcessMinimized(pid: string): boolean {
@@ -369,14 +398,14 @@ export class AppLauncherComponent {
       entryComponent: app.componentName,
       category: app.category,
       isFederated: app.isFederated,
-      federatedConfig: app.federatedConfig
+      federatedConfig: app.federatedConfig,
     });
   }
 
   public launchAllEssentials(): void {
     const essentials = ['terminal', 'appwrite-databases', 'wopi-office'];
     for (const id of essentials) {
-      const found = this.allApps().find(a => a.id === id);
+      const found = this.allApps().find((a) => a.id === id);
       if (found) {
         this.launch(found);
       }

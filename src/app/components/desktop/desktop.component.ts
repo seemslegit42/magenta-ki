@@ -1,10 +1,10 @@
-import { Component, inject } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { WindowManagerService } from '../../services/window-manager.service';
+import { Component, inject } from '@angular/core';
 import { NotificationService } from '../../services/notification.service';
+import { WindowManagerService } from '../../services/window-manager.service';
+import { DockComponent } from '../dock/dock.component';
 import { StatusBarComponent } from '../status-bar/status-bar.component';
 import { WindowComponent } from '../window/window.component';
-import { DockComponent } from '../dock/dock.component';
 
 @Component({
   selector: 'app-desktop',
@@ -128,29 +128,53 @@ import { DockComponent } from '../dock/dock.component';
       </div>
 
     </div>
-  `
+  `,
 })
 export class DesktopComponent {
   protected windowMgr = inject(WindowManagerService);
   protected notificationService = inject(NotificationService);
 
   public getDescriptor(pid: string) {
-    return this.windowMgr.activeProcesses().find(p => p.pid === pid);
+    return this.windowMgr.activeProcesses().find((p) => p.pid === pid);
   }
 
   public launchAppwriteDatabases(): void {
-    this.windowMgr.spawnProcess('appwrite-db', 'Cloud Databases & Studio', 'dataset', 'AppwriteDatabasesComponent', 'system');
+    this.windowMgr.spawnProcess(
+      'appwrite-db',
+      'Cloud Databases & Studio',
+      'dataset',
+      'AppwriteDatabasesComponent',
+      'system',
+    );
   }
 
   public launchAppStore(): void {
-    this.windowMgr.spawnProcess('app-store', 'Native Federation Store', 'storefront', 'AppStoreComponent', 'system');
+    this.windowMgr.spawnProcess(
+      'app-store',
+      'Native Federation Store',
+      'storefront',
+      'AppStoreComponent',
+      'system',
+    );
   }
 
   public launchTerminal(): void {
-    this.windowMgr.spawnProcess('terminal', 'WebOS Terminal & Shell', 'terminal', 'TerminalComponent', 'developer');
+    this.windowMgr.spawnProcess(
+      'terminal',
+      'WebOS Terminal & Shell',
+      'terminal',
+      'TerminalComponent',
+      'developer',
+    );
   }
 
   public launchSecurityAudit(): void {
-    this.windowMgr.spawnProcess('security-audit', 'Security Governance & Audit Trail', 'verified_user', 'SecurityAuditComponent', 'security');
+    this.windowMgr.spawnProcess(
+      'security-audit',
+      'Security Governance & Audit Trail',
+      'verified_user',
+      'SecurityAuditComponent',
+      'security',
+    );
   }
 }

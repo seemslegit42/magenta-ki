@@ -6,10 +6,15 @@
     "start": "cross-env PORT=3000 ng serve",
     "dev": "cross-env PORT=3000 ng serve",
     "build": "ng build",
-    "test": "vitest",
-    "test:unit": "vitest run",
+    "test": "bun test",
+    "test:unit": "bun test tests/unit",
+    "test:integration": "bun test tests/integration",
     "test:e2e": "bun test tests/e2e",
     "lint": "ng lint",
+    "lint:biome": "biome lint . && biome ci biome.json package.json src/server.ts src/app/app.ts src/app/app.routes.ts src/app/models/cicd.models.ts src/app/services/uat.service.ts src/app/services/cicd-pipeline.service.ts src/app/components/apps/uat-portal src/app/components/apps/cicd-pipeline tests/unit/uat.service.test.ts tests/unit/cicd-pipeline.service.test.ts tests/integration tests/e2e/release-and-uat-workflow.e2e.test.ts",
+    "format": "biome format --write .",
+    "typecheck": "tsc --noEmit -p tsconfig.app.json",
+    "prepare": "lefthook install || true",
     "serve:ssr:app": "bun run --bun dist/app/server/server.mjs"
   },
   "private": true,
@@ -41,6 +46,8 @@
     "@angular/build": "^22.2.0",
     "@angular/cli": "^22.2.0",
     "@angular/compiler-cli": "^22.2.0",
+    "@biomejs/biome": "^2.6.8",
+    "@softarc/native-federation-orchestrator": "4.6.0",
     "@tailwindcss/postcss": "^4.1.12",
     "@testing-library/angular": "^19.5.0",
     "@testing-library/jest-dom": "^7.0.1",
@@ -50,11 +57,11 @@
     "cross-env": "^10.1.0",
     "eslint": "^9.39.1",
     "jsdom": "^27.0.0",
+    "lefthook": "^2.2.2",
     "postcss": "^8.5.3",
     "tailwindcss": "^4.1.12",
     "typescript": "~6.0.3",
     "typescript-eslint": "8.47.0",
-    "vitest": "^4.0.0",
-    "@softarc/native-federation-orchestrator": "4.6.0"
+    "vitest": "^4.0.0"
   }
 }

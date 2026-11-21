@@ -7,11 +7,7 @@ import {
 } from '@angular/platform-browser-dynamic/testing';
 
 try {
-  TestBed.initTestEnvironment(
-    BrowserDynamicTestingModule,
-    platformBrowserDynamicTesting(),
-  );
+  TestBed.initTestEnvironment(BrowserDynamicTestingModule, platformBrowserDynamicTesting());
 } catch {
   // Already initialized
 }
-

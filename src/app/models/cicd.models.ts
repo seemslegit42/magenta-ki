@@ -1,13 +1,15 @@
 export type PipelineStatus = 'queued' | 'running' | 'success' | 'failed' | 'cancelled';
-export type PipelineStepName = 
-  | 'checkout' 
-  | 'install' 
-  | 'lint' 
-  | 'test_unit' 
-  | 'test_e2e' 
-  | 'build_angular' 
-  | 'build_go' 
-  | 'docker_build' 
+
+export type PipelineStepName =
+  | 'quality_biome'
+  | 'typecheck'
+  | 'test_unit'
+  | 'test_integration'
+  | 'test_e2e'
+  | 'test_go'
+  | 'build_webos'
+  | 'build_go'
+  | 'docker_build'
   | 'deploy_staging';
 
 export interface PipelineStep {
@@ -25,7 +27,7 @@ export interface PipelineRun {
   commitMessage: string;
   author: string;
   branch: string;
-  triggerEvent: 'push' | 'pull_request' | 'workflow_dispatch' | 'scheduled';
+  triggerEvent: 'gitlab_push' | 'merge_request' | 'manual' | 'schedule';
   status: PipelineStatus;
   startedAt: number;
   completedAt?: number;
@@ -37,7 +39,7 @@ export interface PipelineRun {
 export interface StagingTargetStatus {
   targetName: string;
   url: string;
-  environment: 'staging' | 'preview';
+  environment: 'staging' | 'preview' | 'production';
   status: 'online' | 'deploying' | 'degraded' | 'offline';
   activeVersion: string;
   activeCommitSha: string;
@@ -48,4 +50,36 @@ export interface StagingTargetStatus {
   memoryUsageMb: number;
   cpuPercent: number;
   replicas: number;
+}
+
+export type UatBusinessArea =
+  | 'Project Collaboration'
+  | 'Document Workspace'
+  | 'Billing & Usage'
+  | 'Security & Access';
+
+export type UatScenarioStatus = 'pending' | 'approved' | 'changes_requested' | 'blocked';
+
+export interface UatScenario {
+  id: string;
+  businessArea: UatBusinessArea;
+  title: string;
+  plainLanguageGoal: string;
+  stepsToVerify: string[];
+  expectedOutcome: string;
+  status: UatScenarioStatus;
+  reviewerName: string;
+  reviewerNote: string;
+  updatedAt: number;
+}
+
+export type UatSignOffDecision = 'pending' | 'approved' | 'rejected';
+
+export interface UatSignOffRecord {
+  releaseLabel: string;
+  decision: UatSignOffDecision;
+  signedBy: string;
+  role: string;
+  summaryNote: string;
+  signedAt: number | null;
 }

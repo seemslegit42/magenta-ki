@@ -1,5 +1,5 @@
-import { Injectable, signal, computed } from '@angular/core';
-import { UserProfile, UserRole, Permission } from '../models/webos.models';
+import { computed, Injectable, signal } from '@angular/core';
+import { Permission, UserProfile, UserRole } from '../models/webos.models';
 
 const ADMIN_PERMISSIONS: Permission[] = [
   'audit:read',
@@ -34,12 +34,7 @@ const CREATOR_PERMISSIONS: Permission[] = [
   'database:create',
 ];
 
-const GENERAL_PERMISSIONS: Permission[] = [
-  'wopi:read',
-  'agentfs:read',
-  'process:spawn',
-  'database:read',
-];
+const GENERAL_PERMISSIONS: Permission[] = ['wopi:read', 'agentfs:read', 'process:spawn', 'database:read'];
 
 @Injectable({ providedIn: 'root' })
 export class AuthRbacService {
@@ -78,23 +73,30 @@ export class AuthRbacService {
   public readonly allProfiles = computed(() => this.profiles());
 
   public readonly currentUser = computed(() => {
-    const active = this.profiles().find(p => p.id === this.activeUserId());
+    const active = this.profiles().find((p) => p.id === this.activeUserId());
     return active || this.profiles()[0];
   });
 
   public readonly currentRole = computed(() => this.currentUser().role);
 
-  public readonly availableRoles: { role: UserRole; title: string; description: string; badgeColor: string }[] = [
+  public readonly availableRoles: {
+    role: UserRole;
+    title: string;
+    description: string;
+    badgeColor: string;
+  }[] = [
     {
       role: 'administrator',
       title: 'Administrator',
-      description: 'Unrestricted root authority: gateway routing, audit exports, IAM governance, security policies.',
+      description:
+        'Unrestricted root authority: gateway routing, audit exports, IAM governance, security policies.',
       badgeColor: '#E0218A',
     },
     {
       role: 'content_creator',
       title: 'Content Creator',
-      description: 'Authoring privileges: WOPI document write/locks, AgentFS file editing, sandboxed executions.',
+      description:
+        'Authoring privileges: WOPI document write/locks, AgentFS file editing, sandboxed executions.',
       badgeColor: '#20B2AA',
     },
     {
@@ -106,14 +108,14 @@ export class AuthRbacService {
   ];
 
   public switchUser(userId: string): void {
-    const target = this.profiles().find(p => p.id === userId);
+    const target = this.profiles().find((p) => p.id === userId);
     if (target) {
       this.activeUserId.set(target.id);
     }
   }
 
   public switchRole(role: UserRole): void {
-    const target = this.profiles().find(p => p.role === role);
+    const target = this.profiles().find((p) => p.role === role);
     if (target) {
       this.activeUserId.set(target.id);
     }
@@ -134,8 +136,8 @@ export class AuthRbacService {
   }
 
   public updateUserRole(userId: string, newRole: UserRole): void {
-    this.profiles.update(list =>
-      list.map(user => {
+    this.profiles.update((list) =>
+      list.map((user) => {
         if (user.id === userId) {
           let perms: Permission[];
           switch (newRole) {
@@ -151,7 +153,7 @@ export class AuthRbacService {
           return { ...user, role: newRole, permissions: perms };
         }
         return user;
-      })
+      }),
     );
   }
 }

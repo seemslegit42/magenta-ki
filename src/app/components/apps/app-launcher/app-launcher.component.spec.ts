@@ -1,8 +1,8 @@
-import { TestBed, ComponentFixture } from '@angular/core/testing';
-import { AppLauncherComponent, AppLauncherItem } from './app-launcher.component';
-import { WindowManagerService } from '../../../services/window-manager.service';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { NativeFederationService } from '../../../services/native-federation.service';
-import { describe, it, expect, beforeEach } from 'vitest';
+import { WindowManagerService } from '../../../services/window-manager.service';
+import { AppLauncherComponent, AppLauncherItem } from './app-launcher.component';
 
 describe('AppLauncherComponent', () => {
   let component: AppLauncherComponent;
@@ -13,10 +13,7 @@ describe('AppLauncherComponent', () => {
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({
       imports: [AppLauncherComponent],
-      providers: [
-        WindowManagerService,
-        NativeFederationService
-      ]
+      providers: [WindowManagerService, NativeFederationService],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AppLauncherComponent);
@@ -37,7 +34,7 @@ describe('AppLauncherComponent', () => {
   it('should list all core applications and federated micro-frontends', () => {
     const apps = component.allApps();
     expect(apps.length).toBeGreaterThanOrEqual(9);
-    
+
     const appwrite = apps.find((a: AppLauncherItem) => a.id === 'appwrite-databases');
     expect(appwrite).toBeDefined();
     expect(appwrite?.name).toContain('Databases');
@@ -71,8 +68,8 @@ describe('AppLauncherComponent', () => {
 
     if (terminalApp) {
       component.launch(terminalApp);
-      const openProcs = windowManager.processes().filter(p => p.isOpen);
-      expect(openProcs.some(p => p.appId === 'terminal' || p.pid.includes('terminal'))).toBe(true);
+      const openProcs = windowManager.processes().filter((p) => p.isOpen);
+      expect(openProcs.some((p) => p.appId === 'terminal' || p.pid.includes('terminal'))).toBe(true);
     }
   });
 
@@ -91,7 +88,7 @@ describe('AppLauncherComponent', () => {
       if (procState) {
         windowManager.minimizeWindow(procState.pid);
         expect(component.isProcessMinimized(procState.pid)).toBe(true);
-        
+
         component.launch(wopiApp);
         expect(component.isProcessMinimized(procState.pid)).toBe(false);
       }
@@ -100,7 +97,7 @@ describe('AppLauncherComponent', () => {
 
   it('should launch core essentials suite', () => {
     component.launchAllEssentials();
-    const openProcs = windowManager.processes().filter(p => p.isOpen);
+    const openProcs = windowManager.processes().filter((p) => p.isOpen);
     expect(openProcs.length).toBeGreaterThanOrEqual(2);
   });
 });

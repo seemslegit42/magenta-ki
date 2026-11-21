@@ -1,11 +1,11 @@
-import { Component, Input, inject, signal } from '@angular/core';
-import { WopiService } from '../../../services/wopi.service';
-import { AuthRbacService } from '../../../services/auth-rbac.service';
-import { AuditService } from '../../../services/audit.service';
-import { NotificationService } from '../../../services/notification.service';
-import { WopiDocument, AuditCategory, AuditSeverity } from '../../../models/webos.models';
-import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Component, Input, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { AuditCategory, AuditSeverity, WopiDocument } from '../../../models/webos.models';
+import { AuditService } from '../../../services/audit.service';
+import { AuthRbacService } from '../../../services/auth-rbac.service';
+import { NotificationService } from '../../../services/notification.service';
+import { WopiService } from '../../../services/wopi.service';
 
 @Component({
   selector: 'app-wopi-office',
@@ -110,7 +110,7 @@ import { CommonModule } from '@angular/common';
         </div>
       </div>
     </div>
-  `
+  `,
 })
 export class WopiOfficeComponent {
   @Input({ required: true }) pid!: string;

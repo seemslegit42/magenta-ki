@@ -1,26 +1,33 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { StatusbarComponent } from './components/statusbar/statusbar.component';
-import { DockComponent } from './components/dock/dock.component';
-import { WindowComponent } from './components/window/window.component';
-import { SearchComponent } from './components/search/search.component';
+import { CommonModule, DOCUMENT } from '@angular/common';
+import { Component, computed, inject } from '@angular/core';
+import { UatPortalComponent } from './components/apps/uat-portal/uat-portal.component';
 import { BeepAssistantComponent } from './components/common/beep-assistant.component';
+import { DockComponent } from './components/dock/dock.component';
+import { SearchComponent } from './components/search/search.component';
+import { StatusbarComponent } from './components/statusbar/statusbar.component';
+import { WindowComponent } from './components/window/window.component';
 import { WindowManagerService } from './services/window-manager.service';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
   imports: [
     CommonModule,
     StatusbarComponent,
     DockComponent,
     WindowComponent,
     SearchComponent,
-    BeepAssistantComponent
+    BeepAssistantComponent,
+    UatPortalComponent,
   ],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
 export class App {
   readonly windowManager = inject(WindowManagerService);
+  private readonly document = inject(DOCUMENT);
+
+  readonly isStandaloneUatRoute = computed(() => {
+    const pathname = this.document?.location?.pathname || '/';
+    return pathname === '/uat' || pathname.startsWith('/uat/');
+  });
 }

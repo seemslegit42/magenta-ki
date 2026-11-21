@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'bun:test';
-import { AuthRbacService } from '../../src/app/services/auth-rbac.service';
+import { describe, expect, it } from 'bun:test';
 import { AuditService } from '../../src/app/services/audit.service';
+import { AuthRbacService } from '../../src/app/services/auth-rbac.service';
 import { NotificationService } from '../../src/app/services/notification.service';
 import { WopiService } from '../../src/app/services/wopi.service';
 
@@ -71,7 +71,7 @@ describe('E2E: Audit Trail, Notification System & RBAC Governance Flow', () => {
 
     expect(alertNotif.category).toBe('security');
     expect(notifications.unreadCount()).toBeGreaterThan(0);
-    expect(notifications.toasts().some(t => t.id === alertNotif.id)).toBe(true);
+    expect(notifications.toasts().some((t) => t.id === alertNotif.id)).toBe(true);
 
     // 5. User Role Switch: Switch to Content Creator (Marcus Vance)
     auth.switchRole('content_creator');

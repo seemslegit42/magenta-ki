@@ -1,5 +1,5 @@
-import { Component, ChangeDetectionStrategy, Input, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, Input, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -128,7 +128,7 @@ export interface StoreItem {
       <footer class="pt-3 border-t border-white/10 flex items-center justify-between text-xs text-[#8C94A8]">
       </footer>
     </div>
-  `
+  `,
 })
 export class AppStoreComponent {
   @Input() pid?: string;
@@ -137,7 +137,7 @@ export class AppStoreComponent {
   protected readonly selectedCategory = signal<string>('all');
 
   constructor() {
-    this.searchControl.valueChanges.subscribe(val => {
+    this.searchControl.valueChanges.subscribe((val) => {
       this.searchQuery.set(val || '');
     });
   }
@@ -147,7 +147,7 @@ export class AppStoreComponent {
     { id: 'plugin', label: 'Enterprise Plugins', icon: 'extension' },
     { id: 'ai-model', label: 'Neural AI Models', icon: 'psychology' },
     { id: 'connector', label: 'Cloud Connectors', icon: 'cloud_sync' },
-    { id: 'theme', label: 'Executive Themes', icon: 'palette' }
+    { id: 'theme', label: 'Executive Themes', icon: 'palette' },
   ];
 
   protected readonly storeItems = signal<StoreItem[]>([
@@ -156,52 +156,56 @@ export class AppStoreComponent {
       name: 'Quantum Mesh Accelerator',
       category: 'plugin',
       icon: 'hub',
-      description: 'Zero-latency multi-region sync plugin for real-time edge node orchestration across global clusters.',
+      description:
+        'Zero-latency multi-region sync plugin for real-time edge node orchestration across global clusters.',
       version: '2.4.1',
       publisher: 'ΛΞV Core Labs',
       price: 'Free',
       downloads: '14.2k',
       rating: 4.9,
-      installed: true
+      installed: true,
     },
     {
       id: 'gemini-ultra-weights',
       name: 'Gemini 2.5 Pro Neural Weights',
       category: 'ai-model',
       icon: 'neurology',
-      description: 'Local reasoning model weights optimized for enterprise code generation and autonomous document synthesis.',
+      description:
+        'Local reasoning model weights optimized for enterprise code generation and autonomous document synthesis.',
       version: '2.5.0',
       publisher: 'Google Cloud AI',
       price: 'Enterprise',
       downloads: '48.9k',
       rating: 5.0,
-      installed: true
+      installed: true,
     },
     {
       id: 'appwrite-sync-connector',
       name: 'Enterprise Table Sync',
       category: 'connector',
       icon: 'database',
-      description: 'Direct high-throughput synchronization bridge for multi-tenant cloud and distributed relational clusters.',
+      description:
+        'Direct high-throughput synchronization bridge for multi-tenant cloud and distributed relational clusters.',
       version: '1.8.4',
       publisher: 'Cloud Systems',
       price: 'Free',
       downloads: '32.1k',
       rating: 4.8,
-      installed: false
+      installed: false,
     },
     {
       id: 'verdigris-obsidian-theme',
       name: 'Obsidian Magenta VIP Theme',
       category: 'theme',
       icon: 'palette',
-      description: 'Ultra-dark Vantablack glassmorphism aesthetic with high-intensity #E0218A magenta chromatic glows.',
+      description:
+        'Ultra-dark Vantablack glassmorphism aesthetic with high-intensity #E0218A magenta chromatic glows.',
       version: '2.4.0',
       publisher: 'Verdigris UX',
       price: 'Free',
       downloads: '89.5k',
       rating: 4.9,
-      installed: true
+      installed: true,
     },
     {
       id: 'turso-edge-connector',
@@ -214,36 +218,38 @@ export class AppStoreComponent {
       price: 'Free',
       downloads: '19.4k',
       rating: 4.7,
-      installed: false
+      installed: false,
     },
     {
       id: 'compliance-auditor',
       name: 'SOC2 & HIPAA Sentinel Pack',
       category: 'plugin',
       icon: 'verified_user',
-      description: 'Automated compliance rule engine that validates audit logs and RBAC access matrices in real-time.',
+      description:
+        'Automated compliance rule engine that validates audit logs and RBAC access matrices in real-time.',
       version: '3.1.0',
       publisher: 'SecOps Guild',
       price: 'Enterprise',
       downloads: '8.3k',
       rating: 4.9,
-      installed: false
-    }
+      installed: false,
+    },
   ]);
 
   protected readonly filteredItems = computed(() => {
     const cat = this.selectedCategory();
     const query = this.searchQuery().trim().toLowerCase();
-    return this.storeItems().filter(item => {
+    return this.storeItems().filter((item) => {
       const matchCat = cat === 'all' || item.category === cat;
-      const matchQuery = !query || item.name.toLowerCase().includes(query) || item.description.toLowerCase().includes(query);
+      const matchQuery =
+        !query || item.name.toLowerCase().includes(query) || item.description.toLowerCase().includes(query);
       return matchCat && matchQuery;
     });
   });
 
   protected toggleInstall(item: StoreItem): void {
-    this.storeItems.update(items =>
-      items.map(i => (i.id === item.id ? { ...i, installed: !i.installed } : i))
+    this.storeItems.update((items) =>
+      items.map((i) => (i.id === item.id ? { ...i, installed: !i.installed } : i)),
     );
   }
 }

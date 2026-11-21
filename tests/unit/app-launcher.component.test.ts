@@ -1,11 +1,11 @@
-import { describe, it, expect, beforeEach, afterEach } from 'bun:test';
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import { Injector, runInInjectionContext } from '@angular/core';
 import {
   AppLauncherComponent,
   type AppLauncherItem,
 } from '../../src/app/components/apps/app-launcher/app-launcher.component';
-import { WindowManagerService } from '../../src/app/services/window-manager.service';
 import { NativeFederationService } from '../../src/app/services/native-federation.service';
+import { WindowManagerService } from '../../src/app/services/window-manager.service';
 
 describe('AppLauncherComponent', () => {
   let component: AppLauncherComponent;

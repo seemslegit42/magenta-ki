@@ -1,0 +1,39 @@
+# Lefthook Git Hooks — Verdigris Cloud OS (GitLab Flow + Bun + Biome)
+# Install locally with: bunx lefthook install
+
+pre-commit:
+  parallel: true
+  commands:
+    biome-check:
+      glob: "*.{ts,tsx,js,mjs,json}"
+      run: bunx biome check --no-errors-on-unmatched {staged_files}
+      fail_text: "Biome lint/format check failed. Run 'bun run format' to auto-fix formatting."
+    typecheck:
+      glob: "*.ts"
+      run: bunx tsc --noEmit -p tsconfig.app.json
+      fail_text: "TypeScript strict check failed. Resolve type errors before committing."
+
+commit-msg:
+  commands:
+    conventional-commit:
+      run: |
+        MSG=$(head -n1 "{1}")
+        if ! echo "$MSG" | grep -qE '^(feat|fix|chore|docs|test|ci|refactor|perf|build|style|revert)(\([a-zA-Z0-9._-]+\))?!?: .{3,}$'; then
+          echo "ERROR: Commit message must follow Conventional Commits (e.g., 'feat(uat): add stakeholder sign-off')."
+          echo "Received: $MSG"
+          exit 1
+        fi
+
+pre-push:
+  parallel: false
+  commands:
+    bun-unit-and-integration:
+      run: bun test tests/unit tests/integration
+      fail_text: "Unit or integration tests failed. Push blocked."
+    go-backend-tests:
+      run: |
+        if command -v go >/dev/null 2>&1; then
+          cd go && go test ./...
+        else
+          echo "Go toolchain not installed locally; Go tests will execute in GitLab CI."
+        fi

@@ -1,19 +1,19 @@
-import { Injectable, signal, computed, inject } from '@angular/core';
+import { computed, Injectable, inject, signal } from '@angular/core';
 import {
+  AuditCategory,
+  AuditSeverity,
   CogniOpsCogsBreakdown,
-  XiFloorData,
+  HpvcProposal,
   PoAContributionParams,
   PoARewardResult,
+  UpgradeThresholdResult,
+  XiFloorData,
   XiLedgerState,
   XiSankeyFlow,
-  UpgradeThresholdResult,
-  HpvcProposal,
-  AuditCategory,
-  AuditSeverity
 } from '../models/webos.models';
+import { AppwriteBackendApiService } from './appwrite-backend-api.service';
 import { AuditService } from './audit.service';
 import { NotificationService } from './notification.service';
-import { AppwriteBackendApiService } from './appwrite-backend-api.service';
 
 export interface BurnCogniOpsParams {
   customerId: string;
@@ -67,7 +67,7 @@ export class XiEconomyService {
     try {
       const floor = await this.backendApi.getXiFloor();
       if (floor?.components) {
-        this.cogsBreakdown.update(prev => ({
+        this.cogsBreakdown.update((prev) => ({
           ...prev,
           cInfra: floor.components['cInfra'] ?? prev.cInfra,
           cExec: floor.components['cExec'] ?? prev.cExec,
@@ -82,24 +82,24 @@ export class XiEconomyService {
 
   // --- Economic Constants & State (Signals) ---
   private mintingMultiplier = signal<number>(1.25); // M_Xi
-  private qualityExponent = signal<number>(1.5);    // alpha
+  private qualityExponent = signal<number>(1.5); // alpha
 
   private cogsBreakdown = signal<CogniOpsCogsBreakdown>({
     cInfra: 0.012, // Normalized GPU-Second (N-GPS)
     wInfra: 0.25,
-    cExec: 0.024,  // Agent steps
-    wExec: 0.40,
+    cExec: 0.024, // Agent steps
+    wExec: 0.4,
     cAlign: 0.035, // PAC (LoRA & DPO fine-tuning)
-    wAlign: 0.20,
+    wAlign: 0.2,
     cValid: 0.008, // VCR (Consensus rate)
-    wValid: 0.15
+    wValid: 0.15,
   });
 
   private customerBalances = signal<Record<string, number>>({
     usr_operator_7842: 1250,
     usr_admin_01: 5000,
     usr_creator_02: 850,
-    usr_user_03: 320
+    usr_user_03: 320,
   });
 
   private ledgerState = signal<XiLedgerState>({
@@ -108,7 +108,7 @@ export class XiEconomyService {
     mintedPoaPool: 45000,
     burnedExecutionPool: 128500,
     burnedElasticAccessPool: 34200,
-    terminalOperationalCogsUsd: 2840.50
+    terminalOperationalCogsUsd: 2840.5,
   });
 
   private hpvcProposals = signal<HpvcProposal[]>([
@@ -123,7 +123,7 @@ export class XiEconomyService {
       status: 'approved',
       approvals: 14,
       rejections: 1,
-      createdAt: Date.now() - 86400000 * 5
+      createdAt: Date.now() - 86400000 * 5,
     },
     {
       id: 'prop_hpvc_02',
@@ -136,8 +136,8 @@ export class XiEconomyService {
       status: 'active',
       approvals: 8,
       rejections: 2,
-      createdAt: Date.now() - 86400000 * 1
-    }
+      createdAt: Date.now() - 86400000 * 1,
+    },
   ]);
 
   // --- Computed Views ---
@@ -149,7 +149,7 @@ export class XiEconomyService {
       fiatPegCurrency: 'CAD',
       fiatRatio: 1.0,
       components: cogs,
-      lastUpdated: Date.now()
+      lastUpdated: Date.now(),
     };
   });
 
@@ -157,7 +157,7 @@ export class XiEconomyService {
   public readonly proposals = computed(() => this.hpvcProposals());
   public readonly constants = computed(() => ({
     mintingMultiplier: this.mintingMultiplier(),
-    qualityExponent: this.qualityExponent()
+    qualityExponent: this.qualityExponent(),
   }));
 
   // --- Core Methods ---
@@ -175,7 +175,7 @@ export class XiEconomyService {
   }
 
   public updateCogsComponent(key: keyof CogniOpsCogsBreakdown, value: number): void {
-    this.cogsBreakdown.update(current => ({ ...current, [key]: value }));
+    this.cogsBreakdown.update((current) => ({ ...current, [key]: value }));
   }
 
   public getCustomerXiBalance(customerId: string): number {
@@ -188,12 +188,12 @@ export class XiEconomyService {
    */
   public calculateUpgradeThreshold(
     currentTier: 'starter' | 'professional',
-    targetTier: 'professional' | 'enterprise'
+    targetTier: 'professional' | 'enterprise',
   ): UpgradeThresholdResult {
     const tiers = {
       starter: { fee: 50, quota: 1000, overageRate: 0.08 },
       professional: { fee: 180, quota: 4000, overageRate: 0.05 },
-      enterprise: { fee: 750, quota: 20000, overageRate: 0.03 }
+      enterprise: { fee: 750, quota: 20000, overageRate: 0.03 },
     };
 
     const lower = tiers[currentTier];
@@ -212,7 +212,7 @@ export class XiEconomyService {
       optimalUpgradeXiUnits,
       formula: `U_upgrade = ${lower.quota} + (${higher.fee} - ${lower.fee}) / (${lower.overageRate} - ${higher.overageRate}) = ${optimalUpgradeXiUnits} Ξ`,
       shouldRecommendUpgrade: (currentMonthlyConsumption: number) =>
-        currentMonthlyConsumption >= optimalUpgradeXiUnits
+        currentMonthlyConsumption >= optimalUpgradeXiUnits,
     };
   }
 
@@ -226,24 +226,21 @@ export class XiEconomyService {
 
     // R_Xi calculation
     const rawReward =
-      mXi *
-      params.datasetWeightNk *
-      Math.pow(params.qualityFactorFk, alpha) *
-      params.efficacyImpactEdata;
+      mXi * params.datasetWeightNk * params.qualityFactorFk ** alpha * params.efficacyImpactEdata;
 
     const rewardXi = Math.round(rawReward * 100) / 100;
 
     // Credit to contributor's balance
-    this.customerBalances.update(balances => ({
+    this.customerBalances.update((balances) => ({
       ...balances,
-      [params.contributorId]: (balances[params.contributorId] || 0) + rewardXi
+      [params.contributorId]: (balances[params.contributorId] || 0) + rewardXi,
     }));
 
     // Update global ledger: minting strategic COGS pool
-    this.ledgerState.update(state => ({
+    this.ledgerState.update((state) => ({
       ...state,
       availableSupply: state.availableSupply + rewardXi,
-      mintedPoaPool: state.mintedPoaPool + rewardXi
+      mintedPoaPool: state.mintedPoaPool + rewardXi,
     }));
 
     this.auditService.logEvent({
@@ -252,7 +249,7 @@ export class XiEconomyService {
       severity: AuditSeverity.INFO,
       status: 'success',
       targetEntity: params.contributorId,
-      details: `Minted ${rewardXi} Ξ via Proof-of-Attribution [Nk=${params.datasetWeightNk}, Fk=${params.qualityFactorFk}, Edata=${params.efficacyImpactEdata}]. Classified as Strategic COGS Investment.`
+      details: `Minted ${rewardXi} Ξ via Proof-of-Attribution [Nk=${params.datasetWeightNk}, Fk=${params.qualityFactorFk}, Edata=${params.efficacyImpactEdata}]. Classified as Strategic COGS Investment.`,
     });
 
     this.notificationService.notify({
@@ -260,14 +257,14 @@ export class XiEconomyService {
       message: `You earned ${rewardXi} Ξ for validated high-consensus model alignment data.`,
       category: AuditCategory.DATABASE,
       priority: 'high',
-      sourceApp: 'The Ξ Economy'
+      sourceApp: 'The Ξ Economy',
     });
 
     return {
       rewardXi,
       calculationBreakdown: `R_Xi = ${mXi} * ${params.datasetWeightNk} * (${params.qualityFactorFk}^${alpha}) * ${params.efficacyImpactEdata} = ${rewardXi} Ξ`,
       classification: 'strategic_cogs_investment',
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
   }
 
@@ -282,18 +279,22 @@ export class XiEconomyService {
 
     const newBalance = current - params.xiUnits;
 
-    this.customerBalances.update(balances => ({
+    this.customerBalances.update((balances) => ({
       ...balances,
-      [params.customerId]: newBalance
+      [params.customerId]: newBalance,
     }));
 
     // Update ledger burning pools
-    this.ledgerState.update(state => ({
+    this.ledgerState.update((state) => ({
       ...state,
       availableSupply: state.availableSupply - params.xiUnits,
-      burnedExecutionPool: params.isElasticAccess ? state.burnedExecutionPool : state.burnedExecutionPool + params.xiUnits,
-      burnedElasticAccessPool: params.isElasticAccess ? state.burnedElasticAccessPool + params.xiUnits : state.burnedElasticAccessPool,
-      terminalOperationalCogsUsd: state.terminalOperationalCogsUsd + params.xiUnits * 0.0208
+      burnedExecutionPool: params.isElasticAccess
+        ? state.burnedExecutionPool
+        : state.burnedExecutionPool + params.xiUnits,
+      burnedElasticAccessPool: params.isElasticAccess
+        ? state.burnedElasticAccessPool + params.xiUnits
+        : state.burnedElasticAccessPool,
+      terminalOperationalCogsUsd: state.terminalOperationalCogsUsd + params.xiUnits * 0.0208,
     }));
 
     this.auditService.logEvent({
@@ -302,7 +303,7 @@ export class XiEconomyService {
       severity: AuditSeverity.INFO,
       status: 'success',
       targetEntity: params.customerId,
-      details: `Burned ${params.xiUnits} Ξ for "${params.reason}" (Elastic Access: ${Boolean(params.isElasticAccess)}). Recognized revenue.`
+      details: `Burned ${params.xiUnits} Ξ for "${params.reason}" (Elastic Access: ${Boolean(params.isElasticAccess)}). Recognized revenue.`,
     });
 
     return {
@@ -310,7 +311,7 @@ export class XiEconomyService {
       burnedXi: params.xiUnits,
       remainingBalance: newBalance,
       revenueRecognizedUsd: params.xiUnits * 1.0, // 1:1 Peg
-      message: `Burned ${params.xiUnits} Ξ. Remaining balance: ${newBalance} Ξ.`
+      message: `Burned ${params.xiUnits} Ξ. Remaining balance: ${newBalance} Ξ.`,
     };
   }
 
@@ -321,23 +322,69 @@ export class XiEconomyService {
     const state = this.ledgerState();
 
     const nodes = [
-      { id: 'fiat_sub', label: 'Customer Payments (Subscriptions)', category: 'input' as const, value: 160000 },
+      {
+        id: 'fiat_sub',
+        label: 'Customer Payments (Subscriptions)',
+        category: 'input' as const,
+        value: 160000,
+      },
       { id: 'fiat_overage', label: 'Customer Payments (Overage)', category: 'input' as const, value: 40000 },
-      { id: 'xi_pool', label: 'Available Ξ Pool (Minted Supply)', category: 'currency' as const, value: state.availableSupply },
-      { id: 'exec_burn', label: 'CogniOps Execution (Revenue)', category: 'output' as const, value: state.burnedExecutionPool },
-      { id: 'elastic_burn', label: 'Elastic Feature Access (Revenue)', category: 'output' as const, value: state.burnedElasticAccessPool },
-      { id: 'poa_invest', label: 'Proof-of-Attribution Rewards', category: 'investment' as const, value: state.mintedPoaPool },
-      { id: 'terminal_cogs', label: 'Operational Costs (Hosting & GPU)', category: 'terminal' as const, value: state.terminalOperationalCogsUsd }
+      {
+        id: 'xi_pool',
+        label: 'Available Ξ Pool (Minted Supply)',
+        category: 'currency' as const,
+        value: state.availableSupply,
+      },
+      {
+        id: 'exec_burn',
+        label: 'CogniOps Execution (Revenue)',
+        category: 'output' as const,
+        value: state.burnedExecutionPool,
+      },
+      {
+        id: 'elastic_burn',
+        label: 'Elastic Feature Access (Revenue)',
+        category: 'output' as const,
+        value: state.burnedElasticAccessPool,
+      },
+      {
+        id: 'poa_invest',
+        label: 'Proof-of-Attribution Rewards',
+        category: 'investment' as const,
+        value: state.mintedPoaPool,
+      },
+      {
+        id: 'terminal_cogs',
+        label: 'Operational Costs (Hosting & GPU)',
+        category: 'terminal' as const,
+        value: state.terminalOperationalCogsUsd,
+      },
     ];
 
     const links = [
-      { source: 'Customer Payments (Subscriptions)', target: 'Available Ξ Pool (Minted Supply)', value: 160000 },
+      {
+        source: 'Customer Payments (Subscriptions)',
+        target: 'Available Ξ Pool (Minted Supply)',
+        value: 160000,
+      },
       { source: 'Customer Payments (Overage)', target: 'Available Ξ Pool (Minted Supply)', value: 40000 },
-      { source: 'Proof-of-Attribution Rewards', target: 'Available Ξ Pool (Minted Supply)', value: state.mintedPoaPool },
-      { source: 'Available Ξ Pool (Minted Supply)', target: 'CogniOps Execution (Revenue)', value: state.burnedExecutionPool },
-      { source: 'Available Ξ Pool (Minted Supply)', target: 'Elastic Feature Access (Revenue)', value: state.burnedElasticAccessPool },
+      {
+        source: 'Proof-of-Attribution Rewards',
+        target: 'Available Ξ Pool (Minted Supply)',
+        value: state.mintedPoaPool,
+      },
+      {
+        source: 'Available Ξ Pool (Minted Supply)',
+        target: 'CogniOps Execution (Revenue)',
+        value: state.burnedExecutionPool,
+      },
+      {
+        source: 'Available Ξ Pool (Minted Supply)',
+        target: 'Elastic Feature Access (Revenue)',
+        value: state.burnedElasticAccessPool,
+      },
       { source: 'CogniOps Execution (Revenue)', target: 'Operational Costs (Hosting & GPU)', value: 2200 },
-      { source: 'Elastic Feature Access (Revenue)', target: 'Operational Costs (Hosting & GPU)', value: 640 }
+      { source: 'Elastic Feature Access (Revenue)', target: 'Operational Costs (Hosting & GPU)', value: 640 },
     ];
 
     return {
@@ -345,7 +392,7 @@ export class XiEconomyService {
       links,
       totalVolumeXi: state.availableSupply + state.burnedExecutionPool + state.burnedElasticAccessPool,
       totalFiatInflowUsd: 200000,
-      strategicCogsRatio: Math.round((state.mintedPoaPool / state.availableSupply) * 100) / 100
+      strategicCogsRatio: Math.round((state.mintedPoaPool / state.availableSupply) * 100) / 100,
     };
   }
 
@@ -376,10 +423,10 @@ export class XiEconomyService {
       status: 'active',
       approvals: 1,
       rejections: 0,
-      createdAt: Date.now()
+      createdAt: Date.now(),
     };
 
-    this.hpvcProposals.update(list => [newProp, ...list]);
+    this.hpvcProposals.update((list) => [newProp, ...list]);
 
     this.auditService.logEvent({
       action: 'HPVC_PROPOSAL_SUBMITTED',
@@ -387,7 +434,7 @@ export class XiEconomyService {
       severity: AuditSeverity.INFO,
       status: 'success',
       targetEntity: id,
-      details: `HPVC proposal "${params.title}" filed for ${params.constantKey} [${prev} -> ${params.proposedValue}].`
+      details: `HPVC proposal "${params.title}" filed for ${params.constantKey} [${prev} -> ${params.proposedValue}].`,
     });
 
     return newProp;
@@ -396,12 +443,12 @@ export class XiEconomyService {
   public castGovernanceVote(
     proposalId: string,
     voterId: string,
-    vote: 'approve' | 'reject'
+    vote: 'approve' | 'reject',
   ): { success: boolean; proposal: HpvcProposal } {
     let updated: HpvcProposal | undefined;
 
-    this.hpvcProposals.update(list =>
-      list.map(p => {
+    this.hpvcProposals.update((list) =>
+      list.map((p) => {
         if (p.id === proposalId) {
           const app = vote === 'approve' ? p.approvals + 1 : p.approvals;
           const rej = vote === 'reject' ? p.rejections + 1 : p.rejections;
@@ -417,7 +464,7 @@ export class XiEconomyService {
           return updated;
         }
         return p;
-      })
+      }),
     );
 
     if (!updated) {
@@ -430,7 +477,7 @@ export class XiEconomyService {
       severity: AuditSeverity.INFO,
       status: 'success',
       targetEntity: proposalId,
-      details: `User ${voterId} voted "${vote}" on proposal ${proposalId}. Approvals: ${updated.approvals}.`
+      details: `User ${voterId} voted "${vote}" on proposal ${proposalId}. Approvals: ${updated.approvals}.`,
     });
 
     return { success: true, proposal: updated };

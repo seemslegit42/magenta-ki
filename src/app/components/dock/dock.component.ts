@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TablerIconComponent } from '../common/tabler-icon.component';
+import { Component, inject } from '@angular/core';
 import { WindowManagerService } from '../../services/window-manager.service';
+import { TablerIconComponent } from '../common/tabler-icon.component';
 
 @Component({
   selector: 'app-dock',
@@ -62,7 +62,7 @@ import { WindowManagerService } from '../../services/window-manager.service';
         </button>
       }
     </nav>
-  `
+  `,
 })
 export class DockComponent {
   readonly windowManager = inject(WindowManagerService);
@@ -82,7 +82,7 @@ export class DockComponent {
     this.windowManager.openApp({
       id: 'app-launcher',
       name: 'Application Matrix',
-      icon: 'apps'
+      icon: 'apps',
     });
   }
 
@@ -90,7 +90,7 @@ export class DockComponent {
     this.windowManager.openApp({
       id: 'app-store',
       name: 'Verdigris App Store & Catalog',
-      icon: 'storefront'
+      icon: 'storefront',
     });
   }
 
@@ -98,15 +98,21 @@ export class DockComponent {
     this.windowManager.openApp({
       id: 'native-federation',
       name: 'Native Federation Studio',
-      icon: 'hub'
+      icon: 'hub',
     });
   }
 
   toggleProcess(pid: string) {
-    const proc = this.windowManager.processes().find(p => p.pid === pid);
+    const proc = this.windowManager.processes().find((p) => p.pid === pid);
     if (!proc) return;
     if (!proc.isOpen) {
-      this.windowManager.openApp({ id: proc.appId, name: proc.title, icon: proc.icon, isFederated: proc.isFederated, federatedConfig: proc.federatedConfig });
+      this.windowManager.openApp({
+        id: proc.appId,
+        name: proc.title,
+        icon: proc.icon,
+        isFederated: proc.isFederated,
+        federatedConfig: proc.federatedConfig,
+      });
     } else if (proc.isMinimized) {
       this.windowManager.focusWindow(pid);
     } else {

@@ -1,9 +1,9 @@
-import { describe, it, expect } from 'bun:test';
+import { describe, expect, it } from 'bun:test';
 import { AppwriteDatabaseService } from '../../src/app/services/appwrite-database.service';
-import { WindowManagerService } from '../../src/app/services/window-manager.service';
-import { AuthRbacService } from '../../src/app/services/auth-rbac.service';
 import { AuditService } from '../../src/app/services/audit.service';
+import { AuthRbacService } from '../../src/app/services/auth-rbac.service';
 import { NotificationService } from '../../src/app/services/notification.service';
+import { WindowManagerService } from '../../src/app/services/window-manager.service';
 
 describe('E2E: Appwrite Databases & Server SDK Workflow', () => {
   it('should provision databases, manage schema tables, generate SDK snippets, and enforce RBAC and audit telemetry', async () => {
@@ -23,10 +23,10 @@ describe('E2E: Appwrite Databases & Server SDK Workflow', () => {
       'Appwrite Databases & SDK',
       'dataset',
       'AppwriteDatabasesComponent',
-      'system'
+      'system',
     );
     expect(pid.startsWith('proc_')).toBe(true);
-    expect(windowMgr.activeProcesses().some(p => p.pid === pid)).toBe(true);
+    expect(windowMgr.activeProcesses().some((p) => p.pid === pid)).toBe(true);
 
     // 3. Verify Default Enterprise Databases
     const initialDatabases = dbService.allDatabases();
@@ -47,8 +47,8 @@ describe('E2E: Appwrite Databases & Server SDK Workflow', () => {
       description: 'Dedicated high-frequency sensor ingestion cluster.',
       initialTables: [
         { name: 'vibrations', columnsCount: 5 },
-        { name: 'temperatures', columnsCount: 4 }
-      ]
+        { name: 'temperatures', columnsCount: 4 },
+      ],
     });
 
     expect(dedicatedDb.id).toBe('iot_edge_mesh_dedicated');
@@ -75,8 +75,8 @@ describe('E2E: Appwrite Databases & Server SDK Workflow', () => {
         { key: 'sensor_id', type: 'string', required: true },
         { key: 'psi_value', type: 'float', required: true },
         { key: 'is_critical', type: 'boolean', required: false, defaultValue: false },
-        { key: 'recorded_at', type: 'datetime', required: true }
-      ]
+        { key: 'recorded_at', type: 'datetime', required: true },
+      ],
     });
 
     expect(table.id).toBe('tbl_pressure_metrics');
@@ -109,13 +109,13 @@ describe('E2E: Appwrite Databases & Server SDK Workflow', () => {
       projectId: 'verdigris-production',
       apiKey: 'sec_prod_key_7788',
       databaseId: 'iot_edge_mesh_dedicated',
-      name: 'Industrial IoT Telemetry'
+      name: 'Industrial IoT Telemetry',
     };
 
     const nodeSnippet = dbService.generateServerSdkSnippet('nodejs', sdkParams);
     expect(nodeSnippet).toContain("const sdk = require('node-appwrite');");
     expect(nodeSnippet).toContain("databaseId: 'iot_edge_mesh_dedicated'");
-    expect(nodeSnippet).toContain("tablesDB.create");
+    expect(nodeSnippet).toContain('tablesDB.create');
 
     const rustSnippet = dbService.generateServerSdkSnippet('rust', sdkParams);
     expect(rustSnippet).toContain('use appwrite::services::databases::Databases;');
@@ -129,7 +129,7 @@ describe('E2E: Appwrite Databases & Server SDK Workflow', () => {
     expect(sdkExecution.success).toBe(true);
     expect(sdkExecution.latencyMs).toBeGreaterThan(0);
     expect(sdkExecution.response.$id).toBe('iot_edge_mesh_dedicated');
-    expect(sdkExecution.stdoutLogs.some(l => l.includes('HTTP 201'))).toBe(true);
+    expect(sdkExecution.stdoutLogs.some((l) => l.includes('HTTP 201'))).toBe(true);
 
     const sdkAudit = audit.allLogs()[0];
     expect(sdkAudit.action).toBe('APPWRITE_SDK_INVOKED');
@@ -142,7 +142,7 @@ describe('E2E: Appwrite Databases & Server SDK Workflow', () => {
 
     // 10. Close Window
     windowMgr.terminateProcess(pid);
-    expect(windowMgr.activeProcesses().some(p => p.pid === pid)).toBe(false);
+    expect(windowMgr.activeProcesses().some((p) => p.pid === pid)).toBe(false);
 
     // Total audit events should have recorded all lifecycle actions
     expect(audit.totalCount()).toBeGreaterThan(initialAuditCount + 4);

@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'bun:test';
+import { describe, expect, it } from 'bun:test';
 import { AgentFSService } from '../../src/app/services/agentfs.service';
 
 describe('E2E: AgentFS Sandboxed VFS & Tool Execution Flow', () => {
@@ -23,9 +23,9 @@ describe('E2E: AgentFS Sandboxed VFS & Tool Execution Flow', () => {
         return {
           filesScanned: 3,
           suggestedModifications: ['add_sync_adapter', 'bump_version'],
-          safetyScore: 0.98
+          safetyScore: 0.98,
         };
-      }
+      },
     );
     expect(analyzeOutput.filesScanned).toBe(3);
     expect(analyzeOutput.safetyScore).toBe(0.98);
@@ -46,7 +46,7 @@ describe('E2E: AgentFS Sandboxed VFS & Tool Execution Flow', () => {
       { targetInode: 2, strictMode: true },
       async () => {
         return { lintErrors: 0, warnings: 0, passed: true };
-      }
+      },
     );
     expect(testOutput.passed).toBe(true);
 
@@ -54,12 +54,12 @@ describe('E2E: AgentFS Sandboxed VFS & Tool Execution Flow', () => {
     const auditLogs = vfs.allToolCalls()();
     expect(auditLogs.length).toBeGreaterThanOrEqual(2);
 
-    const toolNames = auditLogs.map(call => call.toolName);
+    const toolNames = auditLogs.map((call) => call.toolName);
     expect(toolNames).toContain('run_sandbox_linter');
     expect(toolNames).toContain('analyze_workspace_files');
 
     // Both recent calls should have completion timestamps and valid output
-    const lintCall = auditLogs.find(c => c.toolName === 'run_sandbox_linter')!;
+    const lintCall = auditLogs.find((c) => c.toolName === 'run_sandbox_linter')!;
     expect(lintCall.completedAt).toBeDefined();
     expect((lintCall.result as any).passed).toBe(true);
   });

@@ -2,6 +2,21 @@
 
 All notable changes to the Verdigris Cloud OS workspace are documented in this file.
 
+## [Unreleased] - 2026-11-21
+
+### Added
+- **GitLab Flow & Lefthook Version Control**: Initialized Git repository with `main`, `staging`, and `production` branches, Conventional Commits enforcement (`commit-msg`), staged Biome + TypeScript checks (`pre-commit`), and unit/integration test gates (`pre-push`) in `lefthook.yml`, documented in `docs/gitlab-flow-guide.md`.
+- **Bun-Only GitLab CI/CD Pipeline (`.gitlab-ci.yml`)**: Replaced GitHub/Node CI workflow with a 5-stage GitLab pipeline (`quality`, `test`, `build`, `deploy_staging`, `uat_and_production`) powered by `oven/bun`, Biome, Go toolchain, and Docker Compose staging health verification.
+- **4-Tier Testing Strategy (No Playwright Bloat)**:
+  - Biome (`biome.json`) unified linting and formatting.
+  - Bun Test (`bun test`) unified across `tests/unit/`, `tests/integration/`, and `tests/e2e/`.
+  - Go backend unit tests (`go/internal/handlers/handlers_test.go`, `go/internal/middleware/auth_test.go`).
+  - Real HTTP REST API contract integration suite (`tests/integration/api-contract.integration.test.ts`) and release/UAT workflow E2E suite (`tests/e2e/release-and-uat-workflow.e2e.test.ts`).
+- **Business Stakeholder UAT Sign-Off Portal (`/uat`)**: Built `UatPortalComponent`, `UatService`, server endpoints (`/api/uat/scenarios`, `/api/uat/signoff`), and non-technical `docs/uat-plan.md` enabling business owners to review plain-English scenarios, record approvals/change requests, submit release sign-off, and download summary reports without developer jargon.
+
+### Removed
+- **Legacy GitHub Actions Node/npm Workflow**: Removed `.github/workflows/ci-cd.yml` in favor of `.gitlab-ci.yml`.
+
 ## [Unreleased] - 2026-10-20
 
 ### Added

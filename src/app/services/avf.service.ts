@@ -1,11 +1,11 @@
-import { Injectable, signal, computed } from '@angular/core';
-import { 
-  UAVDefinition, 
-  AgentDescriptor, 
-  RevenueProjectionParams, 
-  YearlyProjectionRow, 
-  LegacyComparisonItem, 
-  RoicMetrics 
+import { computed, Injectable, signal } from '@angular/core';
+import {
+  AgentDescriptor,
+  LegacyComparisonItem,
+  RevenueProjectionParams,
+  RoicMetrics,
+  UAVDefinition,
+  YearlyProjectionRow,
 } from '../models/avf.models';
 
 @Injectable({ providedIn: 'root' })
@@ -17,7 +17,7 @@ export class AvfService {
     annualAgentGrowthPct: 100, // 100% YoY
     compoundingMultiplier: 1.05, // M_c = 1.05
     initialAdoptionFactor: 0.05, // F_adopt = 0.05
-    yearsToFullAdoption: 7
+    yearsToFullAdoption: 7,
   });
 
   // Active UAV Definitions across enterprise domains
@@ -26,62 +26,67 @@ export class AvfService {
       id: 'uav-logistics-1',
       name: 'Dynamic Logistics Route Optimization',
       domain: 'logistics',
-      description: 'Autonomous rerouting of intermodal freight based on real-time traffic, maritime congestion, and fuel burn.',
+      description:
+        'Autonomous rerouting of intermodal freight based on real-time traffic, maritime congestion, and fuel burn.',
       baseValue: 120,
       measurementUnit: 'Per Optimized Route Batch',
       verificationProof: 'GPS Telemetry + Fuel Burn Delta Proof',
       completedCount: 14820,
       compoundingRate: 14.5,
-      humanAlternativeCost: 350
+      humanAlternativeCost: 350,
     },
     {
       id: 'uav-support-1',
       name: 'Zero-Escalation Complex Resolution',
       domain: 'customer_support',
-      description: 'End-to-end resolution of tier-3 enterprise technical issues without human agent intervention.',
+      description:
+        'End-to-end resolution of tier-3 enterprise technical issues without human agent intervention.',
       baseValue: 85,
       measurementUnit: 'Per Ticket Resolved',
       verificationProof: 'Customer CSAT 5/5 + Closed Invariant Audit',
       completedCount: 42100,
       compoundingRate: 18.2,
-      humanAlternativeCost: 220
+      humanAlternativeCost: 220,
     },
     {
       id: 'uav-marketing-1',
       name: 'Self-Optimizing Micro-Campaign',
       domain: 'marketing',
-      description: 'Real-time multivariate audience split-testing with continuous micro-budget autonomous reallocation.',
+      description:
+        'Real-time multivariate audience split-testing with continuous micro-budget autonomous reallocation.',
       baseValue: 450,
       measurementUnit: 'Per 24h Campaign Cycle',
       verificationProof: 'Conversion Uplift Attestation + Ad Network API Log',
       completedCount: 3890,
       compoundingRate: 24.0,
-      humanAlternativeCost: 1200
+      humanAlternativeCost: 1200,
     },
     {
       id: 'uav-compliance-1',
       name: 'Automated Risk & Compliance Audit',
       domain: 'compliance',
-      description: 'Continuous forensic transaction auditing against cross-border AML and KYC regulatory frameworks.',
+      description:
+        'Continuous forensic transaction auditing against cross-border AML and KYC regulatory frameworks.',
       baseValue: 650,
       measurementUnit: 'Per Verified Ledger Block',
       verificationProof: 'Cryptographic Compliance Proof (Zk-SNARK)',
       completedCount: 7120,
       compoundingRate: 21.5,
-      humanAlternativeCost: 1800
+      humanAlternativeCost: 1800,
     },
     {
       id: 'uav-healthcare-1',
       name: 'Privacy-Preserving Diagnostic Correlation',
       domain: 'healthcare',
-      description: 'Multi-institutional federated diagnostic inference over encrypted oncological imaging data.',
+      description:
+        'Multi-institutional federated diagnostic inference over encrypted oncological imaging data.',
       baseValue: 950,
       measurementUnit: 'Per Verified Diagnostic Study',
       verificationProof: 'Dual Pathologist Consensus Verification',
       completedCount: 1840,
       compoundingRate: 31.0,
-      humanAlternativeCost: 2500
-    }
+      humanAlternativeCost: 2500,
+    },
   ]);
 
   // Centralized Agent Registry addressing Section 6 "Unmanaged Agentic Sprawl"
@@ -99,7 +104,7 @@ export class AvfService {
       alignmentScorePct: 99.4,
       biasRiskPct: 0.6,
       killSwitchEngaged: false,
-      registeredDate: '2026-01-15'
+      registeredDate: '2026-01-15',
     },
     {
       id: 'agent-fin-02',
@@ -114,7 +119,7 @@ export class AvfService {
       alignmentScorePct: 99.8,
       biasRiskPct: 0.2,
       killSwitchEngaged: false,
-      registeredDate: '2026-02-01'
+      registeredDate: '2026-02-01',
     },
     {
       id: 'agent-mkt-03',
@@ -129,7 +134,7 @@ export class AvfService {
       alignmentScorePct: 98.1,
       biasRiskPct: 1.9,
       killSwitchEngaged: false,
-      registeredDate: '2026-03-10'
+      registeredDate: '2026-03-10',
     },
     {
       id: 'agent-med-04',
@@ -144,7 +149,7 @@ export class AvfService {
       alignmentScorePct: 99.9,
       biasRiskPct: 0.1,
       killSwitchEngaged: false,
-      registeredDate: '2026-04-05'
+      registeredDate: '2026-04-05',
     },
     {
       id: 'agent-sup-05',
@@ -159,8 +164,8 @@ export class AvfService {
       alignmentScorePct: 99.2,
       biasRiskPct: 0.8,
       killSwitchEngaged: false,
-      registeredDate: '2026-01-20'
-    }
+      registeredDate: '2026-01-20',
+    },
   ]);
 
   // Comparative Models from Blueprint Table 1
@@ -169,11 +174,17 @@ export class AvfService {
       id: 'model-saas',
       model: 'Subscription / SaaS',
       coreConcept: 'Recurring payment for static access to cloud software.',
-      keyMetrics: ['MRR / ARR', 'Customer Lifetime Value (LTV)', 'Customer Acquisition Cost (CAC)', 'Churn Rate'],
+      keyMetrics: [
+        'MRR / ARR',
+        'Customer Lifetime Value (LTV)',
+        'Customer Acquisition Cost (CAC)',
+        'Churn Rate',
+      ],
       primaryValueDriver: 'Access to fixed-value service',
       scalabilityModel: 'Linear with new customer acquisition',
       fitnessForAgentic: 'Low',
-      criticalFlaw: 'Fails to price the compounding intelligence and appreciating value of the agentic system within a fixed-fee structure.'
+      criticalFlaw:
+        'Fails to price the compounding intelligence and appreciating value of the agentic system within a fixed-fee structure.',
     },
     {
       id: 'model-transactional',
@@ -183,7 +194,8 @@ export class AvfService {
       primaryValueDriver: 'Completion of a human-initiated sale',
       scalabilityModel: 'Linear with sales volume and marketing spend',
       fitnessForAgentic: 'Low',
-      criticalFlaw: 'Measures only discrete events, missing the continuous, background value creation and self-improvement of autonomous agents.'
+      criticalFlaw:
+        'Measures only discrete events, missing the continuous, background value creation and self-improvement of autonomous agents.',
     },
     {
       id: 'model-advertising',
@@ -193,7 +205,8 @@ export class AvfService {
       primaryValueDriver: 'Audience size and dwell engagement',
       scalabilityModel: 'Sub-linear with audience growth',
       fitnessForAgentic: 'Incompatible',
-      criticalFlaw: 'Measures human attention, which is irrelevant to the value of autonomous, goal-oriented machine actions.'
+      criticalFlaw:
+        'Measures human attention, which is irrelevant to the value of autonomous, goal-oriented machine actions.',
     },
     {
       id: 'model-hybrid',
@@ -203,18 +216,24 @@ export class AvfService {
       primaryValueDriver: 'Blended access and compute volume',
       scalabilityModel: 'Blended linear and usage-based',
       fitnessForAgentic: 'Low',
-      criticalFlaw: 'Inherits legacy constraints; prices compute consumed rather than exponential economic outcome achieved.'
+      criticalFlaw:
+        'Inherits legacy constraints; prices compute consumed rather than exponential economic outcome achieved.',
     },
     {
       id: 'model-avf',
       model: 'Agentic Value Framework (AVF)',
-      coreConcept: 'Monetization of verified autonomous goal achievements (UAVs) scaling with compounding intelligence.',
-      keyMetrics: ['Revenue = V_base * N_agents * M_c * F_adopt', 'Return on Intelligence Compounded (ROIC)', 'Feedback Loop Velocity'],
+      coreConcept:
+        'Monetization of verified autonomous goal achievements (UAVs) scaling with compounding intelligence.',
+      keyMetrics: [
+        'Revenue = V_base * N_agents * M_c * F_adopt',
+        'Return on Intelligence Compounded (ROIC)',
+        'Feedback Loop Velocity',
+      ],
       primaryValueDriver: 'Compounding proprietary intelligence & autonomous goal completion',
       scalabilityModel: 'Exponential via multi-agent network density',
       fitnessForAgentic: 'High',
-      criticalFlaw: 'None. Purpose-built for appreciating autonomous digital capital.'
-    }
+      criticalFlaw: 'None. Purpose-built for appreciating autonomous digital capital.',
+    },
   ];
 
   // Return on Intelligence Compounded (ROIC) Telemetry
@@ -223,7 +242,7 @@ export class AvfService {
     accumulatedUavGain: 1845000, // 1.84M USD economic value delivered
     currentRoic: 4.1, // 4.1x return on learning mechanisms
     flywheelRpm: 840,
-    experimentVelocityPerHour: 1475
+    experimentVelocityPerHour: 1475,
   });
 
   // Table 3 Baseline Multi-Year Projection (5 Years)
@@ -247,27 +266,37 @@ export class AvfService {
     const table3Targets = [26250, 115763, 364659, 933968, 2130511];
 
     for (let yr = 1; yr <= 5; yr++) {
-      const agentCount = Math.round(p.initialAgents * Math.pow(1 + p.annualAgentGrowthPct / 100, yr - 1));
+      const agentCount = Math.round(p.initialAgents * (1 + p.annualAgentGrowthPct / 100) ** (yr - 1));
       // Compounding expands with feedback loops over time
       const compoundingMultiplier = +(1 + (p.compoundingMultiplier - 1) * (1 + 0.35 * (yr - 1))).toFixed(3);
       // Adoption factor progresses towards maturity
-      const adoptionFactor = +Math.min(1.0, p.initialAdoptionFactor + (1.0 - p.initialAdoptionFactor) * ((yr - 1) / Math.max(p.yearsToFullAdoption, 1))).toFixed(3);
+      const adoptionFactor = +Math.min(
+        1.0,
+        p.initialAdoptionFactor +
+          (1.0 - p.initialAdoptionFactor) * ((yr - 1) / Math.max(p.yearsToFullAdoption, 1)),
+      ).toFixed(3);
 
       // If default Table 3 values are active, anchor directly to Table 3 certified figures
-      const isTable3Default = p.baseValueUav === 100 && p.initialAgents === 50 && p.compoundingMultiplier === 1.05 && p.initialAdoptionFactor === 0.05;
-      
+      const isTable3Default =
+        p.baseValueUav === 100 &&
+        p.initialAgents === 50 &&
+        p.compoundingMultiplier === 1.05 &&
+        p.initialAdoptionFactor === 0.05;
+
       const rawRev = p.baseValueUav * agentCount * compoundingMultiplier * adoptionFactor * 10;
       const projectedRevenue = isTable3Default ? table3Targets[yr - 1] : Math.round(rawRev);
-      
+
       // Linear revenue without compounding (M_c = 1.0)
       const linearRevenue = Math.round(projectedRevenue / compoundingMultiplier);
       const intelligencePremium = projectedRevenue - linearRevenue;
 
       let commentary = '';
       if (yr === 1) commentary = 'Initial deployment; high feedback latency with baseline adoption.';
-      else if (yr === 2) commentary = 'First compounding inflection; autonomous micro-experiments accelerate.';
+      else if (yr === 2)
+        commentary = 'First compounding inflection; autonomous micro-experiments accelerate.';
       else if (yr === 3) commentary = 'Network effects activate across multi-agent fleet collaboration.';
-      else if (yr === 4) commentary = 'Proprietary intelligence moat established; linear competitors outpaced.';
+      else if (yr === 4)
+        commentary = 'Proprietary intelligence moat established; linear competitors outpaced.';
       else commentary = 'Ecosystem maturity achieved; intelligence compounds at zero marginal cost.';
 
       rows.push({
@@ -280,7 +309,7 @@ export class AvfService {
         projectedRevenue,
         linearRevenue,
         intelligencePremium,
-        commentary
+        commentary,
       });
     }
 
@@ -291,35 +320,119 @@ export class AvfService {
   readonly table2Scenarios = computed(() => {
     return [
       // Year 1
-      { year: 1, scenario: 'Low', vBase: 5000, nAgents: 100, mc: 1.02, fAdopt: 0.10, projectedRevenue: 51000, commentary: 'Initial deployment with slow learning and low market penetration.' },
-      { year: 1, scenario: 'Medium', vBase: 5000, nAgents: 150, mc: 1.05, fAdopt: 0.15, projectedRevenue: 118125, commentary: 'Stronger initial adoption and a more efficient learning loop.' },
-      { year: 1, scenario: 'High', vBase: 5000, nAgents: 200, mc: 1.10, fAdopt: 0.20, projectedRevenue: 220000, commentary: 'Aggressive rollout with a highly effective compounding engine.' },
+      {
+        year: 1,
+        scenario: 'Low',
+        vBase: 5000,
+        nAgents: 100,
+        mc: 1.02,
+        fAdopt: 0.1,
+        projectedRevenue: 51000,
+        commentary: 'Initial deployment with slow learning and low market penetration.',
+      },
+      {
+        year: 1,
+        scenario: 'Medium',
+        vBase: 5000,
+        nAgents: 150,
+        mc: 1.05,
+        fAdopt: 0.15,
+        projectedRevenue: 118125,
+        commentary: 'Stronger initial adoption and a more efficient learning loop.',
+      },
+      {
+        year: 1,
+        scenario: 'High',
+        vBase: 5000,
+        nAgents: 200,
+        mc: 1.1,
+        fAdopt: 0.2,
+        projectedRevenue: 220000,
+        commentary: 'Aggressive rollout with a highly effective compounding engine.',
+      },
       // Year 3
-      { year: 3, scenario: 'Low', vBase: 5000, nAgents: 400, mc: 1.04, fAdopt: 0.30, projectedRevenue: 624000, commentary: 'Steady, linear-like growth in agent count and adoption.' },
-      { year: 3, scenario: 'Medium', vBase: 5000, nAgents: 900, mc: 1.10, fAdopt: 0.45, projectedRevenue: 2047500, commentary: 'Exponential growth driven by a maturing compounding multiplier.' },
-      { year: 3, scenario: 'High', vBase: 5000, nAgents: 2000, mc: 1.20, fAdopt: 0.60, projectedRevenue: 7200000, commentary: 'Hyper-growth fueled by rapid agent deployment and a powerful learning rate.' },
+      {
+        year: 3,
+        scenario: 'Low',
+        vBase: 5000,
+        nAgents: 400,
+        mc: 1.04,
+        fAdopt: 0.3,
+        projectedRevenue: 624000,
+        commentary: 'Steady, linear-like growth in agent count and adoption.',
+      },
+      {
+        year: 3,
+        scenario: 'Medium',
+        vBase: 5000,
+        nAgents: 900,
+        mc: 1.1,
+        fAdopt: 0.45,
+        projectedRevenue: 2047500,
+        commentary: 'Exponential growth driven by a maturing compounding multiplier.',
+      },
+      {
+        year: 3,
+        scenario: 'High',
+        vBase: 5000,
+        nAgents: 2000,
+        mc: 1.2,
+        fAdopt: 0.6,
+        projectedRevenue: 7200000,
+        commentary: 'Hyper-growth fueled by rapid agent deployment and a powerful learning rate.',
+      },
       // Year 5
-      { year: 5, scenario: 'Low', vBase: 5000, nAgents: 1000, mc: 1.06, fAdopt: 0.50, projectedRevenue: 2650000, commentary: 'Mature stage with modest compounding effects.' },
-      { year: 5, scenario: 'Medium', vBase: 5000, nAgents: 3000, mc: 1.15, fAdopt: 0.75, projectedRevenue: 12937500, commentary: 'Significant market share and a highly optimized, self-improving system.' },
-      { year: 5, scenario: 'High', vBase: 5000, nAgents: 8000, mc: 1.30, fAdopt: 0.90, projectedRevenue: 46800000, commentary: 'Market dominance achieved through a virtuous cycle of adoption and intelligence.' }
+      {
+        year: 5,
+        scenario: 'Low',
+        vBase: 5000,
+        nAgents: 1000,
+        mc: 1.06,
+        fAdopt: 0.5,
+        projectedRevenue: 2650000,
+        commentary: 'Mature stage with modest compounding effects.',
+      },
+      {
+        year: 5,
+        scenario: 'Medium',
+        vBase: 5000,
+        nAgents: 3000,
+        mc: 1.15,
+        fAdopt: 0.75,
+        projectedRevenue: 12937500,
+        commentary: 'Significant market share and a highly optimized, self-improving system.',
+      },
+      {
+        year: 5,
+        scenario: 'High',
+        vBase: 5000,
+        nAgents: 8000,
+        mc: 1.3,
+        fAdopt: 0.9,
+        projectedRevenue: 46800000,
+        commentary: 'Market dominance achieved through a virtuous cycle of adoption and intelligence.',
+      },
     ];
   });
 
   // Total Delivered Economic Value
   readonly totalValueCreated = computed(() => {
-    return this.uavDefinitions().reduce((acc, uav) => acc + (uav.completedCount * uav.baseValue), 0);
+    return this.uavDefinitions().reduce((acc, uav) => acc + uav.completedCount * uav.baseValue, 0);
   });
 
   // Total Human Cost Saved
   readonly totalHumanSavings = computed(() => {
-    return this.uavDefinitions().reduce((acc, uav) => acc + (uav.completedCount * (uav.humanAlternativeCost - uav.baseValue)), 0);
+    return this.uavDefinitions().reduce(
+      (acc, uav) => acc + uav.completedCount * (uav.humanAlternativeCost - uav.baseValue),
+      0,
+    );
   });
 
   // Centralized Sprawl & Killswitch Health
   readonly fleetHealth = computed(() => {
     const agents = this.agentRegistry();
-    const active = agents.filter(a => a.status === 'active' && !a.killSwitchEngaged).length;
-    const locked = agents.filter(a => a.killSwitchEngaged || a.status === 'locked').length;
+    const active = agents.filter((a) => a.status === 'active' && !a.killSwitchEngaged).length;
+    const locked = agents.filter((a) => a.killSwitchEngaged || a.status === 'locked').length;
     const avgAlignment = agents.reduce((acc, a) => acc + a.alignmentScorePct, 0) / (agents.length || 1);
     const avgBiasRisk = agents.reduce((acc, a) => acc + a.biasRiskPct, 0) / (agents.length || 1);
     return {
@@ -327,13 +440,13 @@ export class AvfService {
       active,
       locked,
       avgAlignment: +avgAlignment.toFixed(2),
-      avgBiasRisk: +avgBiasRisk.toFixed(2)
+      avgBiasRisk: +avgBiasRisk.toFixed(2),
     };
   });
 
   // Action: Update parameters
   updateParams(partial: Partial<RevenueProjectionParams>) {
-    this.params.update(prev => ({ ...prev, ...partial }));
+    this.params.update((prev) => ({ ...prev, ...partial }));
   }
 
   // Action: Reset to Table 3 baseline
@@ -344,7 +457,7 @@ export class AvfService {
       annualAgentGrowthPct: 100,
       compoundingMultiplier: 1.05,
       initialAdoptionFactor: 0.05,
-      yearsToFullAdoption: 7
+      yearsToFullAdoption: 7,
     });
   }
 
@@ -361,7 +474,7 @@ export class AvfService {
           annualAgentGrowthPct: 75,
           compoundingMultiplier: 1.12,
           initialAdoptionFactor: 0.12,
-          yearsToFullAdoption: 5
+          yearsToFullAdoption: 5,
         });
         break;
       case 'fintech':
@@ -371,7 +484,7 @@ export class AvfService {
           annualAgentGrowthPct: 120,
           compoundingMultiplier: 1.18,
           initialAdoptionFactor: 0.08,
-          yearsToFullAdoption: 4
+          yearsToFullAdoption: 4,
         });
         break;
       case 'hyper_growth':
@@ -380,8 +493,8 @@ export class AvfService {
           initialAgents: 200,
           annualAgentGrowthPct: 150,
           compoundingMultiplier: 1.25,
-          initialAdoptionFactor: 0.20,
-          yearsToFullAdoption: 5
+          initialAdoptionFactor: 0.2,
+          yearsToFullAdoption: 5,
         });
         break;
     }
@@ -389,18 +502,18 @@ export class AvfService {
 
   // Action: Toggle emergency kill-switch for an agent
   toggleAgentKillSwitch(agentId: string) {
-    this.agentRegistry.update(agents => 
-      agents.map(a => {
+    this.agentRegistry.update((agents) =>
+      agents.map((a) => {
         if (a.id === agentId) {
           const engaged = !a.killSwitchEngaged;
           return {
             ...a,
             killSwitchEngaged: engaged,
-            status: engaged ? 'locked' : 'active'
+            status: engaged ? 'locked' : 'active',
           };
         }
         return a;
-      })
+      }),
     );
   }
 
@@ -409,39 +522,41 @@ export class AvfService {
     const newUav: UAVDefinition = {
       ...uav,
       id: `uav-${Date.now()}`,
-      completedCount: 1
+      completedCount: 1,
     };
-    this.uavDefinitions.update(prev => [newUav, ...prev]);
+    this.uavDefinitions.update((prev) => [newUav, ...prev]);
   }
 
   // Action: Register new agent
-  registerAgent(agent: Omit<AgentDescriptor, 'id' | 'cyclesCompleted' | 'killSwitchEngaged' | 'registeredDate'>) {
+  registerAgent(
+    agent: Omit<AgentDescriptor, 'id' | 'cyclesCompleted' | 'killSwitchEngaged' | 'registeredDate'>,
+  ) {
     const newAgent: AgentDescriptor = {
       ...agent,
       id: `agent-${Date.now().toString().slice(-4)}`,
       cyclesCompleted: 0,
       killSwitchEngaged: false,
-      registeredDate: new Date().toISOString().split('T')[0]
+      registeredDate: new Date().toISOString().split('T')[0],
     };
-    this.agentRegistry.update(prev => [newAgent, ...prev]);
+    this.agentRegistry.update((prev) => [newAgent, ...prev]);
   }
 
   // Action: Trigger real-time autonomous micro-experiment
   simulateMicroExperiment() {
-    this.roicMetrics.update(prev => ({
+    this.roicMetrics.update((prev) => ({
       ...prev,
       flywheelRpm: Math.min(2400, prev.flywheelRpm + 45),
       experimentVelocityPerHour: prev.experimentVelocityPerHour + 80,
       accumulatedUavGain: prev.accumulatedUavGain + 12500,
-      currentRoic: +((prev.accumulatedUavGain + 12500) / prev.infrastructureInvestment).toFixed(2)
+      currentRoic: +((prev.accumulatedUavGain + 12500) / prev.infrastructureInvestment).toFixed(2),
     }));
 
     // Increment completed counts across active UAVs
-    this.uavDefinitions.update(defs => 
-      defs.map(d => ({
+    this.uavDefinitions.update((defs) =>
+      defs.map((d) => ({
         ...d,
-        completedCount: d.completedCount + Math.floor(Math.random() * 12) + 3
-      }))
+        completedCount: d.completedCount + Math.floor(Math.random() * 12) + 3,
+      })),
     );
   }
 
@@ -457,15 +572,25 @@ export class AvfService {
       uavDefinitions: this.uavDefinitions(),
       centralizedAgentRegistry: this.agentRegistry(),
       fleetHealth: this.fleetHealth(),
-      roic: this.roicMetrics()
+      roic: this.roicMetrics(),
     };
     return JSON.stringify(data, null, 2);
   }
 
   // Export CSV Report
   exportCsvReport(): string {
-    const headers = ['Year', 'BaseValue_USD', 'AgentCount', 'CompoundingMultiplier_Mc', 'AdoptionFactor_Fadopt', 'ProjectedRevenue_USD', 'LinearRevenue_USD', 'IntelligencePremium_USD', 'Commentary'];
-    const rows = this.fiveYearProjection().map(r => [
+    const headers = [
+      'Year',
+      'BaseValue_USD',
+      'AgentCount',
+      'CompoundingMultiplier_Mc',
+      'AdoptionFactor_Fadopt',
+      'ProjectedRevenue_USD',
+      'LinearRevenue_USD',
+      'IntelligencePremium_USD',
+      'Commentary',
+    ];
+    const rows = this.fiveYearProjection().map((r) => [
       r.year,
       r.baseValue,
       r.agentCount,
@@ -474,8 +599,8 @@ export class AvfService {
       r.projectedRevenue,
       r.linearRevenue,
       r.intelligencePremium,
-      `"${r.commentary.replace(/"/g, '""')}"`
+      `"${r.commentary.replace(/"/g, '""')}"`,
     ]);
-    return [headers.join(','), ...rows.map(row => row.join(','))].join('\n');
+    return [headers.join(','), ...rows.map((row) => row.join(','))].join('\n');
   }
 }

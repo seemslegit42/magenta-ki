@@ -1,21 +1,24 @@
-import { Directive, ElementRef, HostListener, output, inject } from '@angular/core';
+import { Directive, ElementRef, HostListener, inject, output } from '@angular/core';
 
 @Directive({
   selector: '[appDraggable]',
-  standalone: true
+  standalone: true,
 })
 export class DraggableDirective {
   private isDragging = false;
   private offset = { x: 0, y: 0 };
-  
-  dragMove = output<{ x: number, y: number }>();
+
+  dragMove = output<{ x: number; y: number }>();
 
   private el = inject(ElementRef);
 
   @HostListener('mousedown', ['$event'])
   onMouseDown(event: MouseEvent) {
     this.isDragging = true;
-    this.offset = { x: event.clientX - this.el.nativeElement.getBoundingClientRect().left, y: event.clientY - this.el.nativeElement.getBoundingClientRect().top };
+    this.offset = {
+      x: event.clientX - this.el.nativeElement.getBoundingClientRect().left,
+      y: event.clientY - this.el.nativeElement.getBoundingClientRect().top,
+    };
   }
 
   @HostListener('window:mousemove', ['$event'])

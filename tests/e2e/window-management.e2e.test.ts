@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'bun:test';
+import { describe, expect, it } from 'bun:test';
 import { WindowManagerService } from '../../src/app/services/window-manager.service';
 
 describe('E2E: Window Management System Flow', () => {
@@ -11,8 +11,20 @@ describe('E2E: Window Management System Flow', () => {
 
     // 2. Launch multiple applications from dock
     const pid1 = wm.spawnProcess('app-store', 'App Store', 'storefront', 'AppStoreComponent', 'system');
-    const pid2 = wm.spawnProcess('agent-fs', 'AgentFS Explorer', 'folder_special', 'AgentFsExplorerComponent', 'developer');
-    const pid3 = wm.spawnProcess('wopi-office', 'WOPI Office', 'description', 'WopiOfficeComponent', 'productivity');
+    const pid2 = wm.spawnProcess(
+      'agent-fs',
+      'AgentFS Explorer',
+      'folder_special',
+      'AgentFsExplorerComponent',
+      'developer',
+    );
+    const pid3 = wm.spawnProcess(
+      'wopi-office',
+      'WOPI Office',
+      'description',
+      'WopiOfficeComponent',
+      'productivity',
+    );
 
     expect(wm.activeProcesses().length).toBe(3);
     expect(wm.openWindows().length).toBe(3);

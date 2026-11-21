@@ -145,7 +145,11 @@ export class AppwriteBackendApiService {
   /**
    * Update an item enforcing createdBy & teamId immutability
    */
-  public async updateItem(id: string, payload: Partial<ItemRecord>, sessionToken?: string): Promise<ItemRecord> {
+  public async updateItem(
+    id: string,
+    payload: Partial<ItemRecord>,
+    sessionToken?: string,
+  ): Promise<ItemRecord> {
     try {
       const headers: Record<string, string> = { 'Content-Type': 'application/json' };
       if (sessionToken) headers['Authorization'] = `Bearer ${sessionToken}`;
@@ -191,7 +195,9 @@ export class AppwriteBackendApiService {
     try {
       const headers: Record<string, string> = {};
       if (sessionToken) headers['Authorization'] = `Bearer ${sessionToken}`;
-      const url = teamId ? `${this.baseUrl}/api/projects?teamId=${encodeURIComponent(teamId)}` : `${this.baseUrl}/api/projects`;
+      const url = teamId
+        ? `${this.baseUrl}/api/projects?teamId=${encodeURIComponent(teamId)}`
+        : `${this.baseUrl}/api/projects`;
       const res = await fetch(url, { headers });
       if (!res.ok) throw new Error(`Failed to list projects: ${res.statusText}`);
       const data = await res.json();
@@ -206,7 +212,12 @@ export class AppwriteBackendApiService {
   /**
    * Create a new project enforcing createdBy & teamId ownership
    */
-  public async createProject(name: string, description?: string, teamId?: string, sessionToken?: string): Promise<ProjectRecord> {
+  public async createProject(
+    name: string,
+    description?: string,
+    teamId?: string,
+    sessionToken?: string,
+  ): Promise<ProjectRecord> {
     try {
       const headers: Record<string, string> = { 'Content-Type': 'application/json' };
       if (sessionToken) headers['Authorization'] = `Bearer ${sessionToken}`;
@@ -246,7 +257,11 @@ export class AppwriteBackendApiService {
   /**
    * Update project enforcing createdBy & teamId immutability
    */
-  public async updateProject(id: string, payload: Partial<ProjectRecord>, sessionToken?: string): Promise<ProjectRecord> {
+  public async updateProject(
+    id: string,
+    payload: Partial<ProjectRecord>,
+    sessionToken?: string,
+  ): Promise<ProjectRecord> {
     try {
       const headers: Record<string, string> = { 'Content-Type': 'application/json' };
       if (sessionToken) headers['Authorization'] = `Bearer ${sessionToken}`;
@@ -311,7 +326,12 @@ export class AppwriteBackendApiService {
   /**
    * Upload file via base64 flow (returns File ID only)
    */
-  public async uploadFile(base64Data: string, fileName: string, mimeType = 'application/octet-stream', sessionToken?: string): Promise<{ fileId: string; fileName: string }> {
+  public async uploadFile(
+    base64Data: string,
+    fileName: string,
+    mimeType = 'application/octet-stream',
+    sessionToken?: string,
+  ): Promise<{ fileId: string; fileName: string }> {
     try {
       const headers: Record<string, string> = { 'Content-Type': 'application/json' };
       if (sessionToken) headers['Authorization'] = `Bearer ${sessionToken}`;
@@ -351,7 +371,13 @@ export class AppwriteBackendApiService {
   /**
    * Send transactional email via Messaging SDK wrapper
    */
-  public async sendEmail(subject: string, content: string, users: string[] = [], topics: string[] = [], sessionToken?: string) {
+  public async sendEmail(
+    subject: string,
+    content: string,
+    users: string[] = [],
+    topics: string[] = [],
+    sessionToken?: string,
+  ) {
     try {
       const headers: Record<string, string> = { 'Content-Type': 'application/json' };
       if (sessionToken) headers['Authorization'] = `Bearer ${sessionToken}`;
@@ -372,7 +398,14 @@ export class AppwriteBackendApiService {
   /**
    * Send push notification via Messaging SDK wrapper
    */
-  public async sendPush(title: string, body: string, users: string[] = [], topics: string[] = [], data?: Record<string, unknown>, sessionToken?: string) {
+  public async sendPush(
+    title: string,
+    body: string,
+    users: string[] = [],
+    topics: string[] = [],
+    data?: Record<string, unknown>,
+    sessionToken?: string,
+  ) {
     try {
       const headers: Record<string, string> = { 'Content-Type': 'application/json' };
       if (sessionToken) headers['Authorization'] = `Bearer ${sessionToken}`;
@@ -448,7 +481,12 @@ export class AppwriteBackendApiService {
   /**
    * Calculate Proof-of-Attribution (PoA) reward
    */
-  public async calculatePoAReward(contributorId?: string, datasetWeightNk?: number, qualityFactorFk?: number, efficacyImpactEdata?: number) {
+  public async calculatePoAReward(
+    contributorId?: string,
+    datasetWeightNk?: number,
+    qualityFactorFk?: number,
+    efficacyImpactEdata?: number,
+  ) {
     try {
       const res = await fetch(`${this.baseUrl}/api/xi/poa-reward`, {
         method: 'POST',

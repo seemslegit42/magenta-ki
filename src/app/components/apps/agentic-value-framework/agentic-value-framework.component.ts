@@ -1,9 +1,9 @@
-import { Component, ChangeDetectionStrategy, inject, signal, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, Input, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { AvfDomain } from '../../../models/avf.models';
 import { AvfService } from '../../../services/avf.service';
 import { TablerIconComponent } from '../../common/tabler-icon.component';
-import { AvfDomain } from '../../../models/avf.models';
 
 @Component({
   selector: 'app-agentic-value-framework',
@@ -911,7 +911,7 @@ import { AvfDomain } from '../../../models/avf.models';
         <div class="text-[#3EB991]">INNOVΛTΞ. ΛUTOMΛTΞ. DOMINΛTΞ.</div>
       </footer>
     </div>
-  `
+  `,
 })
 export class AgenticValueFrameworkComponent {
   @Input() pid!: string;
@@ -937,7 +937,7 @@ export class AgenticValueFrameworkComponent {
       measurementUnit: 'Per Verified Autonomous Cycle',
       verificationProof: this.newUavProof || 'Cryptographic Consensus Attestation',
       compoundingRate: 15.0,
-      humanAlternativeCost: (this.newUavValue || 100) * 2.5
+      humanAlternativeCost: (this.newUavValue || 100) * 2.5,
     });
     this.newUavName = '';
     this.newUavProof = '';

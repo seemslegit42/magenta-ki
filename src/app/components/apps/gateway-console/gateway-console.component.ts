@@ -1,10 +1,10 @@
-import { Component, Input, inject, signal } from '@angular/core';
-import { GatewayService } from '../../../services/gateway.service';
-import { PolarBillingService, LicenseValidationResult } from '../../../services/polar-billing.service';
-import { XiEconomyService } from '../../../services/xi-economy.service';
-import { PoAContributionParams, PoARewardResult } from '../../../models/webos.models';
-import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Component, Input, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { PoAContributionParams, PoARewardResult } from '../../../models/webos.models';
+import { GatewayService } from '../../../services/gateway.service';
+import { LicenseValidationResult, PolarBillingService } from '../../../services/polar-billing.service';
+import { XiEconomyService } from '../../../services/xi-economy.service';
 
 @Component({
   selector: 'app-gateway-console',
@@ -537,7 +537,7 @@ import { CommonModule } from '@angular/common';
         </div>
       }
     </div>
-  `
+  `,
 })
 export class GatewayConsoleComponent {
   @Input({ required: true }) pid!: string;
@@ -546,7 +546,8 @@ export class GatewayConsoleComponent {
   protected xi = inject(XiEconomyService);
 
   protected activeTab = signal<'xi' | 'polar' | 'turso' | 'logs'>('xi');
-  protected sqlQuery = 'SELECT config_key, config_val, updated_at FROM desktop_state WHERE user_id = "usr_operator_7842";';
+  protected sqlQuery =
+    'SELECT config_key, config_val, updated_at FROM desktop_state WHERE user_id = "usr_operator_7842";';
   protected queryResult = signal<{ columns: string[]; rows: unknown[][] } | null>(null);
   protected gatewayLogs = this.gateway.logs;
 
@@ -558,7 +559,7 @@ export class GatewayConsoleComponent {
     contributorId: 'usr_operator_7842',
     datasetWeightNk: 150,
     qualityFactorFk: 0.95,
-    efficacyImpactEdata: 1.35
+    efficacyImpactEdata: 1.35,
   };
   protected lastPoaResult = signal<PoARewardResult | null>(null);
 
@@ -577,9 +578,9 @@ export class GatewayConsoleComponent {
           total_tokens: 1500,
           prompt_tokens: 1000,
           completion_tokens: 500,
-          _cost: { amount: 3.125, currency: 'usd' }
-        }
-      }
+          _cost: { amount: 3.125, currency: 'usd' },
+        },
+      },
     ]);
   }
 
@@ -588,7 +589,7 @@ export class GatewayConsoleComponent {
       products: ['prod_core_kernel'],
       externalCustomerId: 'usr_operator_7842',
       customerEmail: 'operator@verdigris.cloud',
-      successUrl: 'https://verdigris.cloud/confirmation?checkout_id={CHECKOUT_ID}'
+      successUrl: 'https://verdigris.cloud/confirmation?checkout_id={CHECKOUT_ID}',
     });
     this.latestCheckoutUrl.set(session.url);
   }
@@ -608,7 +609,7 @@ export class GatewayConsoleComponent {
       customerId: 'usr_operator_7842',
       xiUnits: 25,
       reason: 'Agentic Workflow Coordination & Model Inference',
-      isElasticAccess: false
+      isElasticAccess: false,
     });
   }
 

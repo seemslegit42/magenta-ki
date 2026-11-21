@@ -1,13 +1,13 @@
-import { Injectable, signal, computed, inject } from '@angular/core';
+import { computed, Injectable, inject, signal } from '@angular/core';
 import {
-  PolarMeter,
-  PolarIngestEvent,
-  PolarCustomerState,
-  PolarProduct,
-  PolarLicenseKey,
-  PolarCheckoutSession,
   AuditCategory,
-  AuditSeverity
+  AuditSeverity,
+  PolarCheckoutSession,
+  PolarCustomerState,
+  PolarIngestEvent,
+  PolarLicenseKey,
+  PolarMeter,
+  PolarProduct,
 } from '../models/webos.models';
 import { AuditService } from './audit.service';
 import { NotificationService } from './notification.service';
@@ -59,11 +59,11 @@ export class PolarBillingService {
       customMultiplier: 1000000,
       filter: {
         conjunction: 'and',
-        clauses: [{ property: 'name', operator: 'eq', value: 'ai_usage' }]
+        clauses: [{ property: 'name', operator: 'eq', value: 'ai_usage' }],
       },
       aggregation: { func: 'sum', property: 'total_tokens' },
       createdAt: Date.now() - 86400000 * 3,
-      totalEventsProcessed: 142
+      totalEventsProcessed: 142,
     },
     {
       id: 'mtr_edge_pings',
@@ -71,58 +71,88 @@ export class PolarBillingService {
       unit: 'scalar',
       filter: {
         conjunction: 'and',
-        clauses: [{ property: 'name', operator: 'eq', value: 'cloud_execution' }]
+        clauses: [{ property: 'name', operator: 'eq', value: 'cloud_execution' }],
       },
       aggregation: { func: 'count' },
       createdAt: Date.now() - 86400000 * 2,
-      totalEventsProcessed: 890
-    }
+      totalEventsProcessed: 890,
+    },
   ]);
 
   private productsState = signal<PolarProduct[]>([
     {
       id: 'prod_core_kernel',
       name: 'Verdigris Cloud OS Core',
-      description: 'Zoneless Angular 22 enterprise microkernel with native federation and WOPI editor access.',
+      description:
+        'Zoneless Angular 22 enterprise microkernel with native federation and WOPI editor access.',
       isRecurring: true,
       recurringInterval: 'monthly',
       badge: 'POPULAR',
       prices: [
         { id: 'prc_kernel_fixed', amountType: 'fixed', priceAmount: 4900, priceCurrency: 'usd' },
-        { id: 'prc_kernel_metered', amountType: 'metered_unit', unitAmount: 0.00002, priceCurrency: 'usd', meterId: 'mtr_ai_tokens' }
+        {
+          id: 'prc_kernel_metered',
+          amountType: 'metered_unit',
+          unitAmount: 0.00002,
+          priceCurrency: 'usd',
+          meterId: 'mtr_ai_tokens',
+        },
       ],
       benefits: [
-        { id: 'ben_feature_flags', type: 'feature_flag', description: 'Unlock unlimited WASM OPFS sandboxes and WOPI lock tokens', isGranted: true },
-        { id: 'ben_license_keys', type: 'license_keys', description: 'Cryptographic node license keys for sovereign clusters', isGranted: true }
-      ]
+        {
+          id: 'ben_feature_flags',
+          type: 'feature_flag',
+          description: 'Unlock unlimited WASM OPFS sandboxes and WOPI lock tokens',
+          isGranted: true,
+        },
+        {
+          id: 'ben_license_keys',
+          type: 'license_keys',
+          description: 'Cryptographic node license keys for sovereign clusters',
+          isGranted: true,
+        },
+      ],
     },
     {
       id: 'prod_enterprise_cluster',
       name: 'Sovereign Edge Cluster (Dedicated)',
-      description: 'Dedicated isolated NVMe database engine processing high-throughput edge telemetry and multi-tenant security auditing.',
+      description:
+        'Dedicated isolated NVMe database engine processing high-throughput edge telemetry and multi-tenant security auditing.',
       isRecurring: true,
       recurringInterval: 'monthly',
       badge: 'ENTERPRISE',
-      prices: [
-        { id: 'prc_cluster_seat', amountType: 'seat_based', priceAmount: 2900, priceCurrency: 'usd' }
-      ],
+      prices: [{ id: 'prc_cluster_seat', amountType: 'seat_based', priceAmount: 2900, priceCurrency: 'usd' }],
       benefits: [
-        { id: 'ben_repo_access', type: 'github_repository', description: 'Automated collaborator access to private Verdigris kernel repo', isGranted: true },
-        { id: 'ben_credits', type: 'meter_credit', description: '5,000,000 monthly rollover AI tokens', isGranted: true, metadata: { units: 5000000, rollover: true } }
-      ]
+        {
+          id: 'ben_repo_access',
+          type: 'github_repository',
+          description: 'Automated collaborator access to private Verdigris kernel repo',
+          isGranted: true,
+        },
+        {
+          id: 'ben_credits',
+          type: 'meter_credit',
+          description: '5,000,000 monthly rollover AI tokens',
+          isGranted: true,
+          metadata: { units: 5000000, rollover: true },
+        },
+      ],
     },
     {
       id: 'prod_wopi_standalone',
       name: 'Office WOPI Protocol Adapter',
       description: 'Full Microsoft WOPI & Collabora Office online collaborative editing integration suite.',
       isRecurring: false,
-      prices: [
-        { id: 'prc_wopi_fixed', amountType: 'fixed', priceAmount: 19900, priceCurrency: 'usd' }
-      ],
+      prices: [{ id: 'prc_wopi_fixed', amountType: 'fixed', priceAmount: 19900, priceCurrency: 'usd' }],
       benefits: [
-        { id: 'ben_wopi_download', type: 'downloadables', description: 'Signed binary distribution of WOPI gateway container (10GB max)', isGranted: true }
-      ]
-    }
+        {
+          id: 'ben_wopi_download',
+          type: 'downloadables',
+          description: 'Signed binary distribution of WOPI gateway container (10GB max)',
+          isGranted: true,
+        },
+      ],
+    },
   ]);
 
   private customerStatesState = signal<Record<string, PolarCustomerState>>({
@@ -142,12 +172,22 @@ export class PolarBillingService {
           cancelAtPeriodEnd: false,
           priceAmount: 4900,
           currency: 'usd',
-          seats: 5
-        }
+          seats: 5,
+        },
       ],
       benefits: [
-        { id: 'ben_feature_flags', type: 'feature_flag', description: 'Unlimited WASM OPFS and WOPI locks', isGranted: true },
-        { id: 'ben_license_keys', type: 'license_keys', description: 'Cryptographic node licenses', isGranted: true }
+        {
+          id: 'ben_feature_flags',
+          type: 'feature_flag',
+          description: 'Unlimited WASM OPFS and WOPI locks',
+          isGranted: true,
+        },
+        {
+          id: 'ben_license_keys',
+          type: 'license_keys',
+          description: 'Cryptographic node licenses',
+          isGranted: true,
+        },
       ],
       meters: [
         {
@@ -155,17 +195,17 @@ export class PolarBillingService {
           meterName: 'AI LLM Inference Tokens',
           consumedUnits: 125000,
           creditedUnits: 5000000,
-          balance: 4875000
+          balance: 4875000,
         },
         {
           meterId: 'mtr_edge_pings',
           meterName: 'Edge Gateway Requests',
           consumedUnits: 342,
           creditedUnits: 10000,
-          balance: 9658
-        }
-      ]
-    }
+          balance: 9658,
+        },
+      ],
+    },
   });
 
   private totalCostCents = signal<number>(142.85);
@@ -183,8 +223,8 @@ export class PolarBillingService {
       validations: 18,
       lastValidatedAt: Date.now() - 3600000,
       expiresAt: Date.now() + 86400000 * 180,
-      activeDevices: ['inst_node_mac_01', 'inst_node_linux_02']
-    }
+      activeDevices: ['inst_node_mac_01', 'inst_node_linux_02'],
+    },
   ]);
 
   private recentCheckoutsState = signal<PolarCheckoutSession[]>([]);
@@ -216,7 +256,11 @@ export class PolarBillingService {
     customMultiplier?: number;
     filter: {
       conjunction: 'and' | 'or';
-      clauses: { property: string; operator: 'eq' | 'ne' | 'gt' | 'gte' | 'lt' | 'lte' | 'contains' | 'does_not_contain'; value: string | number | boolean }[];
+      clauses: {
+        property: string;
+        operator: 'eq' | 'ne' | 'gt' | 'gte' | 'lt' | 'lte' | 'contains' | 'does_not_contain';
+        value: string | number | boolean;
+      }[];
     };
     aggregation: { func: 'count' | 'sum' | 'avg' | 'min' | 'max' | 'unique'; property?: string };
   }): PolarMeter {
@@ -230,10 +274,10 @@ export class PolarBillingService {
       filter: params.filter,
       aggregation: params.aggregation,
       createdAt: Date.now(),
-      totalEventsProcessed: 0
+      totalEventsProcessed: 0,
     };
 
-    this.metersState.update(list => [newMeter, ...list]);
+    this.metersState.update((list) => [newMeter, ...list]);
 
     this.auditService.logEvent({
       action: 'POLAR_METER_CREATED',
@@ -241,7 +285,7 @@ export class PolarBillingService {
       severity: AuditSeverity.INFO,
       status: 'success',
       targetEntity: meterId,
-      details: `Created Polar usage meter "${params.name}" (${params.unit || 'scalar'}) with aggregation func "${params.aggregation.func}".`
+      details: `Created Polar usage meter "${params.name}" (${params.unit || 'scalar'}) with aggregation func "${params.aggregation.func}".`,
     });
 
     return newMeter;
@@ -251,9 +295,9 @@ export class PolarBillingService {
     let costAdded = 0;
     const currentMeters = this.metersState();
 
-    events.forEach(evt => {
+    events.forEach((evt) => {
       // Evaluate each event against active meters
-      currentMeters.forEach(meter => {
+      currentMeters.forEach((meter) => {
         const matches = this.evaluateFilter(evt, meter.filter);
         if (matches) {
           let unitIncrement = 1;
@@ -263,17 +307,17 @@ export class PolarBillingService {
           }
 
           // Update customer meter balance
-          this.customerStatesState.update(states => {
+          this.customerStatesState.update((states) => {
             const customer = states[evt.external_customer_id];
             if (!customer) return states;
 
-            const updatedMeters = customer.meters.map(cm => {
+            const updatedMeters = customer.meters.map((cm) => {
               if (cm.meterId === meter.id || cm.meterName === meter.name) {
                 const consumed = cm.consumedUnits + unitIncrement;
                 return {
                   ...cm,
                   consumedUnits: consumed,
-                  balance: Math.max(0, cm.creditedUnits - consumed)
+                  balance: Math.max(0, cm.creditedUnits - consumed),
                 };
               }
               return cm;
@@ -283,8 +327,8 @@ export class PolarBillingService {
               ...states,
               [evt.external_customer_id]: {
                 ...customer,
-                meters: updatedMeters
-              }
+                meters: updatedMeters,
+              },
             };
           });
         }
@@ -296,12 +340,12 @@ export class PolarBillingService {
       }
     });
 
-    this.metersState.update(list =>
-      list.map(m => ({ ...m, totalEventsProcessed: m.totalEventsProcessed + events.length }))
+    this.metersState.update((list) =>
+      list.map((m) => ({ ...m, totalEventsProcessed: m.totalEventsProcessed + events.length })),
     );
 
     if (costAdded > 0) {
-      this.totalCostCents.update(val => Math.round((val + costAdded) * 1000) / 1000);
+      this.totalCostCents.update((val) => Math.round((val + costAdded) * 1000) / 1000);
     }
 
     this.auditService.logEvent({
@@ -310,19 +354,19 @@ export class PolarBillingService {
       severity: AuditSeverity.INFO,
       status: 'success',
       targetEntity: `batch_size_${events.length}`,
-      details: `Ingested ${events.length} telemetry event(s) across active meters. Added cost: ${costAdded.toFixed(3)}¢.`
+      details: `Ingested ${events.length} telemetry event(s) across active meters. Added cost: ${costAdded.toFixed(3)}¢.`,
     });
 
     return {
       status: 'success',
       ingestedCount: events.length,
       processedMeters: currentMeters.length,
-      totalCostCentsAdded: costAdded
+      totalCostCentsAdded: costAdded,
     };
   }
 
   private evaluateFilter(evt: PolarIngestEvent, filter: PolarMeter['filter']): boolean {
-    const clauseResults = filter.clauses.map(clause => {
+    const clauseResults = filter.clauses.map((clause) => {
       let candidate: unknown;
       if (clause.property === 'name') {
         candidate = evt.name;
@@ -333,15 +377,24 @@ export class PolarBillingService {
       }
 
       switch (clause.operator) {
-        case 'eq': return candidate === clause.value;
-        case 'ne': return candidate !== clause.value;
-        case 'gt': return typeof candidate === 'number' && candidate > Number(clause.value);
-        case 'gte': return typeof candidate === 'number' && candidate >= Number(clause.value);
-        case 'lt': return typeof candidate === 'number' && candidate < Number(clause.value);
-        case 'lte': return typeof candidate === 'number' && candidate <= Number(clause.value);
-        case 'contains': return typeof candidate === 'string' && candidate.includes(String(clause.value));
-        case 'does_not_contain': return typeof candidate === 'string' && !candidate.includes(String(clause.value));
-        default: return false;
+        case 'eq':
+          return candidate === clause.value;
+        case 'ne':
+          return candidate !== clause.value;
+        case 'gt':
+          return typeof candidate === 'number' && candidate > Number(clause.value);
+        case 'gte':
+          return typeof candidate === 'number' && candidate >= Number(clause.value);
+        case 'lt':
+          return typeof candidate === 'number' && candidate < Number(clause.value);
+        case 'lte':
+          return typeof candidate === 'number' && candidate <= Number(clause.value);
+        case 'contains':
+          return typeof candidate === 'string' && candidate.includes(String(clause.value));
+        case 'does_not_contain':
+          return typeof candidate === 'string' && !candidate.includes(String(clause.value));
+        default:
+          return false;
       }
     });
 
@@ -365,17 +418,17 @@ export class PolarBillingService {
       products: params.products,
       externalCustomerId: params.externalCustomerId,
       customerEmail: params.customerEmail,
-      successUrl: params.successUrl.replace('{CHECKOUT_ID}', checkoutId)
+      successUrl: params.successUrl.replace('{CHECKOUT_ID}', checkoutId),
     };
 
-    this.recentCheckoutsState.update(list => [session, ...list.slice(0, 19)]);
+    this.recentCheckoutsState.update((list) => [session, ...list.slice(0, 19)]);
 
     this.notificationService.notify({
       title: 'Polar Checkout Created',
       message: `Checkout session ${checkoutId} generated for ${params.products.length} product(s).`,
       category: AuditCategory.DATABASE,
       priority: 'normal',
-      sourceApp: 'Polar Billing'
+      sourceApp: 'Polar Billing',
     });
 
     return session;
@@ -398,10 +451,10 @@ export class PolarBillingService {
       limitUsage: 50000,
       validations: 0,
       expiresAt: Date.now() + 86400000 * 365,
-      activeDevices: []
+      activeDevices: [],
     };
 
-    this.licenseKeysState.update(list => [newKey, ...list]);
+    this.licenseKeysState.update((list) => [newKey, ...list]);
 
     this.auditService.logEvent({
       action: 'POLAR_LICENSE_GENERATED',
@@ -409,24 +462,34 @@ export class PolarBillingService {
       severity: AuditSeverity.INFO,
       status: 'success',
       targetEntity: keyId,
-      details: `Generated license key ${displayKey} for product "${productId}" assigned to customer ${externalCustomerId}.`
+      details: `Generated license key ${displayKey} for product "${productId}" assigned to customer ${externalCustomerId}.`,
     });
 
     return newKey;
   }
 
   public validateLicenseKey(keyString: string, deviceId: string): LicenseValidationResult {
-    const target = this.licenseKeysState().find(k => k.key === keyString);
+    const target = this.licenseKeysState().find((k) => k.key === keyString);
     if (!target) {
       return { valid: false, status: 'not_found', activationsCount: 0, message: 'Invalid license key.' };
     }
 
     if (target.status !== 'granted') {
-      return { valid: false, status: target.status, activationsCount: target.activationsCount, message: `License is ${target.status}.` };
+      return {
+        valid: false,
+        status: target.status,
+        activationsCount: target.activationsCount,
+        message: `License is ${target.status}.`,
+      };
     }
 
     if (target.expiresAt && target.expiresAt < Date.now()) {
-      return { valid: false, status: 'expired', activationsCount: target.activationsCount, message: 'License has expired.' };
+      return {
+        valid: false,
+        status: 'expired',
+        activationsCount: target.activationsCount,
+        message: 'License has expired.',
+      };
     }
 
     const devices = new Set(target.activeDevices);
@@ -437,20 +500,23 @@ export class PolarBillingService {
       validations: target.validations + 1,
       lastValidatedAt: Date.now(),
       activationsCount: devices.size,
-      activeDevices: Array.from(devices)
+      activeDevices: Array.from(devices),
     };
 
-    this.licenseKeysState.update(list => list.map(k => (k.id === target.id ? updatedKey : k)));
+    this.licenseKeysState.update((list) => list.map((k) => (k.id === target.id ? updatedKey : k)));
 
     return {
       valid: true,
       status: 'granted',
       activationsCount: devices.size,
-      licenseKey: updatedKey
+      licenseKey: updatedKey,
     };
   }
 
-  public processWebhookEvent(payload: { type: string; data: Record<string, unknown> }, signature: string): { processed: boolean; eventType: string } {
+  public processWebhookEvent(
+    payload: { type: string; data: Record<string, unknown> },
+    signature: string,
+  ): { processed: boolean; eventType: string } {
     if (!signature) {
       throw new Error('Polar Webhook verification failed: missing signature header.');
     }
@@ -461,12 +527,12 @@ export class PolarBillingService {
       severity: AuditSeverity.INFO,
       status: 'success',
       targetEntity: payload.type,
-      details: `Verified and ingested Standard Webhook event "${payload.type}".`
+      details: `Verified and ingested Standard Webhook event "${payload.type}".`,
     });
 
     return {
       processed: true,
-      eventType: payload.type
+      eventType: payload.type,
     };
   }
 }

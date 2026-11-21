@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'bun:test';
+import { describe, expect, it } from 'bun:test';
 
 interface TerminalLog {
   time: string;
@@ -14,11 +14,14 @@ class TerminalSessionSimulator {
   constructor(public pid: string) {
     this.logs.push(
       { time: '12:00:00', prefix: 'sys>', text: 'Verdigris Cloud OS Terminal initialized.', type: 'system' },
-      { time: '12:00:00', prefix: 'sys>', text: 'Type "help" or ask "ai [prompt]".', type: 'system' }
+      { time: '12:00:00', prefix: 'sys>', text: 'Type "help" or ask "ai [prompt]".', type: 'system' },
     );
   }
 
-  public async handleInput(input: string, mockAiHandler?: (prompt: string) => Promise<string>): Promise<void> {
+  public async handleInput(
+    input: string,
+    mockAiHandler?: (prompt: string) => Promise<string>,
+  ): Promise<void> {
     const cmd = input.trim();
     if (!cmd) return;
 
@@ -29,7 +32,7 @@ class TerminalSessionSimulator {
         time: '12:00:01',
         prefix: 'sys>',
         text: 'Available Commands:\n- help: Show this guide\n- status: Display active PIDs and Turso edge metrics\n- clear: Clear terminal logs\n- ai [prompt]: Query the Gemini AI Autonomous Agent & Copilot',
-        type: 'system'
+        type: 'system',
       });
       return;
     }
@@ -39,7 +42,7 @@ class TerminalSessionSimulator {
         time: '12:00:01',
         prefix: 'sys>',
         text: 'Active PIDs: 6 | Memory: 42.4 MB | OPFS WASM Status: Operational | Turso Edge Mesh: Connected',
-        type: 'system'
+        type: 'system',
       });
       return;
     }
@@ -52,7 +55,12 @@ class TerminalSessionSimulator {
           const reply = await mockAiHandler(prompt);
           this.logs.push({ time: '12:00:02', prefix: 'ai>', text: reply, type: 'ai' });
         } else {
-          this.logs.push({ time: '12:00:02', prefix: 'ai>', text: `Autonomous Agent completed task: "${prompt}"`, type: 'ai' });
+          this.logs.push({
+            time: '12:00:02',
+            prefix: 'ai>',
+            text: `Autonomous Agent completed task: "${prompt}"`,
+            type: 'ai',
+          });
         }
       } catch (err: unknown) {
         const errorMsg = err instanceof Error ? err.message : 'AI generation failed';
@@ -67,7 +75,7 @@ class TerminalSessionSimulator {
       time: '12:00:01',
       prefix: 'sys>',
       text: `Executed command "${cmd}" successfully in virtual sandbox.`,
-      type: 'system'
+      type: 'system',
     });
   }
 

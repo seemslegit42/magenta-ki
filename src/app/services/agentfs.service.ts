@@ -3,11 +3,31 @@ import { ToolCallRecord, VfsInode } from '../models/webos.models';
 
 @Injectable({ providedIn: 'root' })
 export class AgentFSService {
-  private inodes = signal<Map<number, VfsInode>>(new Map([
-    [1, { id: 1, mode: 16877, size: 4096, mtime: Date.now(), data: '' }], // root directory
-    [2, { id: 2, mode: 33188, size: 1024, mtime: Date.now(), data: '# Verdigris WebOS Workspace\nAutonomous Agent workspace initialized via AgentFS v2.' }],
-    [3, { id: 3, mode: 33188, size: 2048, mtime: Date.now(), data: '{"project": "enterprise-crm", "version": "2.4.0", "sync": "edge-mesh"}' }]
-  ]));
+  private inodes = signal<Map<number, VfsInode>>(
+    new Map([
+      [1, { id: 1, mode: 16877, size: 4096, mtime: Date.now(), data: '' }], // root directory
+      [
+        2,
+        {
+          id: 2,
+          mode: 33188,
+          size: 1024,
+          mtime: Date.now(),
+          data: '# Verdigris WebOS Workspace\nAutonomous Agent workspace initialized via AgentFS v2.',
+        },
+      ],
+      [
+        3,
+        {
+          id: 3,
+          mode: 33188,
+          size: 2048,
+          mtime: Date.now(),
+          data: '{"project": "enterprise-crm", "version": "2.4.0", "sync": "edge-mesh"}',
+        },
+      ],
+    ]),
+  );
 
   private toolCalls = signal<ToolCallRecord[]>([
     {
@@ -16,7 +36,7 @@ export class AgentFSService {
       parameters: { target: '/workspace.md' },
       result: { status: 'success', bytesRead: 1024 },
       startedAt: Date.now() - 3600000,
-      completedAt: Date.now() - 3599000
+      completedAt: Date.now() - 3599000,
     },
     {
       id: 'call_002',
@@ -24,8 +44,8 @@ export class AgentFSService {
       parameters: { overlayId: 'sandbox_refactor_v1' },
       result: { snapshotHash: 'sha256:8f9a2b...' },
       startedAt: Date.now() - 1800000,
-      completedAt: Date.now() - 1799000
-    }
+      completedAt: Date.now() - 1799000,
+    },
   ]);
 
   public readonly allInodes = signal(this.inodes);
@@ -34,39 +54,39 @@ export class AgentFSService {
   public async executeMonitoredTool<T>(
     toolName: string,
     params: Record<string, unknown>,
-    task: () => Promise<T>
+    task: () => Promise<T>,
   ): Promise<T> {
     const callId = `call_${crypto.randomUUID().slice(0, 6)}`;
     const startedAt = Date.now();
-    
+
     const record: ToolCallRecord = {
       id: callId,
       toolName,
       parameters: params,
-      startedAt
+      startedAt,
     };
 
-    this.toolCalls.update(list => [record, ...list]);
+    this.toolCalls.update((list) => [record, ...list]);
 
     try {
       const output = await task();
       const completedAt = Date.now();
-      this.toolCalls.update(list => 
-        list.map(item => item.id === callId ? { ...item, result: output, completedAt } : item)
+      this.toolCalls.update((list) =>
+        list.map((item) => (item.id === callId ? { ...item, result: output, completedAt } : item)),
       );
       return output;
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown tool execution failure';
       const completedAt = Date.now();
-      this.toolCalls.update(list =>
-        list.map(item => item.id === callId ? { ...item, errorMessage, completedAt } : item)
+      this.toolCalls.update((list) =>
+        list.map((item) => (item.id === callId ? { ...item, errorMessage, completedAt } : item)),
       );
       throw err;
     }
   }
 
   public writeFile(inodeId: number, data: string): void {
-    this.inodes.update(map => {
+    this.inodes.update((map) => {
       const updated = new Map(map);
       const current = updated.get(inodeId);
       if (current) {

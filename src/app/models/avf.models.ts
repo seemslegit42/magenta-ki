@@ -1,4 +1,11 @@
-export type AvfDomain = 'logistics' | 'customer_support' | 'marketing' | 'compliance' | 'healthcare' | 'supply_chain' | 'custom';
+export type AvfDomain =
+  | 'logistics'
+  | 'customer_support'
+  | 'marketing'
+  | 'compliance'
+  | 'healthcare'
+  | 'supply_chain'
+  | 'custom';
 
 export type AgentAutonomy = 'supervised' | 'semi_autonomous' | 'fully_autonomous';
 export type AgentStatus = 'active' | 'learning' | 'paused' | 'locked';

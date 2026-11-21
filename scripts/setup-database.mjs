@@ -1,6 +1,6 @@
 /**
  * Centralized Database Setup & Schema Provisioning Script
- * 
+ *
  * Follows the Appwrite Server SDK Database Rules:
  * - Idempotent table & column creation
  * - Multi-tenant team role permissions
@@ -26,7 +26,7 @@ async function runSetup() {
   console.log('✅ Schema validation complete. TablesDB is ready for production and staging operations.');
 }
 
-runSetup().catch(err => {
+runSetup().catch((err) => {
   console.error('Database setup error:', err);
   process.exit(1);
 });

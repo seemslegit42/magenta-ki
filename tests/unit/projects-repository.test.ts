@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'bun:test';
+import { beforeEach, describe, expect, it } from 'bun:test';
 
 interface Project {
   $id: string;
@@ -48,27 +48,31 @@ class MockProjectRepository {
     if (userTeams && !userTeams.includes(teamId) && !userTeams.includes('administrator')) {
       throw new Error(`appwrite: forbidden - user is not a member of team ${teamId}`);
     }
-    return this.projects.filter(p => p.teamId === teamId);
+    return this.projects.filter((p) => p.teamId === teamId);
   }
 
   listByOwner(userId: string): Project[] {
     if (!userId.trim()) {
       throw new Error('appwrite: userID cannot be empty for ListByOwner');
     }
-    return this.projects.filter(p => p.createdBy === userId);
+    return this.projects.filter((p) => p.createdBy === userId);
   }
 
   getWithOwnership(projectId: string, userId: string, userTeams: string[]): Project {
-    const project = this.projects.find(p => p.$id === projectId);
+    const project = this.projects.find((p) => p.$id === projectId);
     if (!project) {
       throw new Error(`appwrite: project ${projectId} not found`);
     }
 
     const isOwner = project.createdBy === userId;
-    const isTeamMember = project.teamId ? (userTeams.includes(project.teamId) || userTeams.includes('administrator')) : false;
+    const isTeamMember = project.teamId
+      ? userTeams.includes(project.teamId) || userTeams.includes('administrator')
+      : false;
 
     if (!isOwner && !isTeamMember) {
-      throw new Error(`appwrite: forbidden - user ${userId} is not authorized to access project ${projectId}`);
+      throw new Error(
+        `appwrite: forbidden - user ${userId} is not authorized to access project ${projectId}`,
+      );
     }
     return project;
   }
@@ -94,25 +98,20 @@ class MockProjectRepository {
     return project;
   }
 
-  update(
-    projectId: string,
-    userId: string,
-    updates: Record<string, unknown>,
-    userTeams: string[]
-  ): Project {
+  update(projectId: string, userId: string, updates: Record<string, unknown>, userTeams: string[]): Project {
     const existing = this.getWithOwnership(projectId, userId, userTeams);
 
     // Enforce immutability of createdBy
     if ('createdBy' in updates && updates['createdBy'] !== existing.createdBy) {
       throw new Error(
-        `appwrite: validation error - createdBy is immutable and cannot be updated from ${existing.createdBy} to ${updates['createdBy']}`
+        `appwrite: validation error - createdBy is immutable and cannot be updated from ${existing.createdBy} to ${updates['createdBy']}`,
       );
     }
 
     // Enforce immutability of teamId
     if ('teamId' in updates && updates['teamId'] !== existing.teamId) {
       throw new Error(
-        `appwrite: validation error - teamId is immutable and cannot be updated from ${existing.teamId} to ${updates['teamId']}`
+        `appwrite: validation error - teamId is immutable and cannot be updated from ${existing.teamId} to ${updates['teamId']}`,
       );
     }
 
@@ -154,14 +153,14 @@ describe('Projects Repository Ownership Enforcement & Immutability', () => {
     expect(devopsProjects[0].$id).toBe('proj_beta');
 
     expect(() => repo.listByTeam('team_devops', ['team_enterprise_alpha'])).toThrow(
-      'appwrite: forbidden - user is not a member of team team_devops'
+      'appwrite: forbidden - user is not a member of team team_devops',
     );
   });
 
   it('lists projects by owner correctly', () => {
     const ownerProjects = repo.listByOwner('usr_operator_7842');
     expect(ownerProjects.length).toBe(2);
-    expect(ownerProjects.every(p => p.createdBy === 'usr_operator_7842')).toBe(true);
+    expect(ownerProjects.every((p) => p.createdBy === 'usr_operator_7842')).toBe(true);
 
     const devProjects = repo.listByOwner('usr_developer_99');
     expect(devProjects.length).toBe(1);
@@ -177,9 +176,9 @@ describe('Projects Repository Ownership Enforcement & Immutability', () => {
     expect(teamAccess.$id).toBe('proj_alpha');
 
     // Unauthorized user cannot access personal project of another user
-    expect(() =>
-      repo.getWithOwnership('proj_gamma_personal', 'usr_unauthorized', ['team_other'])
-    ).toThrow('forbidden');
+    expect(() => repo.getWithOwnership('proj_gamma_personal', 'usr_unauthorized', ['team_other'])).toThrow(
+      'forbidden',
+    );
   });
 
   it('strictly rejects modifications to createdBy during update', () => {
@@ -191,7 +190,7 @@ describe('Projects Repository Ownership Enforcement & Immutability', () => {
           name: 'Renamed Project',
           createdBy: 'hacker_user_007',
         },
-        ['team_enterprise_alpha']
+        ['team_enterprise_alpha'],
       );
     }).toThrow('createdBy is immutable');
   });
@@ -205,7 +204,7 @@ describe('Projects Repository Ownership Enforcement & Immutability', () => {
           name: 'Renamed Project',
           teamId: 'team_hijacked_id',
         },
-        ['team_enterprise_alpha']
+        ['team_enterprise_alpha'],
       );
     }).toThrow('teamId is immutable');
   });
@@ -218,7 +217,7 @@ describe('Projects Repository Ownership Enforcement & Immutability', () => {
         name: 'Updated Mesh Orchestration Platform',
         description: 'Enhanced cluster controller architecture',
       },
-      ['team_enterprise_alpha']
+      ['team_enterprise_alpha'],
     );
 
     expect(updated.name).toBe('Updated Mesh Orchestration Platform');

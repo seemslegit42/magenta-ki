@@ -1,5 +1,5 @@
-import { Component, inject, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, HostListener, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SearchService } from '../../services/search.service';
 import { TablerIconComponent } from '../common/tabler-icon.component';
@@ -53,7 +53,7 @@ import { TablerIconComponent } from '../common/tabler-icon.component';
         </div>
       </div>
     }
-  `
+  `,
 })
 export class SearchComponent {
   searchService = inject(SearchService);
@@ -61,9 +61,9 @@ export class SearchComponent {
   filteredItems = this.searchService.items();
 
   filterItems() {
-    this.filteredItems = this.searchService.items().filter(item => 
-      item.name.toLowerCase().includes(this.query.toLowerCase())
-    );
+    this.filteredItems = this.searchService
+      .items()
+      .filter((item) => item.name.toLowerCase().includes(this.query.toLowerCase()));
   }
 
   onBackdropClick(event: MouseEvent) {

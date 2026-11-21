@@ -1,9 +1,15 @@
-import { Injectable, signal, computed, inject } from '@angular/core';
-import { AppwriteDatabase, AppwriteTable, AppwriteColumn, AuditCategory, AuditSeverity } from '../models/webos.models';
-import { AuditService } from './audit.service';
-import { NotificationService } from './notification.service';
-import { AuthRbacService } from './auth-rbac.service';
+import { computed, Injectable, inject, signal } from '@angular/core';
+import {
+  AppwriteColumn,
+  AppwriteDatabase,
+  AppwriteTable,
+  AuditCategory,
+  AuditSeverity,
+} from '../models/webos.models';
 import { AppwriteBackendApiService, ItemRecord, ProjectRecord } from './appwrite-backend-api.service';
+import { AuditService } from './audit.service';
+import { AuthRbacService } from './auth-rbac.service';
+import { NotificationService } from './notification.service';
 
 export interface SdkCodeConfig {
   endpoint: string;
@@ -72,7 +78,12 @@ export class AppwriteDatabaseService {
     this.backendApi = resolvedApi ?? new AppwriteBackendApiService();
   }
 
-  public setDependenciesForTesting(audit: AuditService, notif: NotificationService, auth: AuthRbacService, backendApi?: AppwriteBackendApiService): void {
+  public setDependenciesForTesting(
+    audit: AuditService,
+    notif: NotificationService,
+    auth: AuthRbacService,
+    backendApi?: AppwriteBackendApiService,
+  ): void {
     this.auditService = audit;
     this.notificationService = notif;
     this.authRbac = auth;
@@ -88,7 +99,8 @@ export class AppwriteDatabaseService {
       infrastructure: 'shared',
       enabled: true,
       createdAt: Date.now() - 86400000 * 5,
-      description: 'Primary shared multi-tenant datastore backing IAM identity, auth sessions, and tenant accounts.',
+      description:
+        'Primary shared multi-tenant datastore backing IAM identity, auth sessions, and tenant accounts.',
       region: 'us-central-shared',
       totalRecords: 108340,
       tables: [
@@ -107,10 +119,28 @@ export class AppwriteDatabaseService {
             { key: 'two_factor_enabled', type: 'boolean', required: false, defaultValue: true },
           ],
           sampleRecords: [
-            { user_id: 'usr_admin_01', email: 'elena.rostova@verdigris.cloud', role: 'administrator', status: 'active', two_factor_enabled: true },
-            { user_id: 'usr_creator_02', email: 'marcus.vance@verdigris.cloud', role: 'content_creator', status: 'active', two_factor_enabled: true },
-            { user_id: 'usr_user_03', email: 'sarah.chen@verdigris.cloud', role: 'general_user', status: 'active', two_factor_enabled: false },
-          ]
+            {
+              user_id: 'usr_admin_01',
+              email: 'elena.rostova@verdigris.cloud',
+              role: 'administrator',
+              status: 'active',
+              two_factor_enabled: true,
+            },
+            {
+              user_id: 'usr_creator_02',
+              email: 'marcus.vance@verdigris.cloud',
+              role: 'content_creator',
+              status: 'active',
+              two_factor_enabled: true,
+            },
+            {
+              user_id: 'usr_user_03',
+              email: 'sarah.chen@verdigris.cloud',
+              role: 'general_user',
+              status: 'active',
+              two_factor_enabled: false,
+            },
+          ],
         },
         {
           id: 'tbl_teams',
@@ -126,9 +156,19 @@ export class AppwriteDatabaseService {
             { key: 'created_at', type: 'datetime', required: true },
           ],
           sampleRecords: [
-            { team_id: 'team_secops', name: 'SecOps & Compliance', billing_tier: 'enterprise', lead_user_id: 'usr_admin_01' },
-            { team_id: 'team_digital', name: 'Digital Strategy & Content', billing_tier: 'enterprise', lead_user_id: 'usr_creator_02' },
-          ]
+            {
+              team_id: 'team_secops',
+              name: 'SecOps & Compliance',
+              billing_tier: 'enterprise',
+              lead_user_id: 'usr_admin_01',
+            },
+            {
+              team_id: 'team_digital',
+              name: 'Digital Strategy & Content',
+              billing_tier: 'enterprise',
+              lead_user_id: 'usr_creator_02',
+            },
+          ],
         },
         {
           id: 'tbl_sessions',
@@ -141,7 +181,7 @@ export class AppwriteDatabaseService {
             { key: 'user_id', type: 'string', required: true },
             { key: 'ip_address', type: 'string', required: true },
             { key: 'expires_at', type: 'datetime', required: true },
-          ]
+          ],
         },
         {
           id: 'tbl_audit_events',
@@ -156,9 +196,9 @@ export class AppwriteDatabaseService {
             { key: 'severity', type: 'string', required: true },
             { key: 'status', type: 'string', required: true },
             { key: 'timestamp', type: 'datetime', required: true },
-          ]
-        }
-      ]
+          ],
+        },
+      ],
     },
     {
       id: 'db_analytics_dedicated',
@@ -166,7 +206,8 @@ export class AppwriteDatabaseService {
       infrastructure: 'dedicated',
       enabled: true,
       createdAt: Date.now() - 86400000 * 3,
-      description: 'Dedicated isolated NVMe database engine processing high-throughput IoT edge telemetry and AI token meters.',
+      description:
+        'Dedicated isolated NVMe database engine processing high-throughput IoT edge telemetry and AI token meters.',
       region: 'us-east-dedicated-01',
       totalRecords: 502300,
       tables: [
@@ -182,7 +223,7 @@ export class AppwriteDatabaseService {
             { key: 'latency_ms', type: 'float', required: true },
             { key: 'http_status', type: 'integer', required: true },
             { key: 'timestamp', type: 'datetime', required: true },
-          ]
+          ],
         },
         {
           id: 'tbl_agent_executions',
@@ -197,7 +238,7 @@ export class AppwriteDatabaseService {
             { key: 'duration_ms', type: 'integer', required: true },
             { key: 'success', type: 'boolean', required: true },
             { key: 'created_at', type: 'datetime', required: true },
-          ]
+          ],
         },
         {
           id: 'tbl_token_usage',
@@ -210,9 +251,9 @@ export class AppwriteDatabaseService {
             { key: 'model', type: 'string', required: true },
             { key: 'prompt_tokens', type: 'integer', required: true },
             { key: 'output_tokens', type: 'integer', required: true },
-          ]
-        }
-      ]
+          ],
+        },
+      ],
     },
     {
       id: 'db_wopi_collab_dedicated',
@@ -220,7 +261,8 @@ export class AppwriteDatabaseService {
       infrastructure: 'dedicated',
       enabled: true,
       createdAt: Date.now() - 86400000 * 2,
-      description: 'Dedicated low-latency database managing distributed document lock tokens and real-time revisions.',
+      description:
+        'Dedicated low-latency database managing distributed document lock tokens and real-time revisions.',
       region: 'eu-west-dedicated-01',
       totalRecords: 10338,
       tables: [
@@ -237,7 +279,7 @@ export class AppwriteDatabaseService {
             { key: 'size_bytes', type: 'integer', required: true },
             { key: 'version', type: 'string', required: true },
             { key: 'updated_at', type: 'datetime', required: true },
-          ]
+          ],
         },
         {
           id: 'tbl_active_locks',
@@ -251,9 +293,9 @@ export class AppwriteDatabaseService {
             { key: 'holder_user_id', type: 'string', required: true },
             { key: 'acquired_at', type: 'datetime', required: true },
             { key: 'expires_at', type: 'datetime', required: true },
-          ]
-        }
-      ]
+          ],
+        },
+      ],
     },
     {
       id: 'db_federation_catalog',
@@ -261,7 +303,8 @@ export class AppwriteDatabaseService {
       infrastructure: 'shared',
       enabled: true,
       createdAt: Date.now() - 86400000 * 1,
-      description: 'Shared catalog repository registering remote microfrontends, script manifests, and sandbox permissions.',
+      description:
+        'Shared catalog repository registering remote microfrontends, script manifests, and sandbox permissions.',
       region: 'us-central-shared',
       totalRecords: 192,
       tables: [
@@ -277,7 +320,7 @@ export class AppwriteDatabaseService {
             { key: 'remote_entry', type: 'string', required: true },
             { key: 'version', type: 'string', required: true },
             { key: 'status', type: 'string', required: true },
-          ]
+          ],
         },
         {
           id: 'tbl_permissions',
@@ -290,37 +333,37 @@ export class AppwriteDatabaseService {
             { key: 'app_id', type: 'string', required: true },
             { key: 'scope', type: 'string', required: true },
             { key: 'granted_at', type: 'datetime', required: true },
-          ]
-        }
-      ]
-    }
+          ],
+        },
+      ],
+    },
   ]);
 
   public readonly allDatabases = computed(() => this.databasesState());
 
   public readonly databaseCount = computed(() => this.databasesState().length);
 
-  public readonly sharedCount = computed(() =>
-    this.databasesState().filter(d => d.infrastructure === 'shared').length
+  public readonly sharedCount = computed(
+    () => this.databasesState().filter((d) => d.infrastructure === 'shared').length,
   );
 
-  public readonly dedicatedCount = computed(() =>
-    this.databasesState().filter(d => d.infrastructure === 'dedicated').length
+  public readonly dedicatedCount = computed(
+    () => this.databasesState().filter((d) => d.infrastructure === 'dedicated').length,
   );
 
   public readonly totalTables = computed(() =>
-    this.databasesState().reduce((sum, d) => sum + d.tables.length, 0)
+    this.databasesState().reduce((sum, d) => sum + d.tables.length, 0),
   );
 
   public readonly totalRecords = computed(() =>
     this.databasesState().reduce((sum, d) => {
       const dbSum = d.tables.reduce((tSum: number, t: AppwriteTable) => tSum + (t.recordsCount || 0), 0);
       return sum + (d.totalRecords || dbSum);
-    }, 0)
+    }, 0),
   );
 
   public getDatabase(id: string): AppwriteDatabase | undefined {
-    return this.databasesState().find(d => d.id === id);
+    return this.databasesState().find((d) => d.id === id);
   }
 
   public createDatabase(params: {
@@ -345,9 +388,13 @@ export class AppwriteDatabaseService {
       throw new Error(permCheck.reason || 'Permission denied to create database.');
     }
 
-    const dbId = params.id && params.id.trim()
-      ? params.id.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '_')
-      : `db_${crypto.randomUUID().slice(0, 8)}`;
+    const dbId =
+      params.id && params.id.trim()
+        ? params.id
+            .trim()
+            .toLowerCase()
+            .replace(/[^a-z0-9_-]/g, '_')
+        : `db_${crypto.randomUUID().slice(0, 8)}`;
 
     const existing = this.getDatabase(dbId);
     if (existing) {
@@ -367,7 +414,7 @@ export class AppwriteDatabaseService {
       columns: [
         { key: 'id', type: 'string', required: true },
         { key: 'created_at', type: 'datetime', required: true },
-      ]
+      ],
     }));
 
     const newDb: AppwriteDatabase = {
@@ -377,12 +424,13 @@ export class AppwriteDatabaseService {
       enabled,
       createdAt,
       tables,
-      description: params.description || `Appwrite ${infrastructure} database managed under Verdigris Cloud OS.`,
+      description:
+        params.description || `Appwrite ${infrastructure} database managed under Verdigris Cloud OS.`,
       region: infrastructure === 'dedicated' ? 'us-east-dedicated-01' : 'us-central-shared',
       totalRecords: 0,
     };
 
-    this.databasesState.update(list => [newDb, ...list]);
+    this.databasesState.update((list) => [newDb, ...list]);
 
     this.auditService.logEvent({
       action: 'APPWRITE_DATABASE_CREATED',
@@ -421,14 +469,14 @@ export class AppwriteDatabaseService {
     }
 
     let updatedDb: AppwriteDatabase | undefined;
-    this.databasesState.update(list =>
-      list.map(d => {
+    this.databasesState.update((list) =>
+      list.map((d) => {
         if (d.id === id) {
           updatedDb = { ...d, ...updates };
           return updatedDb;
         }
         return d;
-      })
+      }),
     );
 
     if (!updatedDb) {
@@ -467,7 +515,7 @@ export class AppwriteDatabaseService {
       return false;
     }
 
-    this.databasesState.update(list => list.filter(d => d.id !== id));
+    this.databasesState.update((list) => list.filter((d) => d.id !== id));
 
     this.auditService.logEvent({
       action: 'APPWRITE_DATABASE_DELETED',
@@ -489,12 +537,15 @@ export class AppwriteDatabaseService {
     return true;
   }
 
-  public createTable(databaseId: string, params: {
-    id?: string;
-    name: string;
-    columns?: AppwriteColumn[];
-    initialRecords?: Record<string, unknown>[];
-  }): AppwriteTable {
+  public createTable(
+    databaseId: string,
+    params: {
+      id?: string;
+      name: string;
+      columns?: AppwriteColumn[];
+      initialRecords?: Record<string, unknown>[];
+    },
+  ): AppwriteTable {
     const user = this.authRbac.currentUser();
     const permCheck = this.authRbac.checkPermission('database:create');
     if (!permCheck.allowed) {
@@ -514,9 +565,13 @@ export class AppwriteDatabaseService {
       throw new Error(`Database '${databaseId}' not found.`);
     }
 
-    const tableId = params.id && params.id.trim()
-      ? params.id.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '_')
-      : `tbl_${params.name.toLowerCase().replace(/[^a-z0-9_-]/g, '_') || crypto.randomUUID().slice(0, 6)}`;
+    const tableId =
+      params.id && params.id.trim()
+        ? params.id
+            .trim()
+            .toLowerCase()
+            .replace(/[^a-z0-9_-]/g, '_')
+        : `tbl_${params.name.toLowerCase().replace(/[^a-z0-9_-]/g, '_') || crypto.randomUUID().slice(0, 6)}`;
 
     const columns: AppwriteColumn[] = params.columns || [
       { key: 'id', type: 'string', required: true },
@@ -532,12 +587,12 @@ export class AppwriteDatabaseService {
       createdAt: Date.now(),
       columns,
       sampleRecords: params.initialRecords || [
-        { id: `rec_${crypto.randomUUID().slice(0, 6)}`, created_at: new Date().toISOString() }
-      ]
+        { id: `rec_${crypto.randomUUID().slice(0, 6)}`, created_at: new Date().toISOString() },
+      ],
     };
 
-    this.databasesState.update(list =>
-      list.map(d => {
+    this.databasesState.update((list) =>
+      list.map((d) => {
         if (d.id === databaseId) {
           return {
             ...d,
@@ -546,7 +601,7 @@ export class AppwriteDatabaseService {
           };
         }
         return d;
-      })
+      }),
     );
 
     this.auditService.logEvent({
@@ -587,11 +642,11 @@ export class AppwriteDatabaseService {
     const db = this.getDatabase(databaseId);
     if (!db) return false;
 
-    this.databasesState.update(list =>
-      list.map(d => {
+    this.databasesState.update((list) =>
+      list.map((d) => {
         if (d.id === databaseId) {
           const removed = d.tables.find((t: AppwriteTable) => t.id === tableId);
-          const countDiff = removed ? (removed.recordsCount || 0) : 0;
+          const countDiff = removed ? removed.recordsCount || 0 : 0;
           return {
             ...d,
             tables: d.tables.filter((t: AppwriteTable) => t.id !== tableId),
@@ -599,7 +654,7 @@ export class AppwriteDatabaseService {
           };
         }
         return d;
-      })
+      }),
     );
 
     this.auditService.logEvent({
@@ -614,7 +669,11 @@ export class AppwriteDatabaseService {
     return true;
   }
 
-  public insertRecord(databaseId: string, tableId: string, record: Record<string, unknown>): Record<string, unknown> {
+  public insertRecord(
+    databaseId: string,
+    tableId: string,
+    record: Record<string, unknown>,
+  ): Record<string, unknown> {
     const user = this.authRbac.currentUser();
     const permCheck = this.authRbac.checkPermission('database:create');
     if (!permCheck.allowed) {
@@ -637,11 +696,11 @@ export class AppwriteDatabaseService {
     const recordWithId = {
       $id: record['$id'] || `rec_${crypto.randomUUID().slice(0, 8)}`,
       $createdAt: new Date().toISOString(),
-      ...record
+      ...record,
     };
 
-    this.databasesState.update(list =>
-      list.map(d => {
+    this.databasesState.update((list) =>
+      list.map((d) => {
         if (d.id === databaseId) {
           const updatedTables = d.tables.map((t: AppwriteTable) => {
             if (t.id === tableId) {
@@ -649,7 +708,7 @@ export class AppwriteDatabaseService {
               return {
                 ...t,
                 recordsCount: (t.recordsCount || 0) + 1,
-                sampleRecords: [recordWithId, ...currentSamples].slice(0, 50)
+                sampleRecords: [recordWithId, ...currentSamples].slice(0, 50),
               };
             }
             return t;
@@ -657,11 +716,11 @@ export class AppwriteDatabaseService {
           return {
             ...d,
             tables: updatedTables,
-            totalRecords: (d.totalRecords || 0) + 1
+            totalRecords: (d.totalRecords || 0) + 1,
           };
         }
         return d;
-      })
+      }),
     );
 
     this.auditService.logEvent({
@@ -962,7 +1021,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
   public async simulateSdkExecution(language: string, config: SdkCodeConfig): Promise<SdkExecutionResult> {
     const latency = Math.floor(Math.random() * 60) + 35; // 35 - 95ms
-    await new Promise(resolve => setTimeout(resolve, latency));
+    await new Promise((resolve) => setTimeout(resolve, latency));
 
     const dbId = config.databaseId || `db_${crypto.randomUUID().slice(0, 8)}`;
     const name = config.name || 'Simulated SDK Database';
@@ -983,7 +1042,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
       `[AUTH] API Key verified against project ${config.projectId || 'verdigris-cloud-os'}`,
       `[POST /v1/databases] Payload: { databaseId: "${dbId}", name: "${name}" }`,
       `[HTTP 201 Created] Latency: ${latency}ms | Edge cluster response verified.`,
-      `[OUTPUT] Created Database ID: ${dbId}`
+      `[OUTPUT] Created Database ID: ${dbId}`,
     ];
 
     this.auditService.logEvent({
@@ -1003,7 +1062,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
       databaseId: dbId,
       timestamp: Date.now(),
       response,
-      stdoutLogs
+      stdoutLogs,
     };
   }
 
@@ -1034,7 +1093,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     return item;
   }
 
-  public async updateLiveItem(id: string, payload: Partial<ItemRecord>, sessionToken?: string): Promise<ItemRecord> {
+  public async updateLiveItem(
+    id: string,
+    payload: Partial<ItemRecord>,
+    sessionToken?: string,
+  ): Promise<ItemRecord> {
     const item = await this.backendApi.updateItem(id, payload, sessionToken);
     this.auditService.logEvent({
       action: 'APPWRITE_ITEM_UPDATED',
@@ -1064,7 +1127,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     return this.backendApi.listProjects(teamId, sessionToken);
   }
 
-  public async createLiveProject(name: string, description?: string, teamId?: string, sessionToken?: string): Promise<ProjectRecord> {
+  public async createLiveProject(
+    name: string,
+    description?: string,
+    teamId?: string,
+    sessionToken?: string,
+  ): Promise<ProjectRecord> {
     const proj = await this.backendApi.createProject(name, description, teamId, sessionToken);
     this.auditService.logEvent({
       action: 'APPWRITE_PROJECT_CREATED',
@@ -1077,7 +1145,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     return proj;
   }
 
-  public async updateLiveProject(id: string, payload: Partial<ProjectRecord>, sessionToken?: string): Promise<ProjectRecord> {
+  public async updateLiveProject(
+    id: string,
+    payload: Partial<ProjectRecord>,
+    sessionToken?: string,
+  ): Promise<ProjectRecord> {
     const proj = await this.backendApi.updateProject(id, payload, sessionToken);
     this.auditService.logEvent({
       action: 'APPWRITE_PROJECT_UPDATED',
@@ -1103,7 +1175,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     return success;
   }
 
-  public async uploadLiveFile(base64Data: string, fileName: string, mimeType?: string, sessionToken?: string) {
+  public async uploadLiveFile(
+    base64Data: string,
+    fileName: string,
+    mimeType?: string,
+    sessionToken?: string,
+  ) {
     const res = await this.backendApi.uploadFile(base64Data, fileName, mimeType, sessionToken);
     this.auditService.logEvent({
       action: 'APPWRITE_STORAGE_UPLOADED',
@@ -1116,7 +1193,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     return res;
   }
 
-  public async downloadLiveFileDataUrl(fileId: string, mimeType?: string, sessionToken?: string): Promise<string> {
+  public async downloadLiveFileDataUrl(
+    fileId: string,
+    mimeType?: string,
+    sessionToken?: string,
+  ): Promise<string> {
     return this.backendApi.getFileDataUrl(fileId, mimeType, sessionToken);
   }
 }

@@ -1,11 +1,11 @@
-import { Component, signal, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { AuditCategory, AuditSeverity, UserRole } from '../../models/webos.models';
+import { AuditService } from '../../services/audit.service';
+import { AuthRbacService } from '../../services/auth-rbac.service';
 import { GatewayService } from '../../services/gateway.service';
 import { NotificationService } from '../../services/notification.service';
-import { AuthRbacService } from '../../services/auth-rbac.service';
 import { WindowManagerService } from '../../services/window-manager.service';
-import { AuditService } from '../../services/audit.service';
-import { UserRole, AuditCategory, AuditSeverity } from '../../models/webos.models';
 
 @Component({
   selector: 'app-status-bar',
@@ -177,7 +177,7 @@ import { UserRole, AuditCategory, AuditSeverity } from '../../models/webos.model
         </div>
       </div>
     </header>
-  `
+  `,
 })
 export class StatusBarComponent implements OnInit, OnDestroy {
   private gateway = inject(GatewayService);
@@ -203,11 +203,13 @@ export class StatusBarComponent implements OnInit, OnDestroy {
 
   private updateTime(): void {
     const now = new Date();
-    this.currentTime.set(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+    this.currentTime.set(
+      now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+    );
   }
 
   public toggleNotifications(): void {
-    this.isNotificationsOpen.update(v => !v);
+    this.isNotificationsOpen.update((v) => !v);
   }
 
   public openSecurityAuditApp(): void {
@@ -217,7 +219,13 @@ export class StatusBarComponent implements OnInit, OnDestroy {
       severity: AuditSeverity.INFO,
       details: 'Security Governance & Audit Trail console opened from status bar.',
     });
-    this.windowMgr.spawnProcess('security-audit', 'Security Governance & Audit Trail', 'verified_user', 'SecurityAuditComponent', 'security');
+    this.windowMgr.spawnProcess(
+      'security-audit',
+      'Security Governance & Audit Trail',
+      'verified_user',
+      'SecurityAuditComponent',
+      'security',
+    );
   }
 
   public sendTestNotification(type: 'task' | 'message' | 'update'): void {

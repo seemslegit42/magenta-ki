@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'bun:test';
+import { beforeEach, describe, expect, it } from 'bun:test';
 import { AuthRbacService } from '../../src/app/services/auth-rbac.service';
 
 describe('AuthRbacService', () => {
@@ -18,7 +18,7 @@ describe('AuthRbacService', () => {
   });
 
   it('should verify all predefined roles and their descriptions', () => {
-    const roles = service.availableRoles.map(r => r.role);
+    const roles = service.availableRoles.map((r) => r.role);
     expect(roles).toContain('administrator');
     expect(roles).toContain('content_creator');
     expect(roles).toContain('general_user');
@@ -63,7 +63,7 @@ describe('AuthRbacService', () => {
 
   it('should allow updating user roles dynamically', () => {
     service.updateUserRole('usr_user_03', 'content_creator');
-    const updated = service.allProfiles().find(p => p.id === 'usr_user_03')!;
+    const updated = service.allProfiles().find((p) => p.id === 'usr_user_03')!;
     expect(updated.role).toBe('content_creator');
     expect(updated.permissions).toContain('wopi:edit');
   });

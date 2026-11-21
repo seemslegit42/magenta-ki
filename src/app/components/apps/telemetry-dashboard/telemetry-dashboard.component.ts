@@ -24,7 +24,7 @@ import { TelemetryService } from '../../../services/telemetry.service';
         </div>
       </div>
     </div>
-  `
+  `,
 })
 export class TelemetryDashboardComponent {
   protected readonly telemetry = inject(TelemetryService);

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'bun:test';
+import { beforeEach, describe, expect, it } from 'bun:test';
 import { WindowManagerService } from '../../src/app/services/window-manager.service';
 
 describe('WindowManagerService', () => {

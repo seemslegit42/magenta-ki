@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach } from 'bun:test';
-import { XiEconomyService } from '../../src/app/services/xi-economy.service';
+import { beforeEach, describe, expect, it } from 'bun:test';
 import { CogniOpsCogsBreakdown, PoAContributionParams } from '../../src/app/models/webos.models';
+import { XiEconomyService } from '../../src/app/services/xi-economy.service';
 
 describe('XiEconomyService', () => {
   let service: XiEconomyService;
@@ -24,11 +24,11 @@ describe('XiEconomyService', () => {
       cInfra: 0.012,
       wInfra: 0.25,
       cExec: 0.024,
-      wExec: 0.40,
+      wExec: 0.4,
       cAlign: 0.035,
-      wAlign: 0.20,
+      wAlign: 0.2,
       cValid: 0.008,
-      wValid: 0.15
+      wValid: 0.15,
     };
 
     const calculatedFloor = service.calculateFloorCost(customBreakdown);
@@ -53,7 +53,7 @@ describe('XiEconomyService', () => {
       contributorId: 'usr_operator_7842',
       datasetWeightNk: 120,
       qualityFactorFk: 0.95, // High DPO preference score
-      efficacyImpactEdata: 1.45 // 45% lift in model counterfactual benchmark
+      efficacyImpactEdata: 1.45, // 45% lift in model counterfactual benchmark
     };
 
     const rewardResult = service.calculateAndMintPoaReward(contribution);
@@ -70,7 +70,7 @@ describe('XiEconomyService', () => {
       customerId: 'usr_operator_7842',
       xiUnits: 50,
       reason: 'Multi-Agent DPO Fine-Tuning Execution',
-      isElasticAccess: true
+      isElasticAccess: true,
     });
 
     expect(burnResult.success).toBe(true);
@@ -81,9 +81,15 @@ describe('XiEconomyService', () => {
   it('should generate balanced Sankey diagram flow telemetry', () => {
     const sankey = service.generateSankeyFlow();
     expect(sankey.nodes.length).toBeGreaterThanOrEqual(7);
-    expect(sankey.links.some(l => l.source.includes('Customer Payments') && l.target.includes('Available'))).toBe(true);
-    expect(sankey.links.some(l => l.source.includes('Available') && l.target.includes('CogniOps Execution'))).toBe(true);
-    expect(sankey.links.some(l => l.source.includes('Proof-of-Attribution') && l.target.includes('Available'))).toBe(true);
+    expect(
+      sankey.links.some((l) => l.source.includes('Customer Payments') && l.target.includes('Available')),
+    ).toBe(true);
+    expect(
+      sankey.links.some((l) => l.source.includes('Available') && l.target.includes('CogniOps Execution')),
+    ).toBe(true);
+    expect(
+      sankey.links.some((l) => l.source.includes('Proof-of-Attribution') && l.target.includes('Available')),
+    ).toBe(true);
   });
 
   it('should record HPVC parameter governance proposals and adjust economic constants', () => {
@@ -92,7 +98,7 @@ describe('XiEconomyService', () => {
       constantKey: 'mintingMultiplier',
       proposedValue: 1.15,
       justification: 'Inference efficiency gain of 18% via LoRA model quantization',
-      proposerRole: 'administrator'
+      proposerRole: 'administrator',
     });
 
     expect(proposal.id).toContain('prop_');

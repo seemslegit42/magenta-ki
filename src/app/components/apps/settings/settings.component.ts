@@ -1,10 +1,10 @@
-import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, Input, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NotificationService } from '../../../services/notification.service';
-import { AuthRbacService } from '../../../services/auth-rbac.service';
+import { AuditCategory, AuditSeverity, UserRole } from '../../../models/webos.models';
 import { AuditService } from '../../../services/audit.service';
-import { UserRole, AuditCategory, AuditSeverity } from '../../../models/webos.models';
+import { AuthRbacService } from '../../../services/auth-rbac.service';
+import { NotificationService } from '../../../services/notification.service';
 
 @Component({
   selector: 'app-settings',
@@ -217,7 +217,7 @@ import { UserRole, AuditCategory, AuditSeverity } from '../../../models/webos.mo
         </div>
       </div>
     </div>
-  `
+  `,
 })
 export class SettingsComponent {
   @Input({ required: true }) pid!: string;
@@ -259,7 +259,6 @@ export class SettingsComponent {
       },
     });
   }
-
 
   public sendSampleToast(): void {
     this.notificationService.notify({

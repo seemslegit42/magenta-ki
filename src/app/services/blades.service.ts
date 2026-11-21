@@ -19,15 +19,20 @@ export interface Agent {
 }
 
 export interface ModelProvider {
-  generate(prompt: string, context?: Record<string, unknown>): Promise<{ text: string; polarUsage?: unknown }>;
+  generate(
+    prompt: string,
+    context?: Record<string, unknown>,
+  ): Promise<{ text: string; polarUsage?: unknown }>;
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class BladesService implements Agent {
   private agentName = signal<string>('Blades-WebOS-Agent');
-  private agentDescription = signal<string>('Multimodal AI Agent framework wrapper for Λ Ξ V O S executing chain-of-thought reasoning.');
+  private agentDescription = signal<string>(
+    'Multimodal AI Agent framework wrapper for Λ Ξ V O S executing chain-of-thought reasoning.',
+  );
   private memoryLogs = signal<Message[]>([]);
   private isExecuting = signal<boolean>(false);
 
@@ -49,10 +54,10 @@ export class BladesService implements Agent {
     const userMsg: Message = {
       role: 'user',
       content: invocation.prompt,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
-    
-    this.memoryLogs.update(logs => [...logs, userMsg]);
+
+    this.memoryLogs.update((logs) => [...logs, userMsg]);
 
     try {
       const response = await fetch('/api/ai/chat', {
@@ -63,9 +68,9 @@ export class BladesService implements Agent {
           context: {
             ...invocation.context,
             sessionId: invocation.sessionId || 'session_webos_default',
-            framework: 'blades-go-client-wrapper'
-          }
-        })
+            framework: 'blades-go-client-wrapper',
+          },
+        }),
       });
 
       if (!response.ok) {
@@ -78,10 +83,10 @@ export class BladesService implements Agent {
       const assistantMsg: Message = {
         role: 'assistant',
         content: assistantText,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
 
-      this.memoryLogs.update(logs => [...logs, assistantMsg]);
+      this.memoryLogs.update((logs) => [...logs, assistantMsg]);
       this.isExecuting.set(false);
       return assistantMsg;
     } catch (err: unknown) {
@@ -89,9 +94,9 @@ export class BladesService implements Agent {
       const errorMsg: Message = {
         role: 'assistant',
         content: `Error executing Blades agent: ${err instanceof Error ? err.message : 'Unknown error'}`,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
-      this.memoryLogs.update(logs => [...logs, errorMsg]);
+      this.memoryLogs.update((logs) => [...logs, errorMsg]);
       return errorMsg;
     }
   }

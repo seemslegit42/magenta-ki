@@ -1,52 +1,66 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 import { WopiDocument } from '../models/webos.models';
 
 @Injectable({ providedIn: 'root' })
 export class WopiService {
-  private documents = signal<Map<string, WopiDocument>>(new Map([
-    ['doc_101', {
-      fileId: 'doc_101',
-      baseFileName: 'Q3_Strategic_Enterprise_Roadmap.docx',
-      ownerId: 'system-enterprise-admin',
-      size: 14280,
-      userId: 'usr-operator',
-      userFriendlyName: 'Authenticated Employee',
-      version: '2026100901',
-      userCanWrite: true,
-      supportsUpdate: true,
-      supportsLocks: true,
-      content: 'Verdigris Cloud OS — Q3 Strategic Enterprise Roadmap\n\n1. Executive Summary\nDeploying federated microkernels and Native Federation app stores across global enterprise clusters.\n\n2. Key Deliverables\n- Zoneless Angular Signals desktop shell\n- AgentFS OPFS WASM sandboxing\n- Enterprise API Gateway with per-tenant distributed edge databases\n- WOPI collaborative office federation',
-      fileType: 'document'
-    }],
-    ['doc_102', {
-      fileId: 'doc_102',
-      baseFileName: 'Global_Edge_Tenants_Q3.xlsx',
-      ownerId: 'system-enterprise-admin',
-      size: 8940,
-      userId: 'usr-operator',
-      userFriendlyName: 'Authenticated Employee',
-      version: '2026100902',
-      userCanWrite: true,
-      supportsUpdate: true,
-      supportsLocks: true,
-      content: 'Tenant ID\tRegion\tStatus\tStorage (MB)\tActive PIDs\tLatency (ms)\ncorp_alpha\tus-east-1\tActive\t1420\t24\t3.8\ncorp_beta\tEU-Central\tActive\t3890\t52\t4.1\ncorp_gamma\tAP-South\tActive\t840\t12\t4.9',
-      fileType: 'spreadsheet'
-    }],
-    ['doc_103', {
-      fileId: 'doc_103',
-      baseFileName: 'Executive_Pitch_Magenta_Resonance.pptx',
-      ownerId: 'system-enterprise-admin',
-      size: 24500,
-      userId: 'usr-operator',
-      userFriendlyName: 'Authenticated Employee',
-      version: '2026100903',
-      userCanWrite: true,
-      supportsUpdate: true,
-      supportsLocks: true,
-      content: 'Slide 1: Verdigris Interface Protocol VIP v2.4\nSlide 2: The Magenta Resonance & Hyperspatial UI\nSlide 3: Zero-Install Enterprise WebOS Architecture\nSlide 4: AgentFS & Distributed Edge Mesh',
-      fileType: 'presentation'
-    }]
-  ]));
+  private documents = signal<Map<string, WopiDocument>>(
+    new Map([
+      [
+        'doc_101',
+        {
+          fileId: 'doc_101',
+          baseFileName: 'Q3_Strategic_Enterprise_Roadmap.docx',
+          ownerId: 'system-enterprise-admin',
+          size: 14280,
+          userId: 'usr-operator',
+          userFriendlyName: 'Authenticated Employee',
+          version: '2026100901',
+          userCanWrite: true,
+          supportsUpdate: true,
+          supportsLocks: true,
+          content:
+            'Verdigris Cloud OS — Q3 Strategic Enterprise Roadmap\n\n1. Executive Summary\nDeploying federated microkernels and Native Federation app stores across global enterprise clusters.\n\n2. Key Deliverables\n- Zoneless Angular Signals desktop shell\n- AgentFS OPFS WASM sandboxing\n- Enterprise API Gateway with per-tenant distributed edge databases\n- WOPI collaborative office federation',
+          fileType: 'document',
+        },
+      ],
+      [
+        'doc_102',
+        {
+          fileId: 'doc_102',
+          baseFileName: 'Global_Edge_Tenants_Q3.xlsx',
+          ownerId: 'system-enterprise-admin',
+          size: 8940,
+          userId: 'usr-operator',
+          userFriendlyName: 'Authenticated Employee',
+          version: '2026100902',
+          userCanWrite: true,
+          supportsUpdate: true,
+          supportsLocks: true,
+          content:
+            'Tenant ID\tRegion\tStatus\tStorage (MB)\tActive PIDs\tLatency (ms)\ncorp_alpha\tus-east-1\tActive\t1420\t24\t3.8\ncorp_beta\tEU-Central\tActive\t3890\t52\t4.1\ncorp_gamma\tAP-South\tActive\t840\t12\t4.9',
+          fileType: 'spreadsheet',
+        },
+      ],
+      [
+        'doc_103',
+        {
+          fileId: 'doc_103',
+          baseFileName: 'Executive_Pitch_Magenta_Resonance.pptx',
+          ownerId: 'system-enterprise-admin',
+          size: 24500,
+          userId: 'usr-operator',
+          userFriendlyName: 'Authenticated Employee',
+          version: '2026100903',
+          userCanWrite: true,
+          supportsUpdate: true,
+          supportsLocks: true,
+          content:
+            'Slide 1: Verdigris Interface Protocol VIP v2.4\nSlide 2: The Magenta Resonance & Hyperspatial UI\nSlide 3: Zero-Install Enterprise WebOS Architecture\nSlide 4: AgentFS & Distributed Edge Mesh',
+          fileType: 'presentation',
+        },
+      ],
+    ]),
+  );
 
   private activeLocks = signal<Map<string, string>>(new Map());
 
@@ -73,7 +87,7 @@ export class WopiService {
       throw new Error('Lock contention failure: document is locked by another session.');
     }
 
-    this.documents.update(map => {
+    this.documents.update((map) => {
       const updated = new Map(map);
       const target = updated.get(fileId);
       if (target) {
@@ -81,7 +95,7 @@ export class WopiService {
           ...target,
           content,
           size: content.length,
-          version: String(Date.now())
+          version: String(Date.now()),
         });
       }
       return updated;
@@ -91,12 +105,12 @@ export class WopiService {
 
   public acquireLock(fileId: string): string {
     const lock = `lock_${crypto.randomUUID().slice(0, 8)}`;
-    this.activeLocks.update(map => new Map(map).set(fileId, lock));
+    this.activeLocks.update((map) => new Map(map).set(fileId, lock));
     return lock;
   }
 
   public releaseLock(fileId: string): void {
-    this.activeLocks.update(map => {
+    this.activeLocks.update((map) => {
       const updated = new Map(map);
       updated.delete(fileId);
       return updated;

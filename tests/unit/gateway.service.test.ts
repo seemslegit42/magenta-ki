@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'bun:test';
+import { beforeEach, describe, expect, it } from 'bun:test';
 import { GatewayService } from '../../src/app/services/gateway.service';
 
 describe('GatewayService', () => {
@@ -37,12 +37,14 @@ describe('GatewayService', () => {
   });
 
   it('should execute desktop_state query on Turso edge database and return configuration rows', () => {
-    const res = service.queryEdgeDatabase('SELECT config_key, config_val FROM desktop_state WHERE user_id = "test"');
+    const res = service.queryEdgeDatabase(
+      'SELECT config_key, config_val FROM desktop_state WHERE user_id = "test"',
+    );
     expect(res.columns).toContain('config_key');
     expect(res.columns).toContain('config_val');
     expect(res.rows.length).toBeGreaterThanOrEqual(3);
 
-    const keys = res.rows.map(r => r[0]);
+    const keys = res.rows.map((r) => r[0]);
     expect(keys).toContain('theme_cadence');
     expect(keys).toContain('dock_position');
   });

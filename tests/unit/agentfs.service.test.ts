@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'bun:test';
+import { beforeEach, describe, expect, it } from 'bun:test';
 import { AgentFSService } from '../../src/app/services/agentfs.service';
 
 describe('AgentFSService', () => {
@@ -39,7 +39,7 @@ describe('AgentFSService', () => {
       { target: '/workspace.md' },
       async () => {
         return { status: 'build_ok', durationMs: 42 };
-      }
+      },
     );
 
     expect(result.status).toBe('build_ok');
@@ -58,13 +58,9 @@ describe('AgentFSService', () => {
     const initialCallCount = service.allToolCalls()().length;
 
     await expect(
-      service.executeMonitoredTool(
-        'failing_tool',
-        { flag: true },
-        async () => {
-          throw new Error('Sandbox segmentation fault');
-        }
-      )
+      service.executeMonitoredTool('failing_tool', { flag: true }, async () => {
+        throw new Error('Sandbox segmentation fault');
+      }),
     ).rejects.toThrow('Sandbox segmentation fault');
 
     const calls = service.allToolCalls()();

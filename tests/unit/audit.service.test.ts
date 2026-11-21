@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'bun:test';
+import { beforeEach, describe, expect, it } from 'bun:test';
 import { AuditService } from '../../src/app/services/audit.service';
 import { AuthRbacService } from '../../src/app/services/auth-rbac.service';
 
@@ -17,7 +17,7 @@ describe('AuditService', () => {
     expect(logs.length).toBeGreaterThanOrEqual(5);
     expect(auditService.totalCount()).toBe(logs.length);
 
-    const actions = logs.map(l => l.action);
+    const actions = logs.map((l) => l.action);
     expect(actions).toContain('SYSTEM_BOOT');
     expect(actions).toContain('AUTH_SESSION_ESTABLISHED');
     expect(actions).toContain('PERMISSION_BLOCKED');
@@ -68,7 +68,9 @@ describe('AuditService', () => {
 
   it('should export audit trail in formatted CSV with headers', () => {
     const csvStr = auditService.exportAuditLogsCsv();
-    expect(csvStr).toContain('ID,Timestamp,User ID,Role,Action,Category,Severity,Target Entity,Status,Details,IP Address');
+    expect(csvStr).toContain(
+      'ID,Timestamp,User ID,Role,Action,Category,Severity,Target Entity,Status,Details,IP Address',
+    );
     expect(csvStr.split('\n').length).toBeGreaterThan(5);
   });
 

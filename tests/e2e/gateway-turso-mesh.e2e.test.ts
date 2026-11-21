@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'bun:test';
+import { describe, expect, it } from 'bun:test';
 import { GatewayService } from '../../src/app/services/gateway.service';
 
 describe('E2E: Control Plane Gateway & Turso Edge DB Mesh Flow', () => {
@@ -16,22 +16,24 @@ describe('E2E: Control Plane Gateway & Turso Edge DB Mesh Flow', () => {
 
     // 2. Query Routing: Desktop state preferences query
     const desktopStateResult = gateway.queryEdgeDatabase(
-      'SELECT config_key, config_val, updated_at FROM desktop_state WHERE user_id = "usr_operator_7842";'
+      'SELECT config_key, config_val, updated_at FROM desktop_state WHERE user_id = "usr_operator_7842";',
     );
 
     expect(desktopStateResult.columns).toEqual(['config_key', 'config_val', 'updated_at']);
     expect(desktopStateResult.rows.length).toBeGreaterThanOrEqual(3);
 
-    const configMap = new Map(desktopStateResult.rows.map(r => [r[0], r[1]]));
+    const configMap = new Map(desktopStateResult.rows.map((r) => [r[0], r[1]]));
     expect(configMap.get('theme_cadence')).toBe('syncopated_magenta_v2.4');
     expect(configMap.get('dock_position')).toBe('bottom_offset');
 
     // 3. Query Routing: Enterprise Cluster Mesh Status Query
-    const clusterNodesResult = gateway.queryEdgeDatabase('SELECT id, entity_name, status, created_at FROM cluster_nodes;');
+    const clusterNodesResult = gateway.queryEdgeDatabase(
+      'SELECT id, entity_name, status, created_at FROM cluster_nodes;',
+    );
     expect(clusterNodesResult.columns).toContain('entity_name');
     expect(clusterNodesResult.rows.length).toBe(3);
 
-    const operationalNode = clusterNodesResult.rows.find(r => r[1] === 'Alpha Cluster Node');
+    const operationalNode = clusterNodesResult.rows.find((r) => r[1] === 'Alpha Cluster Node');
     expect(operationalNode).toBeDefined();
     expect(operationalNode![2]).toBe('Operational');
 
@@ -46,11 +48,11 @@ describe('E2E: Control Plane Gateway & Turso Edge DB Mesh Flow', () => {
       expect(log.timestamp).toBeDefined();
     }
 
-    const accountAuthLog = auditLogs.find(l => l.path === '/api/v1/account')!;
+    const accountAuthLog = auditLogs.find((l) => l.path === '/api/v1/account')!;
     expect(accountAuthLog).toBeDefined();
     expect(accountAuthLog.method).toBe('GET');
 
-    const tursoQueryLog = auditLogs.find(l => l.path === '/api/v1/turso/query')!;
+    const tursoQueryLog = auditLogs.find((l) => l.path === '/api/v1/turso/query')!;
     expect(tursoQueryLog).toBeDefined();
     expect(tursoQueryLog.method).toBe('POST');
   });

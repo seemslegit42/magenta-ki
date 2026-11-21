@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'bun:test';
+import { describe, expect, it } from 'bun:test';
 import { WopiService } from '../../src/app/services/wopi.service';
 
 describe('E2E: WOPI Office Suite & Collaborative Editing Flow', () => {

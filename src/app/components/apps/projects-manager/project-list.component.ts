@@ -1,9 +1,9 @@
-import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ProjectRecord } from '../../../services/appwrite-backend-api.service';
 import { ProjectService } from '../../../services/project.service';
 import { ProjectFormComponent } from './project-form.component';
-import { ProjectRecord } from '../../../services/appwrite-backend-api.service';
 
 @Component({
   selector: 'app-project-list',
@@ -201,7 +201,7 @@ import { ProjectRecord } from '../../../services/appwrite-backend-api.service';
         </div>
       }
     </div>
-  `
+  `,
 })
 export class ProjectListComponent {
   protected readonly projectService = inject(ProjectService);
@@ -215,7 +215,11 @@ export class ProjectListComponent {
     const list = this.projectService.projects();
     const query = this.searchQuery().toLowerCase().trim();
     if (!query) return list;
-    return list.filter(p => p.name.toLowerCase().includes(query) || (p.description && p.description.toLowerCase().includes(query)));
+    return list.filter(
+      (p) =>
+        p.name.toLowerCase().includes(query) ||
+        (p.description && p.description.toLowerCase().includes(query)),
+    );
   });
 
   public getInputValue(event: Event): string {
@@ -250,7 +254,7 @@ export class ProjectListComponent {
       // Attempt unauthorized modification to immutable fields
       await this.projectService.updateProject(proj.$id || '', {
         createdBy: 'unauthorized_malicious_user',
-        teamId: 'illegal_tenant_id'
+        teamId: 'illegal_tenant_id',
       });
       this.actionMessage.set('Security Warning: Backend failed to enforce immutability!');
     } catch (err: unknown) {

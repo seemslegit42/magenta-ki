@@ -1,12 +1,12 @@
-import { Component, Input, inject, signal, computed } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
+import { Component, computed, Input, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { AuditCategory, VfsInode, WopiDocument } from '../../../models/webos.models';
 import { AgentFSService } from '../../../services/agentfs.service';
-import { WopiService } from '../../../services/wopi.service';
 import { AuditService } from '../../../services/audit.service';
 import { NotificationService } from '../../../services/notification.service';
-import { VfsInode, WopiDocument, AuditCategory } from '../../../models/webos.models';
+import { WopiService } from '../../../services/wopi.service';
 
 export interface ManagedFileItem {
   uid: string;
@@ -278,7 +278,7 @@ export interface ManagedFileItem {
         </div>
       }
     </div>
-  `
+  `,
 })
 export class AgentFsExplorerComponent {
   @Input({ required: true }) pid!: string;
@@ -308,7 +308,7 @@ export class AgentFsExplorerComponent {
     // 1. AgentFS Inodes
     const inodesMap = this.agentFs.allInodes()();
     inodesMap.forEach((inode: VfsInode, id: number) => {
-      const name = inode.name || (id === 2 ? 'workspace.md' : (id === 3 ? 'config.json' : `inode_${id}.txt`));
+      const name = inode.name || (id === 2 ? 'workspace.md' : id === 3 ? 'config.json' : `inode_${id}.txt`);
       let type: ManagedFileItem['type'] = 'text';
       if (name.endsWith('.md') || id === 2) type = 'document';
       else if (name.endsWith('.json') || id === 3) type = 'json';
@@ -318,11 +318,11 @@ export class AgentFsExplorerComponent {
         uid: `agentfs_${id}`,
         name,
         type,
-        size: inode.size || (inode.data?.length || 0),
+        size: inode.size || inode.data?.length || 0,
         mtime: inode.mtime || Date.now(),
         content: inode.data || '',
         source: 'agentfs',
-        originalId: id
+        originalId: id,
       });
     });
 
@@ -337,11 +337,11 @@ export class AgentFsExplorerComponent {
         uid: `wopi_${doc.fileId}`,
         name: doc.baseFileName,
         type,
-        size: doc.size || (doc.content?.length || 0),
+        size: doc.size || doc.content?.length || 0,
         mtime: doc.updatedAt || Date.now(),
         content: doc.content || '',
         source: 'wopi',
-        originalId: doc.fileId
+        originalId: doc.fileId,
       });
     });
 
@@ -351,9 +351,11 @@ export class AgentFsExplorerComponent {
   protected filteredFiles = computed(() => {
     const query = this.searchQuery.trim().toLowerCase();
     const filter = this.selectedFilter;
-    return this.filesList().filter(file => {
-      const matchFilter = filter === 'all' || file.type === filter || (filter === 'document' && file.type === 'document');
-      const matchQuery = !query || file.name.toLowerCase().includes(query) || file.content.toLowerCase().includes(query);
+    return this.filesList().filter((file) => {
+      const matchFilter =
+        filter === 'all' || file.type === filter || (filter === 'document' && file.type === 'document');
+      const matchQuery =
+        !query || file.name.toLowerCase().includes(query) || file.content.toLowerCase().includes(query);
       return matchFilter && matchQuery;
     });
   });
@@ -391,7 +393,12 @@ export class AgentFsExplorerComponent {
       }
 
       // Update local selected file content
-      const updated = { ...file, content: this.editableContent, size: this.editableContent.length, mtime: Date.now() };
+      const updated = {
+        ...file,
+        content: this.editableContent,
+        size: this.editableContent.length,
+        mtime: Date.now(),
+      };
       this.selectedFile.set(updated);
       this.isDirty.set(false);
       this.saveMessage.set('File saved successfully.');
@@ -460,7 +467,7 @@ export class AgentFsExplorerComponent {
       mtime: Date.now(),
       content,
       source: 'agentfs',
-      originalId: newInodeId
+      originalId: newInodeId,
     };
     this.selectFile(newFile);
   }

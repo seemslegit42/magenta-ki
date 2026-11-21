@@ -1,5 +1,5 @@
-import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
@@ -63,7 +63,7 @@ import { MatIconModule } from '@angular/material/icon';
         <span class="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-[#3EB991] border-2 border-[#0E1015] animate-pulse"></span>
       </button>
     </div>
-  `
+  `,
 })
 export class BeepAssistantComponent {
   public readonly isOpen = signal<boolean>(false);
@@ -72,15 +72,15 @@ export class BeepAssistantComponent {
     "I see you're attempting to engineer a singularity. Would you like me to judge your life choices or compile the kernel?",
     "Your architecture is cleaner than my code, and that's saying something. Keep going, Sovereign.",
     "Did you know 99% of bugs vanish if you just pretend they're quantum fluctuations? Try it.",
-    "System load at 12%. The AI overlords are pleased with your productivity today.",
+    'System load at 12%. The AI overlords are pleased with your productivity today.',
     "Remember: The future needs context, and you've got more context than a dictionary in a black hole.",
-    "Warning: Excessive brilliance detected in viewport. Wear quantum sunglasses."
+    'Warning: Excessive brilliance detected in viewport. Wear quantum sunglasses.',
   ];
 
   public readonly currentQuote = signal<string>(this.quotes[0]);
 
   public toggleOpen(): void {
-    this.isOpen.update(v => !v);
+    this.isOpen.update((v) => !v);
   }
 
   public nextSass(): void {
