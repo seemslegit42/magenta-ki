@@ -2,6 +2,10 @@
   <main class="relative w-screen h-screen overflow-hidden flex flex-col bg-[#0E1015]">
     <app-uat-portal [standaloneMode]="true" class="flex-1 h-full overflow-hidden" />
   </main>
+} @else if (isStandaloneFeedbackRoute()) {
+  <main class="relative w-screen h-screen overflow-hidden flex flex-col bg-[#0E1015]">
+    <app-feedback-hub [standaloneMode]="true" class="flex-1 h-full overflow-hidden" />
+  </main>
 } @else {
   <main class="relative w-screen h-screen overflow-hidden flex flex-col bg-[#0E1015]">
     <!-- OS Status Bar -->

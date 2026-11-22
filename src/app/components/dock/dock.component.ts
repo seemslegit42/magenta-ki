@@ -75,6 +75,9 @@ export class DockComponent {
     if (icon === 'storefront') return 'store';
     if (icon === 'hub') return 'network';
     if (icon === 'alt_route' || icon === 'route') return 'git-branch';
+    if (icon === 'clipboard-check' || icon === 'fact_check') return 'clipboard-check';
+    if (icon === 'message-report' || icon === 'rate_review') return 'message-report';
+    if (icon === 'star') return 'star';
     return 'apps';
   }
 

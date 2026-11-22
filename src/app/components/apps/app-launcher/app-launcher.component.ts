@@ -313,6 +313,16 @@ export class AppLauncherComponent {
       componentName: 'UatPortalComponent',
     },
     {
+      id: 'feedback-hub',
+      name: 'Feedback & API Strategy Hub',
+      category: 'productivity',
+      icon: 'rate_review',
+      description:
+        'Collect user ratings and feedback with automated NLP categorization, triage backlog scoring, and external API health monitoring.',
+      version: 'v1.0.0',
+      componentName: 'FeedbackHubComponent',
+    },
+    {
       id: 'settings',
       name: 'Verdigris System Settings',
       category: 'system',

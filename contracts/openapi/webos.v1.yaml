@@ -304,6 +304,136 @@ paths:
               schema:
                 $ref: '#/components/schemas/XiGovernanceResponse'
 
+  /feedback:
+    get:
+      summary: List categorized user feedback entries and aggregated product analytics
+      operationId: listFeedback
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: sentiment
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Feedback list and analytics summary
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  entries:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FeedbackEntry'
+                  analytics:
+                    $ref: '#/components/schemas/FeedbackAnalyticsReport'
+    post:
+      summary: Submit user feedback with automated backend NLP categorization and priority scoring
+      operationId: submitFeedback
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedbackSubmissionPayload'
+      responses:
+        '201':
+          description: Feedback created and categorized
+        '400':
+          description: Validation error envelope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+
+  /feedback/analytics:
+    get:
+      summary: Retrieve aggregated product feedback analytics and top priorities
+      operationId: getFeedbackAnalytics
+      responses:
+        '200':
+          description: Analytics report retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  analytics:
+                    $ref: '#/components/schemas/FeedbackAnalyticsReport'
+
+  /feedback/{id}:
+    patch:
+      summary: Update triage workflow status for a feedback entry
+      operationId: updateFeedbackStatus
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  type: string
+                  enum: [new, triaged, planned, resolved]
+      responses:
+        '200':
+          description: Feedback triage status updated
+
+  /feedback/{id}/analyze-ai:
+    post:
+      summary: Enrich an existing feedback entry using server-side Gemini structured JSON classification
+      operationId: analyzeFeedbackWithAi
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Feedback re-scored using Gemini AI
+        '503':
+          description: Server GEMINI_API_KEY unconfigured
+
+  /integrations/strategy:
+    get:
+      summary: List external service integration contracts and live circuit-breaker snapshots
+      operationId: listIntegrationContracts
+      responses:
+        '200':
+          description: Integration contracts retrieved successfully
+
+  /integrations/probe/{serviceId}:
+    post:
+      summary: Probe external integration health with SSRF guard and circuit-breaker tracking
+      operationId: probeIntegrationService
+      parameters:
+        - name: serviceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Connectivity verified
+        '403':
+          description: Outbound probe URL blocked by SSRF security policy
+
 components:
   schemas:
     SystemPreferences:
@@ -450,3 +580,74 @@ components:
           type: array
           items:
             type: object
+
+    ApiErrorEnvelope:
+      type: object
+      required: [code, message, retryable, correlationId, timestamp]
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        serviceId:
+          type: string
+        retryable:
+          type: boolean
+        upstreamStatus:
+          type: integer
+        correlationId:
+          type: string
+        timestamp:
+          type: integer
+
+    FeedbackSubmissionPayload:
+      type: object
+      required: [rating, title, comment, area]
+      properties:
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        title:
+          type: string
+        comment:
+          type: string
+        area:
+          type: string
+        userCategoryHint:
+          type: string
+        contactEmail:
+          type: string
+        submittedBy:
+          type: string
+
+    FeedbackEntry:
+      type: object
+      properties:
+        id:
+          type: string
+        rating:
+          type: integer
+        title:
+          type: string
+        comment:
+          type: string
+        area:
+          type: string
+        status:
+          type: string
+          enum: [new, triaged, planned, resolved]
+        analysis:
+          type: object
+
+    FeedbackAnalyticsReport:
+      type: object
+      properties:
+        totalSubmissions:
+          type: integer
+        averageRating:
+          type: number
+        npsScore:
+          type: integer
+        openActionCount:
+          type: integer

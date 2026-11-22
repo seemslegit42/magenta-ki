@@ -1,5 +1,6 @@
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
+import { FeedbackHubComponent } from './components/apps/feedback-hub/feedback-hub.component';
 import { UatPortalComponent } from './components/apps/uat-portal/uat-portal.component';
 import { BeepAssistantComponent } from './components/common/beep-assistant.component';
 import { DockComponent } from './components/dock/dock.component';
@@ -18,6 +19,7 @@ import { WindowManagerService } from './services/window-manager.service';
     SearchComponent,
     BeepAssistantComponent,
     UatPortalComponent,
+    FeedbackHubComponent,
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',
@@ -29,5 +31,10 @@ export class App {
   readonly isStandaloneUatRoute = computed(() => {
     const pathname = this.document?.location?.pathname || '/';
     return pathname === '/uat' || pathname.startsWith('/uat/');
+  });
+
+  readonly isStandaloneFeedbackRoute = computed(() => {
+    const pathname = this.document?.location?.pathname || '/';
+    return pathname === '/feedback' || pathname.startsWith('/feedback/');
   });
 }

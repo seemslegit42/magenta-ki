@@ -13,6 +13,11 @@ All notable changes to the Verdigris Cloud OS workspace are documented in this f
   - Go backend unit tests (`go/internal/handlers/handlers_test.go`, `go/internal/middleware/auth_test.go`).
   - Real HTTP REST API contract integration suite (`tests/integration/api-contract.integration.test.ts`) and release/UAT workflow E2E suite (`tests/e2e/release-and-uat-workflow.e2e.test.ts`).
 - **Business Stakeholder UAT Sign-Off Portal (`/uat`)**: Built `UatPortalComponent`, `UatService`, server endpoints (`/api/uat/scenarios`, `/api/uat/signoff`), and non-technical `docs/uat-plan.md` enabling business owners to review plain-English scenarios, record approvals/change requests, submit release sign-off, and download summary reports without developer jargon.
+- **Comprehensive API Integration Strategy (`docs/api-integration-strategy.md`) & Resilient Gateway**:
+  - Formalized protocols, data formats, rate-limit budgets, canonical `ApiErrorEnvelope`, SSRF host allowlists, and secret boundaries across Google Gemini, Appwrite, Turso/libSQL, Polar.sh, WOPI Office, and GitLab CI/CD.
+  - Built reusable server-side `ResilientHttpClient` (`src/server/resilient-http-client.ts`) with SSRF private IP blocking, `AbortSignal` timeouts, jittered backoff retries, and 3-failure circuit breaking, plus Angular `ApiClientService` (`src/app/services/api-client.service.ts`).
+- **User Feedback Hub (`/feedback`) & Backend Analytics Engine**:
+  - Built `StarRatingComponent`, `FeedbackHubComponent` (Submit Form, Product Insights & Triage Backlog, API Integration Strategy Console), `FeedbackService`, and pure backend classifier `src/server/feedback-analyzer.ts` with REST endpoints `/api/feedback`, `/api/feedback/analytics`, `/api/feedback/:id`, `/api/feedback/:id/analyze-ai`, `/api/integrations/strategy`, and `/api/integrations/probe/:serviceId`.
 
 ### Removed
 - **Legacy GitHub Actions Node/npm Workflow**: Removed `.github/workflows/ci-cd.yml` in favor of `.gitlab-ci.yml`.

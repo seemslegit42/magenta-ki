@@ -169,6 +169,84 @@ import { Component, input } from '@angular/core';
           <path d="M4 12l8 4l8 -4" />
           <path d="M4 16l8 4l8 -4" />
         }
+        @case ('star') {
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" />
+        }
+        @case ('star-filled') {
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path
+            fill="currentColor"
+            stroke="none"
+            d="M8.243 7.34l-6.38 .925l-.113 .023a1 1 0 0 0 -.44 1.684l4.622 4.499l-1.09 6.355l-.013 .11a1 1 0 0 0 1.464 .944l5.706 -3l5.693 3l.1 .046a1 1 0 0 0 1.352 -1.1l-1.091 -6.355l4.624 -4.5l.078 -.085a1 1 0 0 0 -.633 -1.62l-6.38 -.926l-2.852 -5.78a1 1 0 0 0 -1.794 0l-2.853 5.78z"
+          />
+        }
+        @case ('bug') {
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M9 9v-1a3 3 0 0 1 6 0v1" />
+          <path d="M8 9h8a6 6 0 0 1 1 3v3a5 5 0 0 1 -10 0v-3a6 6 0 0 1 1 -3" />
+          <path d="M3 13l4 0" />
+          <path d="M17 13l4 0" />
+          <path d="M12 20l0 -6" />
+          <path d="M4 19l3.35 -2" />
+          <path d="M20 19l-3.35 -2" />
+          <path d="M4 7l3.75 2.4" />
+          <path d="M20 7l-3.75 2.4" />
+        }
+        @case ('bulb') {
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M3 12h1m8 -9v1m8 8h1m-15.4 -6.4l.7 .7m12.1 -.7l-.7 .7" />
+          <path d="M9 16a5 5 0 1 1 6 0a3.5 3.5 0 0 0 -1 3a2 2 0 0 1 -4 0a3.5 3.5 0 0 0 -1 -3" />
+          <path d="M9.7 17l4.6 0" />
+        }
+        @case ('gauge') {
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+          <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+          <path d="M13.41 10.59l2.59 -2.59" />
+          <path d="M7 12a5 5 0 0 1 5 -5" />
+        }
+        @case ('plug') {
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M9.785 6l8.215 8.215l-2.054 2.054a5.81 5.81 0 1 1 -8.215 -8.215l2.054 -2.054z" />
+          <path d="M4 20l3.5 -3.5" />
+          <path d="M15 4l-3.5 3.5" />
+          <path d="M20 9l-3.5 3.5" />
+        }
+        @case ('activity') {
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M3 12h4l3 8l4 -16l3 8h4" />
+        }
+        @case ('lock') {
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6z" />
+          <path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0" />
+          <path d="M8 11v-4a4 4 0 1 1 8 0v4" />
+        }
+        @case ('bolt') {
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M13 3l0 7l6 0l-8 11l0 -7l-6 0l8 -11" />
+        }
+        @case ('download') {
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
+          <path d="M7 11l5 5l5 -5" />
+          <path d="M12 4l0 12" />
+        }
+        @case ('thumb-up') {
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M7 11v8a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1v-7a1 1 0 0 1 1 -1h3a4 4 0 0 0 4 -4v-1a2 2 0 0 1 4 0v5h3a2 2 0 0 1 2 2l-1 5a2 3 0 0 1 -2 2h-7a3 3 0 0 1 -3 -3" />
+        }
+        @case ('filter') {
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M4 4h16v2.172a2 2 0 0 1 -.586 1.414l-4.414 4.414v7l-6 2v-8.5l-4.48 -4.928a2 2 0 0 1 -.52 -1.345v-2.227z" />
+        }
+        @case ('message-report') {
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
+          <path d="M12 8v3" />
+          <path d="M12 14v.01" />
+        }
         @default {
           <circle cx="12" cy="12" r="9" />
         }

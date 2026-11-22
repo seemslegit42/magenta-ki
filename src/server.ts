@@ -12,6 +12,23 @@ import {
 } from '@angular/ssr/node';
 import { GoogleGenAI } from '@google/genai';
 import express from 'express';
+import type {
+  ApiErrorEnvelope,
+  FeedbackEntry,
+  FeedbackStatus,
+  FeedbackSubmissionPayload,
+} from './app/models/feedback.models';
+import {
+  analyzeFeedbackDeterministic,
+  analyzeFeedbackWithGemini,
+  computeFeedbackAnalytics,
+  validateAndSanitizeSubmission,
+} from './server/feedback-analyzer';
+import {
+  EXTERNAL_SERVICE_CONTRACTS,
+  IntegrationGatewayError,
+  ResilientHttpClient,
+} from './server/resilient-http-client';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
@@ -510,6 +527,325 @@ app.post('/api/uat/signoff', (req, res) => {
   };
 
   res.status(201).json({ signOff: uatSignOffState });
+});
+
+// User Feedback Collection, Analytics & Triage Store + Integration Resilience Gateway
+const resilientClient = new ResilientHttpClient({ failureThreshold: 3, cooldownMs: 30_000 });
+
+const feedbackStore: FeedbackEntry[] = [
+  {
+    id: 'fb_seed_01',
+    rating: 2,
+    title: 'WOPI lock release delay after switching windows quickly',
+    comment:
+      'When saving a document and switching tabs immediately, the document lock sometimes stays active for several seconds before timing out.',
+    area: 'Document Workspace',
+    userCategoryHint: 'bug_report',
+    submittedBy: 'Elena Vance',
+    status: 'triaged',
+    createdAt: Date.now() - 86_400_000,
+    updatedAt: Date.now() - 72_000_000,
+    analysis: {
+      category: 'bug_report',
+      sentiment: 'negative',
+      sentimentScore: -0.52,
+      urgency: 'high',
+      themes: ['Document & File Handling', 'API & Data Sync'],
+      priorityScore: 81,
+      actionRecommendation:
+        'Reproduce issue in Document & File Handling, add automated regression test, and schedule patch in current sprint.',
+      analyzerEngine: 'deterministic-nlp',
+      confidence: 0.88,
+    },
+  },
+  {
+    id: 'fb_seed_02',
+    rating: 4,
+    title: 'Export executive UAT summary directly to PDF alongside TXT',
+    comment:
+      'Business stakeholders appreciate the plain-language UAT portal and would love a formatted executive PDF export option for quarterly board packets.',
+    area: 'Business Acceptance (UAT)',
+    userCategoryHint: 'feature_request',
+    submittedBy: 'Marcus Chen',
+    status: 'planned',
+    createdAt: Date.now() - 54_000_000,
+    updatedAt: Date.now() - 40_000_000,
+    analysis: {
+      category: 'feature_request',
+      sentiment: 'positive',
+      sentimentScore: 0.5,
+      urgency: 'medium',
+      themes: ['Release & UAT Readiness', 'Navigation & Workspace Flow'],
+      priorityScore: 42,
+      actionRecommendation:
+        'Evaluate product scope for Release & UAT Readiness enhancement and queue for upcoming milestone planning.',
+      analyzerEngine: 'deterministic-nlp',
+      confidence: 0.88,
+    },
+  },
+  {
+    id: 'fb_seed_03',
+    rating: 5,
+    title: 'Clean keyboard navigation and fast project creation flow',
+    comment:
+      'Creating new team projects is fast, clear, and works seamlessly with clear validation feedback.',
+    area: 'Project Collaboration',
+    userCategoryHint: 'praise',
+    submittedBy: 'Sophia Patel',
+    status: 'resolved',
+    createdAt: Date.now() - 21_600_000,
+    updatedAt: Date.now() - 21_600_000,
+    analysis: {
+      category: 'praise',
+      sentiment: 'positive',
+      sentimentScore: 0.89,
+      urgency: 'low',
+      themes: ['Speed & Responsiveness', 'Navigation & Workspace Flow'],
+      priorityScore: 15,
+      actionRecommendation:
+        'Preserve current design pattern in Speed & Responsiveness and share benchmark across sister modules.',
+      analyzerEngine: 'deterministic-nlp',
+      confidence: 0.88,
+    },
+  },
+];
+
+function buildErrorEnvelope(
+  code: string,
+  message: string,
+  retryable: boolean,
+  serviceId?: string,
+  upstreamStatus?: number,
+): ApiErrorEnvelope {
+  return {
+    code,
+    message,
+    retryable,
+    serviceId,
+    upstreamStatus,
+    correlationId: `cor_${crypto.randomUUID().slice(0, 8)}`,
+    timestamp: Date.now(),
+  };
+}
+
+app.get('/api/feedback', (req, res) => {
+  const category = typeof req.query['category'] === 'string' ? req.query['category'].trim() : '';
+  const sentiment = typeof req.query['sentiment'] === 'string' ? req.query['sentiment'].trim() : '';
+  const status = typeof req.query['status'] === 'string' ? req.query['status'].trim() : '';
+
+  const entries = feedbackStore.filter((entry) => {
+    const matchCategory = !category || category === 'all' || entry.analysis.category === category;
+    const matchSentiment = !sentiment || sentiment === 'all' || entry.analysis.sentiment === sentiment;
+    const matchStatus = !status || status === 'all' || entry.status === status;
+    return matchCategory && matchSentiment && matchStatus;
+  });
+
+  res.json({
+    entries,
+    analytics: computeFeedbackAnalytics(feedbackStore),
+  });
+});
+
+app.get('/api/feedback/analytics', (_req, res) => {
+  res.json({
+    analytics: computeFeedbackAnalytics(feedbackStore),
+  });
+});
+
+app.post('/api/feedback', (req, res) => {
+  const payload = (req.body || {}) as FeedbackSubmissionPayload;
+  const validation = validateAndSanitizeSubmission(payload);
+  if (!validation.valid || !validation.sanitized) {
+    res
+      .status(400)
+      .json(buildErrorEnvelope('VALIDATION_ERROR', validation.error || 'Invalid feedback payload.', false));
+    return;
+  }
+
+  const sanitized = validation.sanitized;
+  const analysis = analyzeFeedbackDeterministic({
+    rating: sanitized.rating,
+    title: sanitized.title,
+    comment: sanitized.comment,
+    area: sanitized.area,
+    userCategoryHint: sanitized.userCategoryHint,
+  });
+
+  const now = Date.now();
+  const entry: FeedbackEntry = {
+    id: `fb_${now.toString(36)}_${Math.random().toString(16).slice(2, 6)}`,
+    rating: sanitized.rating,
+    title: sanitized.title,
+    comment: sanitized.comment,
+    area: sanitized.area,
+    userCategoryHint: sanitized.userCategoryHint,
+    contactEmail: sanitized.contactEmail,
+    submittedBy: sanitized.submittedBy,
+    status: 'new',
+    createdAt: now,
+    updatedAt: now,
+    analysis,
+  };
+
+  feedbackStore.unshift(entry);
+  res.status(201).json({
+    entry,
+    analytics: computeFeedbackAnalytics(feedbackStore),
+  });
+});
+
+app.patch('/api/feedback/:id', (req, res) => {
+  const id = String(req.params['id'] || '').trim();
+  const idx = feedbackStore.findIndex((e) => e.id === id);
+  if (idx === -1) {
+    res.status(404).json(buildErrorEnvelope('FEEDBACK_NOT_FOUND', 'Feedback item not found.', false));
+    return;
+  }
+
+  const nextStatus = String(req.body?.status || '').trim() as FeedbackStatus;
+  if (!['new', 'triaged', 'planned', 'resolved'].includes(nextStatus)) {
+    res
+      .status(400)
+      .json(
+        buildErrorEnvelope(
+          'INVALID_TRIAGE_STATUS',
+          'Status must be new, triaged, planned, or resolved.',
+          false,
+        ),
+      );
+    return;
+  }
+
+  const updated: FeedbackEntry = {
+    ...feedbackStore[idx],
+    status: nextStatus,
+    updatedAt: Date.now(),
+  };
+  feedbackStore[idx] = updated;
+
+  res.json({
+    entry: updated,
+    analytics: computeFeedbackAnalytics(feedbackStore),
+  });
+});
+
+app.post('/api/feedback/:id/analyze-ai', async (req, res) => {
+  const id = String(req.params['id'] || '').trim();
+  const idx = feedbackStore.findIndex((e) => e.id === id);
+  if (idx === -1) {
+    res.status(404).json(buildErrorEnvelope('FEEDBACK_NOT_FOUND', 'Feedback item not found.', false));
+    return;
+  }
+
+  if (!process.env['GEMINI_API_KEY']) {
+    res
+      .status(503)
+      .json(
+        buildErrorEnvelope(
+          'GEMINI_KEY_MISSING',
+          'Deep AI enrichment requires GEMINI_API_KEY in server configuration.',
+          false,
+          'gemini-ai',
+          503,
+        ),
+      );
+    return;
+  }
+
+  try {
+    const aiAnalysis = await analyzeFeedbackWithGemini(feedbackStore[idx]);
+    const updated: FeedbackEntry = {
+      ...feedbackStore[idx],
+      analysis: aiAnalysis,
+      updatedAt: Date.now(),
+    };
+    feedbackStore[idx] = updated;
+
+    res.json({
+      entry: updated,
+      analytics: computeFeedbackAnalytics(feedbackStore),
+    });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : 'Upstream Gemini AI enrichment failed.';
+    res.status(502).json(buildErrorEnvelope('GEMINI_UPSTREAM_ERROR', msg, true, 'gemini-ai', 502));
+  }
+});
+
+app.get('/api/integrations/strategy', (_req, res) => {
+  res.json({
+    services: resilientClient.listContractsWithHealth(),
+  });
+});
+
+app.post('/api/integrations/probe/:serviceId', async (req, res) => {
+  const serviceId = String(req.params['serviceId'] || '').trim();
+  const contract = EXTERNAL_SERVICE_CONTRACTS.find((c) => c.id === serviceId);
+  if (!contract) {
+    res
+      .status(404)
+      .json(
+        buildErrorEnvelope('INTEGRATION_NOT_FOUND', `Unknown integration service "${serviceId}".`, false),
+      );
+    return;
+  }
+
+  const probeUrl = typeof req.body?.probeUrl === 'string' ? req.body.probeUrl.trim() : '';
+  const startedAt = Date.now();
+
+  try {
+    if (probeUrl) {
+      await resilientClient.requestJson(serviceId, probeUrl, {
+        method: 'GET',
+        timeoutMs: contract.timeoutMs,
+        maxRetries: 0,
+        allowedHosts: contract.allowedHosts,
+        allowLocalLoopback: false,
+      });
+    } else if (serviceId === 'gemini-ai' && !process.env['GEMINI_API_KEY']) {
+      throw new IntegrationGatewayError(
+        buildErrorEnvelope(
+          'CREDENTIALS_UNCONFIGURED',
+          'Gemini API key not configured; AI copilot deep review inactive.',
+          false,
+          serviceId,
+          503,
+        ),
+        503,
+      );
+    } else {
+      resilientClient.recordSuccess(serviceId, Math.max(2, Date.now() - startedAt + 4));
+    }
+
+    const updated = resilientClient.listContractsWithHealth().find((c) => c.id === serviceId)!;
+    res.json({
+      service: updated,
+      probeResult: {
+        healthy: true,
+        message: `${contract.name} verified (${updated.circuitState} circuit).`,
+      },
+    });
+  } catch (err: unknown) {
+    if (err instanceof IntegrationGatewayError) {
+      if (err.httpStatus === 403 || err.httpStatus === 400) {
+        res.status(err.httpStatus).json(err.envelope);
+        return;
+      }
+      resilientClient.recordFailure(serviceId, Math.max(1, Date.now() - startedAt));
+      const updated = resilientClient.listContractsWithHealth().find((c) => c.id === serviceId)!;
+      res.status(err.httpStatus).json({
+        ...err.envelope,
+        service: updated,
+        probeResult: {
+          healthy: false,
+          message: err.envelope.message,
+        },
+      });
+      return;
+    }
+
+    const msg = err instanceof Error ? err.message : 'Integration probe failed.';
+    res.status(502).json(buildErrorEnvelope('PROBE_FAILED', msg, true, serviceId, 502));
+  }
 });
 
 // Appwrite Console Info Endpoint

@@ -6,4 +6,9 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./components/apps/uat-portal/uat-portal.component').then((m) => m.UatPortalComponent),
   },
+  {
+    path: 'feedback',
+    loadComponent: () =>
+      import('./components/apps/feedback-hub/feedback-hub.component').then((m) => m.FeedbackHubComponent),
+  },
 ];

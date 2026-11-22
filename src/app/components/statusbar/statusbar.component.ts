@@ -29,6 +29,10 @@ import { TablerIconComponent } from '../common/tabler-icon.component';
             <app-tabler-icon name="clipboard-check" size="15" class="text-[#3EB991]" />
             <span>Business UAT</span>
           </button>
+          <button type="button" class="px-3 py-1.5 rounded-xl hover:bg-white/10 hover:text-[#20B2AA] cursor-pointer transition-all focus:outline-none border border-transparent hover:border-[#20B2AA]/30 font-medium text-[#F5FFFA] shadow-sm flex items-center space-x-1.5" (click)="openFeedbackHub()">
+            <app-tabler-icon name="message-report" size="15" class="text-[#20B2AA]" />
+            <span>Feedback</span>
+          </button>
         </nav>
       </div>
 
@@ -131,6 +135,17 @@ export class StatusbarComponent {
       icon: 'clipboard-check',
       componentName: 'UatPortalComponent',
       entryComponent: 'UatPortalComponent',
+      category: 'productivity',
+    });
+  }
+
+  openFeedbackHub() {
+    this.windowManager.openApp({
+      id: 'feedback-hub',
+      name: 'Feedback & API Strategy Hub',
+      icon: 'message-report',
+      componentName: 'FeedbackHubComponent',
+      entryComponent: 'FeedbackHubComponent',
       category: 'productivity',
     });
   }

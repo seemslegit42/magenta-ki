@@ -8,6 +8,7 @@ import { AppStoreComponent } from '../apps/app-store/app-store.component';
 import { AppwriteDatabasesComponent } from '../apps/appwrite-databases/appwrite-databases.component';
 import { ChatWindowComponent } from '../apps/chat-window/chat-window.component';
 import { CicdPipelineComponent } from '../apps/cicd-pipeline/cicd-pipeline.component';
+import { FeedbackHubComponent } from '../apps/feedback-hub/feedback-hub.component';
 import { GatewayConsoleComponent } from '../apps/gateway-console/gateway-console.component';
 import { ProjectsManagerComponent } from '../apps/projects-manager/projects-manager.component';
 import { RemoteContainerComponent } from '../apps/remote-container/remote-container.component';
@@ -36,6 +37,7 @@ import { WopiOfficeComponent } from '../apps/wopi-office/wopi-office.component';
     CicdPipelineComponent,
     ProjectsManagerComponent,
     UatPortalComponent,
+    FeedbackHubComponent,
   ],
   template: `
     <div
@@ -172,6 +174,9 @@ import { WopiOfficeComponent } from '../apps/wopi-office/wopi-office.component';
           }
           @case ('UatPortalComponent') {
             <app-uat-portal [pid]="descriptor.pid" />
+          }
+          @case ('FeedbackHubComponent') {
+            <app-feedback-hub [pid]="descriptor.pid" />
           }
           @case ('RemoteContainerComponent') {
             <app-remote-container [pid]="descriptor.pid" [descriptor]="descriptor" />

@@ -42,3 +42,6 @@
 - [x] Configure Bun-only GitLab CI/CD pipeline (`.gitlab-ci.yml`) with Biome quality gate, Go tests, and Docker staging deployment
 - [x] Implement 4-tier testing strategy (Biome + Bun Unit/Integration/E2E + Go tests, zero Playwright bloat)
 - [x] Launch plain-English Business Stakeholder UAT Portal (`/uat`), `/api/uat/*` endpoints, and `docs/uat-plan.md`
+- [x] Author comprehensive API Integration Strategy (`docs/api-integration-strategy.md`) covering protocols, formats, retries, circuit breaking, and SSRF security controls
+- [x] Implement reusable `ResilientHttpClient` (server) and `ApiClientService` (client) with normalized `ApiErrorEnvelope`
+- [x] Build User Feedback Hub (`/feedback`), `StarRatingComponent`, backend NLP categorization/priority engine, and automated tests

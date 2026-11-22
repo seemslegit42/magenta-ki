@@ -124,6 +124,7 @@ export class WindowManagerService {
       else if (app.id === 'projects-manager' || app.id === 'projects') component = 'ProjectsManagerComponent';
       else if (app.id === 'cicd' || app.id === 'cicd-pipeline') component = 'CicdPipelineComponent';
       else if (app.id === 'uat' || app.id === 'uat-portal') component = 'UatPortalComponent';
+      else if (app.id === 'feedback' || app.id === 'feedback-hub') component = 'FeedbackHubComponent';
       else component = 'RemoteContainerComponent';
     }
     return this.spawnProcess(
